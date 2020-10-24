@@ -1,0 +1,12 @@
+g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "ACO.cpp" -o obj/Debug/ACO.o
+g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "checks.cpp" -o obj/Debug/checks.o
+g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "Cars.cpp" -o obj/Debug/Cars.o
+g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "Passengers.cpp" -o obj/Debug/Passengers.o
+g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "display.cpp" -o obj/Debug/display.o
+g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "init.cpp" -o obj/Debug/init.o
+g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "main.cpp" -o obj/Debug/main.o
+g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "parser.cpp" -o obj/Debug/parser.o
+g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "probabilities.cpp" -o obj/Debug/probabilities.o
+g++  -o bin/Debug/ACO11 obj/Debug/ACO.o obj/Debug/checks.o obj/Debug/Cars.o obj/Debug/Passengers.o obj/Debug/display.o obj/Debug/init.o obj/Debug/main.o obj/Debug/parser.o obj/Debug/probabilities.o  -m64  
+
+ 

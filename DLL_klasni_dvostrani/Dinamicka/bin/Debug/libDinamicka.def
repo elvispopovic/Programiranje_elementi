@@ -1,0 +1,4 @@
+EXPORTS
+    DllMain @1
+    InicijalizirajIDohvatiObjekt @2
+    PosaljiObjekt @3

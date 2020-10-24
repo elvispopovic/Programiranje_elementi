@@ -1,0 +1,69 @@
+# depslib dependency file v1.0
+1479801401 source:c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftclasstest\main.cpp
+	<iostream>
+	"fastFourier.h"
+
+1479801401 c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftclasstest\fastfourier.h
+
+1479801401 source:c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftclasstest\fastfourierclass.cpp
+	<cmath>
+	"fastFourier.h"
+
+1479828467 source:c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftclasstestvariable\fastfourierclass.cpp
+	<iostream>
+	<cmath>
+	"fastFourier.h"
+
+1479906614 c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftclasstestvariable\fastfourier.h
+
+1479857418 source:c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftclasstestvariable\main.cpp
+	<iostream>
+	<cmath>
+	"fastFourier.h"
+
+1480290350 source:c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftdctclasstest\fastfourierclass.cpp
+	<iostream>
+	<cmath>
+	<cstring>
+	"fastFourier.h"
+
+1480264316 c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftdctclasstest\fastfourier.h
+
+1480290195 source:c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftdctclasstest\main.cpp
+	<iostream>
+	<cmath>
+	<windows.h>
+	<complex.h>
+	"fastFourier.h"
+	"fftw3.h"
+
+1469897046 c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftdctclasstest\fftw3.h
+	<stdio.h>
+	<stddef.h>
+
+1480289730 source:c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftdctclasstest\fastfourierclass_old3.cpp
+	<iostream>
+	<cmath>
+	<cstring>
+	"fastFourier.h"
+
+1480492815 source:c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftdctclass fftw\main.cpp
+	<iostream>
+	<cmath>
+	<windows.h>
+	<complex.h>
+	"fastFourier.h"
+	"fftw3.h"
+
+1480463038 c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftdctclass fftw\fastfourier.h
+
+1469897046 c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftdctclass fftw\fftw3.h
+	<stdio.h>
+	<stddef.h>
+
+1480492935 source:c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftdctclass fftw\fastfourierclass.cpp
+	<iostream>
+	<cmath>
+	<cstring>
+	"fastFourier.h"
+

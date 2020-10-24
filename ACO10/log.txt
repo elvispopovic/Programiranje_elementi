@@ -1,0 +1,746 @@
+Init...
+FeroQ: 82900
+Init done.
+Node: V3, cost to V1: 57, passengers: 1:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V3, shortage: 0, cost: 0
+Pass P9, budget: 34.0487, current budget: 34.0487, tau: 0.1, dest node: V2, radius: 2
+Pass P9, p = 0.278232, passenger P9 enters car.
+
+Picked passengers (after entering): 1/5, shared cost: 28.5
+Shortage: 0
+Cost after passenger charging and shortage calculating: 28.5, total cost: 28.5
+
+Node: V1, cost to V2: 475, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 1/5
+P9, cur budget: 5.54868
+Current ant passengers:
+P9, 
+Pass P2, budget: 43.5523, current budget: 43.5523, tau: 0.1, dest node: V0, radius: 2
+Pass P3, budget: 25.9647, current budget: 25.9647, tau: 0.1, dest node: V3, radius: 4294967295
+Pass P4, budget: 77.4181, current budget: 77.4181, tau: 0.1, dest node: V2, radius: 1
+Pass P5, budget: 44.4257, current budget: 44.4257, tau: 0.1, dest node: V0, radius: 2
+Pass P6, budget: 89.638, current budget: 89.638, tau: 0.1, dest node: V2, radius: 1
+Pass P7, budget: 43.9999, current budget: 43.9999, tau: 0.1, dest node: V0, radius: 2
+Pass P8, budget: 44.0477, current budget: 44.0477, tau: 0.1, dest node: V0, radius: 2
+Pass P6, p = 0.632456, passenger P6 enters car.
+Pass P4, p = 0.589346, passenger P4 enters car.
+Pass P5, p = 0.31484, passenger P5 enters car.
+Pass P8, p = 0.313507, passenger P8 enters car.
+
+Picked passengers (after entering): 5/5, shared cost: 79.1667
+Shortage: 145.226
+Cost after passenger charging and shortage calculating: 224.393, total cost: 252.893
+
+Node: V2, cost to V0: 466, passengers: 0:
+Current car: C0, capacity: 5
+Passenger P9 has left car. Current budget: 0
+Passenger P6 has left car. Current budget: 10.4713
+Passenger P4 has left car. Current budget: 0
+Picked passengers (after leaving): 2/5
+P5, cur budget: 0
+P8, cur budget: 0
+Current ant passengers:
+P9, P6, P4, P5, P8, 
+Rollback to V3, and car C0, counter: 1, cost: 0
+Node: V3, cost to V1: 57, passengers: 1:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P9, p = 0.278232, passenger P9 enters car.
+
+Picked passengers (after entering): 1/5, shared cost: 28.5
+Shortage: 28.5
+Cost after passenger charging and shortage calculating: 57, total cost: 57
+
+Node: V1, cost to V2: 475, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 1/5
+P9, cur budget: 0
+Current ant passengers:
+P9, 
+Rollback to V3, and car C0, counter: 2, cost: 0
+Node: V3, cost to V1: 57, passengers: 1:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P2, budget: 43.5523, current budget: 43.5523, tau: 0.1, dest node: V0, radius: 3
+Pass P3, budget: 25.9647, current budget: 25.9647, tau: 0.1, dest node: V3, radius: 0
+Pass P4, budget: 77.4181, current budget: 0, tau: 0.1, dest node: V2, radius: 2
+Pass P5, budget: 44.4257, current budget: 0, tau: 0.405907, dest node: V0, radius: 3
+Pass P6, budget: 89.638, current budget: 10.4713, tau: 0.1, dest node: V2, radius: 2
+Pass P7, budget: 43.9999, current budget: 43.9999, tau: 0.1, dest node: V0, radius: 3
+Pass P8, budget: 44.0477, current budget: 0, tau: 0.403304, dest node: V0, radius: 3
+Pass P9, p = 1.00113, passenger P9 enters car.
+
+Picked passengers (after entering): 1/5, shared cost: 28.5
+Shortage: 28.5
+Cost after passenger charging and shortage calculating: 57, total cost: 57
+
+Node: V1, cost to V2: 475, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 1/5
+P9, cur budget: 0
+Current ant passengers:
+P9, 
+Rollback to V3, and car C0, counter: 3, cost: 0
+Node: V3, cost to V1: 57, passengers: 1:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P2, budget: 43.5523, current budget: 43.5523, tau: 0.1, dest node: V0, radius: 3
+Pass P3, budget: 25.9647, current budget: 25.9647, tau: 0.1, dest node: V3, radius: 0
+Pass P4, budget: 77.4181, current budget: 0, tau: 0.1, dest node: V2, radius: 2
+Pass P5, budget: 44.4257, current budget: 0, tau: 0.405907, dest node: V0, radius: 3
+Pass P6, budget: 89.638, current budget: 10.4713, tau: 0.1, dest node: V2, radius: 2
+Pass P7, budget: 43.9999, current budget: 43.9999, tau: 0.1, dest node: V0, radius: 3
+Pass P8, budget: 44.0477, current budget: 0, tau: 0.403304, dest node: V0, radius: 3
+Don't pick active.
+Picked passengers (after entering): 0/5, shared cost: 57
+Shortage: 0
+Cost after passenger charging and shortage calculating: 57, total cost: 57
+
+Node: V1, cost to V2: 475, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V1, shortage: 0, cost: 57
+Pass P2, budget: 43.5523, current budget: 43.5523, tau: 0.1, dest node: V0, radius: 2
+Pass P3, budget: 25.9647, current budget: 25.9647, tau: 0.1, dest node: V3, radius: 4294967295
+Pass P4, budget: 77.4181, current budget: 0, tau: 0.1, dest node: V2, radius: 1
+Pass P5, budget: 44.4257, current budget: 0, tau: 0.405907, dest node: V0, radius: 2
+Pass P6, budget: 89.638, current budget: 10.4713, tau: 0.1, dest node: V2, radius: 1
+Pass P7, budget: 43.9999, current budget: 43.9999, tau: 0.1, dest node: V0, radius: 2
+Pass P8, budget: 44.0477, current budget: 0, tau: 0.403304, dest node: V0, radius: 2
+Pass P5, p = 0.634313, passenger P5 enters car.
+Pass P6, p = 0.632456, passenger P6 enters car.
+Pass P8, p = 0.629598, passenger P8 enters car.
+Pass P4, p = 0.589346, passenger P4 enters car.
+Pass P7, p = 0.313338, passenger P7 enters car.
+
+Picked passengers (after entering): 5/5, shared cost: 79.1667
+Shortage: 341.362
+Cost after passenger charging and shortage calculating: 420.529, total cost: 477.529
+
+Node: V2, cost to V0: 466, passengers: 0:
+Current car: C0, capacity: 5
+Passenger P6 has left car. Current budget: 0
+Passenger P4 has left car. Current budget: 0
+Picked passengers (after leaving): 3/5
+P5, cur budget: 0
+P8, cur budget: 0
+P7, cur budget: 0
+Current ant passengers:
+P5, P6, P8, P4, P7, 
+Rollback to V1, and car C0, counter: 1, cost: 57
+Node: V1, cost to V2: 475, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P5, p = 0.728941, passenger P5 enters car.
+Pass P8, p = 0.723338, passenger P8 enters car.
+Pass P6, p = 0.632456, passenger P6 enters car.
+Pass P4, p = 0.589346, passenger P4 enters car.
+Pass P7, p = 0.474058, passenger P7 enters car.
+
+Picked passengers (after entering): 5/5, shared cost: 79.1667
+Shortage: 395.833
+Cost after passenger charging and shortage calculating: 475, total cost: 532
+
+Node: V2, cost to V0: 466, passengers: 0:
+Current car: C0, capacity: 5
+Passenger P6 has left car. Current budget: 0
+Passenger P4 has left car. Current budget: 0
+Picked passengers (after leaving): 3/5
+P5, cur budget: 0
+P8, cur budget: 0
+P7, cur budget: 0
+Current ant passengers:
+P5, P8, P6, P4, P7, 
+Rollback to V1, and car C0, counter: 2, cost: 57
+Node: V1, cost to V2: 475, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P5, p = 0.801627, passenger P5 enters car.
+Pass P8, p = 0.795355, passenger P8 enters car.
+Pass P6, p = 0.632456, passenger P6 enters car.
+Pass P4, p = 0.589346, passenger P4 enters car.
+Pass P7, p = 0.577812, passenger P7 enters car.
+
+Picked passengers (after entering): 5/5, shared cost: 79.1667
+Shortage: 395.833
+Cost after passenger charging and shortage calculating: 475, total cost: 532
+
+Node: V2, cost to V0: 466, passengers: 0:
+Current car: C0, capacity: 5
+Passenger P6 has left car. Current budget: 0
+Passenger P4 has left car. Current budget: 0
+Picked passengers (after leaving): 3/5
+P5, cur budget: 0
+P8, cur budget: 0
+P7, cur budget: 0
+Current ant passengers:
+P5, P8, P6, P4, P7, 
+Rollback to V1, and car C0, counter: 3, cost: 57
+Node: V1, cost to V2: 475, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Don't pick active.
+Picked passengers (after entering): 0/5, shared cost: 475
+Shortage: 0
+Cost after passenger charging and shortage calculating: 475, total cost: 532
+
+Node: V2, cost to V0: 466, passengers: 0:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V2, shortage: 0, cost: 532
+
+Picked passengers (after entering): 0/5, shared cost: 466
+Shortage: 0
+Cost after passenger charging and shortage calculating: 466, total cost: 998
+
+Node: V0, cost to V3: 67, passengers: 2:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V0, shortage: 0, cost: 998
+Pass P0, budget: 24.6574, current budget: 24.6574, tau: 0.1, dest node: V2, radius: 4294967295
+Pass P1, budget: 24.2041, current budget: 24.2041, tau: 0.1, dest node: V2, radius: 4294967295
+
+Picked passengers (after entering): 0/5, shared cost: 67
+Shortage: 0
+Cost after passenger charging and shortage calculating: 67, total cost: 1065
+
+
+Ant tour pass status:
+Node: V3
+
+Passenger solution O.K. 
+Car cost: 0
+Tour cost (without passengers): 1065, cost (with passengers): 1065
+=====================
+Node: V3, cost to V1: 57, passengers: 1:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V3, shortage: 0, cost: 0
+Pass P9, budget: 34.0487, current budget: 34.0487, tau: 0.1, dest node: V2, radius: 3
+Pass P9, p = 0.225527, passenger P9 enters car.
+
+Picked passengers (after entering): 1/5, shared cost: 28.5
+Shortage: 0
+Cost after passenger charging and shortage calculating: 28.5, total cost: 28.5
+
+Node: V1, cost to V0: 62, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 1/5
+P9, cur budget: 5.54868
+Current ant passengers:
+P9, 
+Pass P2, budget: 43.5523, current budget: 43.5523, tau: 0.1, dest node: V0, radius: 1
+Pass P3, budget: 25.9647, current budget: 25.9647, tau: 0.1, dest node: V3, radius: 4294967295
+Pass P4, budget: 77.4181, current budget: 77.4181, tau: 0.1, dest node: V2, radius: 2
+Pass P5, budget: 44.4257, current budget: 44.4257, tau: 0.1, dest node: V0, radius: 1
+Pass P6, budget: 89.638, current budget: 89.638, tau: 0.1, dest node: V2, radius: 2
+Pass P7, budget: 43.9999, current budget: 43.9999, tau: 0.1, dest node: V0, radius: 1
+Pass P8, budget: 44.0477, current budget: 44.0477, tau: 0.1, dest node: V0, radius: 1
+Pass P6, p = 0.474342, passenger P6 enters car.
+Pass P5, p = 0.472954, passenger P5 enters car.
+Pass P8, p = 0.471621, passenger P8 enters car.
+Pass P7, p = 0.471452, passenger P7 enters car.
+
+Picked passengers (after entering): 5/5, shared cost: 10.3333
+Shortage: 4.78465
+Cost after passenger charging and shortage calculating: 15.118, total cost: 43.618
+
+Node: V0, cost to V2: 466, passengers: 2:
+Current car: C0, capacity: 5
+Passenger P5 has left car. Current budget: 34.0924
+Passenger P8 has left car. Current budget: 33.7144
+Passenger P7 has left car. Current budget: 33.6666
+Picked passengers (after leaving): 2/5
+P9, cur budget: 0
+P6, cur budget: 79.3047
+Current ant passengers:
+P9, P6, P5, P8, P7, 
+Rollback to V3, and car C0, counter: 1, cost: 0
+Node: V3, cost to V1: 57, passengers: 1:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P0, budget: 24.6574, current budget: 24.6574, tau: 0.1, dest node: V2, radius: 3
+Pass P1, budget: 24.2041, current budget: 24.2041, tau: 0.1, dest node: V2, radius: 3
+Pass P9, p = 1.91582, passenger P9 enters car.
+
+Picked passengers (after entering): 1/5, shared cost: 28.5
+Shortage: 28.5
+Cost after passenger charging and shortage calculating: 57, total cost: 57
+
+Node: V1, cost to V0: 62, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 1/5
+P9, cur budget: 0
+Current ant passengers:
+P9, 
+Rollback to V3, and car C0, counter: 2, cost: 0
+Node: V3, cost to V1: 57, passengers: 1:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P2, budget: 43.5523, current budget: 43.5523, tau: 0.1, dest node: V0, radius: 2
+Pass P3, budget: 25.9647, current budget: 25.9647, tau: 0.1, dest node: V3, radius: 0
+Pass P4, budget: 77.4181, current budget: 77.4181, tau: 0.1, dest node: V2, radius: 3
+Pass P5, budget: 44.4257, current budget: 34.0924, tau: 0.1, dest node: V0, radius: 2
+Pass P6, budget: 89.638, current budget: 79.3047, tau: 18.8345, dest node: V2, radius: 3
+Pass P7, budget: 43.9999, current budget: 33.6666, tau: 0.1, dest node: V0, radius: 2
+Pass P8, budget: 44.0477, current budget: 33.7144, tau: 0.1, dest node: V0, radius: 2
+Pass P9, p = 2.06834, passenger P9 enters car.
+
+Picked passengers (after entering): 1/5, shared cost: 28.5
+Shortage: 28.5
+Cost after passenger charging and shortage calculating: 57, total cost: 57
+
+Node: V1, cost to V0: 62, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 1/5
+P9, cur budget: 0
+Current ant passengers:
+P9, 
+Rollback to V3, and car C0, counter: 3, cost: 0
+Node: V3, cost to V1: 57, passengers: 1:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P2, budget: 43.5523, current budget: 43.5523, tau: 0.1, dest node: V0, radius: 2
+Pass P3, budget: 25.9647, current budget: 25.9647, tau: 0.1, dest node: V3, radius: 0
+Pass P4, budget: 77.4181, current budget: 77.4181, tau: 0.1, dest node: V2, radius: 3
+Pass P5, budget: 44.4257, current budget: 34.0924, tau: 0.1, dest node: V0, radius: 2
+Pass P6, budget: 89.638, current budget: 79.3047, tau: 18.8345, dest node: V2, radius: 3
+Pass P7, budget: 43.9999, current budget: 33.6666, tau: 0.1, dest node: V0, radius: 2
+Pass P8, budget: 44.0477, current budget: 33.7144, tau: 0.1, dest node: V0, radius: 2
+Don't pick active.
+Picked passengers (after entering): 0/5, shared cost: 57
+Shortage: 0
+Cost after passenger charging and shortage calculating: 57, total cost: 57
+
+Node: V1, cost to V0: 62, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V1, shortage: 0, cost: 57
+Pass P2, budget: 43.5523, current budget: 43.5523, tau: 0.1, dest node: V0, radius: 1
+Pass P3, budget: 25.9647, current budget: 25.9647, tau: 0.1, dest node: V3, radius: 4294967295
+Pass P4, budget: 77.4181, current budget: 77.4181, tau: 0.1, dest node: V2, radius: 2
+Pass P5, budget: 44.4257, current budget: 34.0924, tau: 0.1, dest node: V0, radius: 1
+Pass P6, budget: 89.638, current budget: 79.3047, tau: 18.8345, dest node: V2, radius: 2
+Pass P7, budget: 43.9999, current budget: 33.6666, tau: 0.1, dest node: V0, radius: 1
+Pass P8, budget: 44.0477, current budget: 33.7144, tau: 0.1, dest node: V0, radius: 1
+Pass P6, p = 6.50981, passenger P6 enters car.
+Pass P5, p = 0.472954, passenger P5 enters car.
+Pass P8, p = 0.471621, passenger P8 enters car.
+Pass P7, p = 0.471452, passenger P7 enters car.
+Pass P2, p = 0.469873, passenger P2 enters car.
+
+Picked passengers (after entering): 5/5, shared cost: 10.3333
+Shortage: 0
+Cost after passenger charging and shortage calculating: 10.3333, total cost: 67.3333
+
+Node: V0, cost to V2: 466, passengers: 2:
+Current car: C0, capacity: 5
+Passenger P5 has left car. Current budget: 23.759
+Passenger P8 has left car. Current budget: 23.3811
+Passenger P7 has left car. Current budget: 23.3332
+Passenger P2 has left car. Current budget: 33.2189
+Picked passengers (after leaving): 1/5
+P6, cur budget: 68.9713
+Current ant passengers:
+P6, P5, P8, P7, P2, 
+Pass P0, budget: 24.6574, current budget: 24.6574, tau: 0.1, dest node: V2, radius: 1
+Pass P1, budget: 24.2041, current budget: 24.2041, tau: 0.1, dest node: V2, radius: 1
+Pass P0, p = 0.403215, passenger P0 enters car.
+Pass P1, p = 0.401616, passenger P1 enters car.
+
+Picked passengers (after entering): 3/5, shared cost: 116.5
+Shortage: 231.667
+Cost after passenger charging and shortage calculating: 348.167, total cost: 415.501
+
+Node: V2, cost to V3: 215, passengers: 0:
+Current car: C0, capacity: 5
+Passenger P6 has left car. Current budget: 0
+Passenger P0 has left car. Current budget: 0
+Passenger P1 has left car. Current budget: 0
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+P6, P5, P8, P7, P2, P0, P1, 
+Rollback to V1, and car C0, counter: 1, cost: 57
+Node: V1, cost to V0: 62, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P6, p = 6.50981, passenger P6 enters car.
+Pass P5, p = 0.472954, passenger P5 enters car.
+Pass P8, p = 0.471621, passenger P8 enters car.
+Pass P7, p = 0.471452, passenger P7 enters car.
+Pass P2, p = 0.469873, passenger P2 enters car.
+
+Picked passengers (after entering): 5/5, shared cost: 10.3333
+Shortage: 10.3333
+Cost after passenger charging and shortage calculating: 20.6667, total cost: 77.6667
+
+Node: V0, cost to V2: 466, passengers: 2:
+Current car: C0, capacity: 5
+Passenger P5 has left car. Current budget: 13.4257
+Passenger P8 has left car. Current budget: 13.0478
+Passenger P7 has left car. Current budget: 12.9999
+Passenger P2 has left car. Current budget: 22.8856
+Picked passengers (after leaving): 1/5
+P6, cur budget: 0
+Current ant passengers:
+P6, P5, P8, P7, P2, 
+Rollback to V1, and car C0, counter: 2, cost: 57
+Node: V1, cost to V0: 62, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P0, budget: 24.6574, current budget: 0, tau: 0.1, dest node: V2, radius: 2
+Pass P1, budget: 24.2041, current budget: 0, tau: 0.1, dest node: V2, radius: 2
+Pass P6, p = 7.86737, passenger P6 enters car.
+Pass P5, p = 0.472954, passenger P5 enters car.
+Pass P8, p = 0.471621, passenger P8 enters car.
+Pass P7, p = 0.471452, passenger P7 enters car.
+Pass P2, p = 0.469873, passenger P2 enters car.
+
+Picked passengers (after entering): 5/5, shared cost: 10.3333
+Shortage: 10.3333
+Cost after passenger charging and shortage calculating: 20.6667, total cost: 77.6667
+
+Node: V0, cost to V2: 466, passengers: 2:
+Current car: C0, capacity: 5
+Passenger P5 has left car. Current budget: 3.09238
+Passenger P8 has left car. Current budget: 2.71442
+Passenger P7 has left car. Current budget: 2.66656
+Passenger P2 has left car. Current budget: 12.5523
+Picked passengers (after leaving): 1/5
+P6, cur budget: 0
+Current ant passengers:
+P6, P5, P8, P7, P2, 
+Rollback to V1, and car C0, counter: 3, cost: 57
+Node: V1, cost to V0: 62, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P0, budget: 24.6574, current budget: 0, tau: 0.1, dest node: V2, radius: 2
+Pass P1, budget: 24.2041, current budget: 0, tau: 0.1, dest node: V2, radius: 2
+Don't pick active.
+Picked passengers (after entering): 0/5, shared cost: 62
+Shortage: 0
+Cost after passenger charging and shortage calculating: 62, total cost: 119
+
+Node: V0, cost to V2: 466, passengers: 2:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V0, shortage: 0, cost: 119
+Pass P0, budget: 24.6574, current budget: 0, tau: 0.1, dest node: V2, radius: 1
+Pass P1, budget: 24.2041, current budget: 0, tau: 0.1, dest node: V2, radius: 1
+Pass P0, p = 0.403215, passenger P0 enters car.
+Pass P1, p = 0.401616, passenger P1 enters car.
+
+Picked passengers (after entering): 2/5, shared cost: 155.333
+Shortage: 310.667
+Cost after passenger charging and shortage calculating: 466, total cost: 585
+
+Node: V2, cost to V3: 215, passengers: 0:
+Current car: C0, capacity: 5
+Passenger P0 has left car. Current budget: 0
+Passenger P1 has left car. Current budget: 0
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+P0, P1, 
+Rollback to V0, and car C0, counter: 1, cost: 119
+Node: V0, cost to V2: 466, passengers: 2:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P0, p = 0.403215, passenger P0 enters car.
+Pass P1, p = 0.401616, passenger P1 enters car.
+
+Picked passengers (after entering): 2/5, shared cost: 155.333
+Shortage: 310.667
+Cost after passenger charging and shortage calculating: 466, total cost: 585
+
+Node: V2, cost to V3: 215, passengers: 0:
+Current car: C0, capacity: 5
+Passenger P0 has left car. Current budget: 0
+Passenger P1 has left car. Current budget: 0
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+P0, P1, 
+Rollback to V0, and car C0, counter: 2, cost: 119
+Node: V0, cost to V2: 466, passengers: 2:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Pass P0, p = 0.403215, passenger P0 enters car.
+Pass P1, p = 0.401616, passenger P1 enters car.
+
+Picked passengers (after entering): 2/5, shared cost: 155.333
+Shortage: 310.667
+Cost after passenger charging and shortage calculating: 466, total cost: 585
+
+Node: V2, cost to V3: 215, passengers: 0:
+Current car: C0, capacity: 5
+Passenger P0 has left car. Current budget: 0
+Passenger P1 has left car. Current budget: 0
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+P0, P1, 
+Rollback to V0, and car C0, counter: 3, cost: 119
+Node: V0, cost to V2: 466, passengers: 2:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Don't pick active.
+Picked passengers (after entering): 0/5, shared cost: 466
+Shortage: 0
+Cost after passenger charging and shortage calculating: 466, total cost: 585
+
+Node: V2, cost to V3: 215, passengers: 0:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V2, shortage: 0, cost: 585
+
+Picked passengers (after entering): 0/5, shared cost: 215
+Shortage: 0
+Cost after passenger charging and shortage calculating: 215, total cost: 800
+
+
+Ant tour pass status:
+Node: V3
+
+Passenger solution O.K. 
+Car cost: 0
+Tour cost (without passengers): 800, cost (with passengers): 800
+=====================
+Iteration: 0
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V3, 1454.48, C0, 1, 57, 57, 0)
+; 
+(V1, 1337.2, C0, 7, 62, 62, 0)
+; 
+(V0, 177.996, C0, 2, 466, 466, 0)
+; 
+(V2, 385.68, C0, 0, 215, 215, 0)
+; 
+(V3,-)
+Cars (name, pheromone, passengers): 
+(C0, 82.999, 0/5), 
+Passengers (name, tau):
+
+>>> Cost: 800, (800 without passengers)
+Node: V2, cost to V3: 215, passengers: 0:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V2, shortage: 0, cost: 0
+
+Picked passengers (after entering): 0/5, shared cost: 215
+Shortage: 0
+Cost after passenger charging and shortage calculating: 215, total cost: 215
+
+Node: V3, cost to V1: 57, passengers: 1:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V3, shortage: 0, cost: 215
+Pass P9, budget: 34.0487, current budget: 34.0487, tau: 0.1, dest node: V2, radius: 4294967295
+
+Picked passengers (after entering): 0/5, shared cost: 57
+Shortage: 0
+Cost after passenger charging and shortage calculating: 57, total cost: 272
+
+Node: V1, cost to V0: 62, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V1, shortage: 0, cost: 272
+Pass P2, budget: 43.5523, current budget: 43.5523, tau: 0.1, dest node: V0, radius: 1
+Pass P3, budget: 25.9647, current budget: 25.9647, tau: 0.1, dest node: V3, radius: 4294967295
+Pass P4, budget: 77.4181, current budget: 77.4181, tau: 0.1, dest node: V2, radius: 4294967295
+Pass P5, budget: 44.4257, current budget: 44.4257, tau: 0.1, dest node: V0, radius: 1
+Pass P6, budget: 89.638, current budget: 89.638, tau: 0.1, dest node: V2, radius: 4294967295
+Pass P7, budget: 43.9999, current budget: 43.9999, tau: 0.1, dest node: V0, radius: 1
+Pass P8, budget: 44.0477, current budget: 44.0477, tau: 0.1, dest node: V0, radius: 1
+Pass P5, p = 0.472954, passenger P5 enters car.
+Pass P8, p = 0.471621, passenger P8 enters car.
+Pass P7, p = 0.471452, passenger P7 enters car.
+Pass P2, p = 0.469873, passenger P2 enters car.
+
+Picked passengers (after entering): 4/5, shared cost: 12.4
+Shortage: 0
+Cost after passenger charging and shortage calculating: 12.4, total cost: 284.4
+
+Node: V0, cost to V2: 466, passengers: 2:
+Current car: C0, capacity: 5
+Passenger P5 has left car. Current budget: 32.0257
+Passenger P8 has left car. Current budget: 31.6477
+Passenger P7 has left car. Current budget: 31.5999
+Passenger P2 has left car. Current budget: 31.1523
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+P5, P8, P7, P2, 
+Base point passengers: P5, P8, P7, P2, 
+>>> Zero passenger point at V0, shortage: 0, cost: 284.4
+Pass P0, budget: 24.6574, current budget: 24.6574, tau: 0.1, dest node: V2, radius: 4294967295
+Pass P1, budget: 24.2041, current budget: 24.2041, tau: 0.1, dest node: V2, radius: 4294967295
+
+Picked passengers (after entering): 0/5, shared cost: 466
+Shortage: 0
+Cost after passenger charging and shortage calculating: 466, total cost: 750.4
+
+
+Ant tour pass status:
+Node: V2
+
+Passenger solution O.K. 
+Car cost: 0
+Tour cost (without passengers): 800, cost (with passengers): 750.4
+=====================
+Node: V2, cost to V3: 215, passengers: 0:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V2, shortage: 0, cost: 0
+
+Picked passengers (after entering): 0/5, shared cost: 215
+Shortage: 0
+Cost after passenger charging and shortage calculating: 215, total cost: 215
+
+Node: V3, cost to V1: 57, passengers: 1:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V3, shortage: 0, cost: 215
+Pass P9, budget: 34.0487, current budget: 34.0487, tau: 0.1, dest node: V2, radius: 4294967295
+
+Picked passengers (after entering): 0/5, shared cost: 57
+Shortage: 0
+Cost after passenger charging and shortage calculating: 57, total cost: 272
+
+Node: V1, cost to V0: 62, passengers: 7:
+Current car: C0, capacity: 5
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+
+Base point passengers: 
+>>> Zero passenger point at V1, shortage: 0, cost: 272
+Pass P2, budget: 43.5523, current budget: 43.5523, tau: 0.1, dest node: V0, radius: 1
+Pass P3, budget: 25.9647, current budget: 25.9647, tau: 0.1, dest node: V3, radius: 4294967295
+Pass P4, budget: 77.4181, current budget: 77.4181, tau: 0.1, dest node: V2, radius: 4294967295
+Pass P5, budget: 44.4257, current budget: 44.4257, tau: 0.1, dest node: V0, radius: 1
+Pass P6, budget: 89.638, current budget: 89.638, tau: 0.1, dest node: V2, radius: 4294967295
+Pass P7, budget: 43.9999, current budget: 43.9999, tau: 0.1, dest node: V0, radius: 1
+Pass P8, budget: 44.0477, current budget: 44.0477, tau: 0.1, dest node: V0, radius: 1
+Pass P5, p = 0.472954, passenger P5 enters car.
+Pass P8, p = 0.471621, passenger P8 enters car.
+Pass P7, p = 0.471452, passenger P7 enters car.
+Pass P2, p = 0.469873, passenger P2 enters car.
+
+Picked passengers (after entering): 4/5, shared cost: 12.4
+Shortage: 0
+Cost after passenger charging and shortage calculating: 12.4, total cost: 284.4
+
+Node: V0, cost to V2: 466, passengers: 2:
+Current car: C0, capacity: 5
+Passenger P5 has left car. Current budget: 32.0257
+Passenger P8 has left car. Current budget: 31.6477
+Passenger P7 has left car. Current budget: 31.5999
+Passenger P2 has left car. Current budget: 31.1523
+Picked passengers (after leaving): 0/5
+Current ant passengers:
+P5, P8, P7, P2, 
+Base point passengers: P5, P8, P7, P2, 
+>>> Zero passenger point at V0, shortage: 0, cost: 284.4
+Pass P0, budget: 24.6574, current budget: 24.6574, tau: 0.1, dest node: V2, radius: 4294967295
+Pass P1, budget: 24.2041, current budget: 24.2041, tau: 0.1, dest node: V2, radius: 4294967295
+
+Picked passengers (after entering): 0/5, shared cost: 466
+Shortage: 0
+Cost after passenger charging and shortage calculating: 466, total cost: 750.4
+
+
+Ant tour pass status:
+Node: V2
+
+Passenger solution O.K. 
+Car cost: 0
+Tour cost (without passengers): 800, cost (with passengers): 750.4
+=====================
+Iteration: 1
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V2, 767.405, C0, 0, 215, 215, 0)
+; 
+(V3, 2894.33, C0, 1, 57, 57, 0)
+; 
+(V1, 2660.92, C0, 7, 62, 12.4, 0)
+P5->V0, P8->V0, P7->V0, P2->V0, ; 
+(V0, 354.113, C0, 2, 466, 466, 0)
+; 
+(V2,-)
+Cars (name, pheromone, passengers): 
+(C0, 165.069, 0/5), 
+Passengers (name, tau):
+P5, 0.1, P8, 0.1, P7, 0.1, P2, 0.1, 
+>>> Cost: 750.4, (800 without passengers)
+Cleanup...
+Cleanup done.
+Free data...
+Data freeing done.

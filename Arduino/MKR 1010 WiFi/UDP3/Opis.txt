@@ -1,0 +1,10 @@
+Kreira se UDP server sa mogućnošću primanja komandi.
+Ako se primi addr xxxx.xxxx.xxxx.xxxx:xxxx (adresa i port), slat će stalno random brojeve generirane crypto chipom u MKR 1010 pločici preko UDP-a na navedenu adresu i port.
+Ako se primi stop zaustavit će se slanje.
+Svaki udp prijem vraća odgovor.
+
+
+Linux:
+Adapteri: /sbin/ifconfig -a
+Slanje komande: nc -s 192.168.8.101 -p 10000 -u 192.168.8.102 10000
+gdje je -s adresa računala koje šalje UDP komandu a -p je port. Destinacija tj. -u je adresa arduina na mreži.

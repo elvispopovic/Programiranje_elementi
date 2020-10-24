@@ -1,0 +1,2 @@
+gcc -Wall -g -c dretva.c -o obj/Debug/dretva.o
+g++ -D_REENTRANT -o bin/Debug/dretva.a obj/Debug/dretva.o -lpthread

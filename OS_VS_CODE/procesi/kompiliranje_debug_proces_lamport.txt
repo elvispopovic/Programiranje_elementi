@@ -1,0 +1,2 @@
+gcc -Wall -g -c proces_lamport.c -o obj/Debug/proces_lamport.o
+g++  -o bin/Debug/proces_lamport.a obj/Debug/proces_lamport.o 

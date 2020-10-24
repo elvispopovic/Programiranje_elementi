@@ -1,0 +1,44 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "11.0",
+    "tasks": [
+        {
+            "label": "CB style debug",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "${workspaceFolder}/compile/compile_debug.txt"
+            ],
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "CB style release",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "${workspaceFolder}/compile/compile_release.txt"
+            ],
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "valgrind debug",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "${workspaceFolder}/valgrind/valgrind_debug_command"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "valgrind release",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "${workspaceFolder}/valgrind/valgrind_release_command"
+            ],
+            "problemMatcher": []
+        }
+    ]
+
+}

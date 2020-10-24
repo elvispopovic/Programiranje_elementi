@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1474702414 source:c:\foi\zavrsni_razvoj\multithreading eksperimenti\osnovni\exp2\strukture.cpp
+	<iostream>
+	<stack>
+

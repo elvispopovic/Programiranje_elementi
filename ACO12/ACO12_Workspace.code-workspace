@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "/home/epc/Programiranje/Projekti/ACO12/"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"cmath": "cpp",
+			"iostream": "cpp",
+			"ostream": "cpp"
+		}
+	}
+}

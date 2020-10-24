@@ -1,0 +1,46 @@
+//---------------------------------------------------------------------------
+
+#ifndef KlijentH
+#define KlijentH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+
+#include <winsock2.h>
+#include <Processthreadsapi.h>
+#include <ws2tcpip.h>
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+class TForm2 : public TForm
+{
+__published:	// IDE-managed Components
+	TMemo *memIspis;
+	TButton *Button1;
+	TButton *Button2;
+	void __fastcall FormCreate(TObject *Sender);
+	void __fastcall FormDestroy(TObject *Sender);
+	void __fastcall Button1Click(TObject *Sender);
+	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
+	void __fastcall Button2Click(TObject *Sender);
+private:	// User declarations
+	WSAData wsaData;
+	STARTUPINFO StartupInfo;
+	PROCESS_INFORMATION ProcessInfo;
+	Dretva *primanje;
+    bool __fastcall PokreniServer();
+	void __fastcall IspisiAdresu(ADDRINFO *info);
+	SOCKET PosaljiZahtijevZaVezu(const char *adresa, short port, int family);
+	void __fastcall Slanje(SOCKET server);
+    void __fastcall Primanje(SOCKET server);
+
+public:		// User declarations
+	SOCKET server;
+	__fastcall TForm2(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TForm2 *Form2;
+//---------------------------------------------------------------------------
+#endif

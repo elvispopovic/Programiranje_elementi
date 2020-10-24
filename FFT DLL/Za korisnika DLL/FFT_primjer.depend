@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1480501838 source:c:\epc\programiranje\code__block experimenti\fft\fft dll\za korisnika dll\primjer.cpp
+	<iostream>
+	<cmath>
+	"fft_dll.h"
+
+1480499877 c:\epc\programiranje\code__block experimenti\fft\fft dll\za korisnika dll\fft_dll.h
+	<windows.h>
+

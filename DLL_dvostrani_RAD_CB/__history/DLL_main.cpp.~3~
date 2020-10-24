@@ -1,0 +1,99 @@
+//   Important note about DLL memory management when your DLL uses the
+//   static version of the RunTime Library:
+//
+//   If your DLL exports any functions that pass String objects (or structs/
+//   classes containing nested Strings) as parameter or function results,
+//   you will need to add the library MEMMGR.LIB to both the DLL project and
+//   any other projects that use the DLL.  You will also need to use MEMMGR.LIB
+//   if any other projects which use the DLL will be performing new or delete
+//   operations on any non-TObject-derived classes which are exported from the
+//   DLL. Adding MEMMGR.LIB to your project will change the DLL and its calling
+//   EXE's to use the BORLNDMM.DLL as their memory manager.  In these cases,
+//   the file BORLNDMM.DLL should be deployed along with your DLL.
+//
+//   To avoid using BORLNDMM.DLL, pass string information using "char *" or
+//   ShortString parameters.
+//
+//   If your DLL uses the dynamic version of the RTL, you do not need to
+//   explicitly add MEMMGR.LIB as this will be done implicitly for you
+
+#include <fmx.h>
+#include <iostream>
+#include "DLL.h"
+#pragma hdrstop
+#pragma argsused
+
+using namespace std;
+
+class Klasa : public IKlasa
+{
+public:
+	Klasa()
+	{
+		cout << "Konstruktor: Objekt je kreiran." << endl;
+	}
+	~Klasa()
+	{
+		cout << "Destruktor: Objekt je unisten." << endl;
+	}
+	void __stdcall f1()
+	{
+		cout << "Pozvana je f1 iz klase." << endl;
+	}
+	int __stdcall f2(int x)
+	{
+		cout << "Pozvana je f2 iz klase sa parametrom " << x << "." << endl;
+		return x*x;
+	}
+
+	float __stdcall f3(float x)
+	{
+		cout << "Pozvana je f3 iz klase sa parametrom " << x << "." << endl;
+		return sqrt(x);
+	}
+};
+
+extern "C" int _libmain(unsigned long reason)
+{
+	switch(reason)
+	{
+		case DLL_PROCESS_ATTACH:
+		{
+			cout << "Dll je zakvacen na proces." << endl;
+			break;
+		}
+		case DLL_PROCESS_DETACH:
+		{
+			cout << "Dll je otkvacen od procesa." << endl;
+			break;
+		}
+		case DLL_THREAD_ATTACH:
+		{
+			cout << "Dll je zakvacen na dretvu." << endl;
+			break;
+		}
+		case DLL_THREAD_DETACH:
+		{
+			cout << "Dll je otkvacen od dretve." << endl;
+			break;
+		}
+	}
+	return 1;
+}
+
+//pokazivac na funkciju u glavnom programu
+IntFuncChar PozoviMe;
+
+//funkcija za kreiranje i prosljedjivanje objekta iz dll prema vanjskom programu
+extern "C" __declspec(dllexport) void* __stdcall DobaviObjekt()
+{
+	if(PozoviMe!=NULL)
+		PozoviMe("Ovo je tekst koji je poslan iz dll.");
+	return static_cast<void *>(new Klasa());
+}
+
+extern "C"  __declspec(dllexport) void __stdcall PosaljiFunkciju(IntFuncChar f)
+{
+	PozoviMe = f;
+}
+

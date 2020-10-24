@@ -1,0 +1,2253 @@
+<!-- Mirrored from long.ccaba.upc.edu/long/045Guidelines/eva/ipv6.html by HTTrack Website Copier/3.x [XR&CO'2013], Wed, 27 Apr 2016 07:09:48 GMT -->
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title> Porting applications to IPv6 HowTo</title>
+<style type="text/css">
+  DIV.cuadro { border-style:solid;border-color:#6D5B7B;border-width:2;background-color:#ECE9EF}
+</style></head>
+
+
+
+
+
+
+
+<body bgcolor="white">
+<h1> Porting applications to IPv6 HowTo</h1>
+
+Author: Eva M. Castro<br>
+<a href="mailto:eva@gsyc.escet.urjc.es">eva@gsyc.escet.urjc.es</a>
+
+<hr>
+<ul>
+<li><a href="#structures">Socket Address Structures</a>
+</li><li><a href="#functions">Socket Functions</a>
+</li><li><a href="#conversion">Address Conversion Functions</a>
+</li><li><a href="#resolution">Resolving Names</a>
+</li><li><a href="#multicast">Multicasting</a>
+</li><li><a href="#guidelines">New Application Design Guidelines</a>
+</li><li><a href="#conclusions">Conclusions</a>
+</li><li><a href="#appendix">Appendix: Real examples of porting process</a>
+<blockquote>
+    <a href="#originalDaytime">1. Original Daytime version</a>
+    <blockquote>
+        <a href="#daytimeServer4">1.1. IPv4 Daytime server (TCP/UDP)</a><br>
+        <a href="#daytimeClient4">1.2. IPv4 Daytime client (TCP/UDP)</a>
+    </blockquote>
+    <a href="#unicastDaytime">2. The unicast daytime ported to IPv6</a>
+    <blockquote>
+        <a href="#daytimeServer6">2.1. IPv6 Daytime server (TCP/UDP)</a><br>
+        <a href="#daytimeClient6">2.2. IPv6 Daytime client (TCP/UDP).</a>
+    </blockquote>
+    <a href="#multicastDaytime">3. The multicast daytime</a>
+</blockquote>
+</li><li><a href="#glossary">Glossary and Abbreviations</a>
+</li><li><a href="#references">References</a>
+</li></ul>
+<hr>
+<p>
+Some changes are needed to adapt the socket API for IPv6 support: a new socket 
+address structure to carry IPv6 addresses, new address conversion functions and 
+several new socket options that are developed in RFC-2553. </p><p>
+
+These extensions are designed to provide access to the basic IPv6 features 
+required by TCP and UDP applications, including multicasting, while introducing 
+a minimum of change into the system and providing complete compatibility for existing 
+IPv4 applications. Access to more advanced features (raw sockets, header 
+configuration, etc.) is addressed in RFC-2292.</p><p>
+
+This document includes some examples of code porting, used to illustrate the required changes in the client 
+and server components. Migration guidelines are valid for any programming language, however for
+ simplicity, application porting examples are provided only in C language. All these examples
+ have been tested in a SuSE Linux 7.3 distribution, kernel version 2.4.10. </p><p>
+
+Download all example source code, <a href="http://long.ccaba.upc.edu/long/045Guidelines/eva/examples.html">examples.tgz </a>.
+
+
+</p><h2><a name="structures">Socket Address Structures</a></h2>
+
+Functions provided by socket API use socket address structures to determine 
+the communication service access point. Since different protocols can handle 
+socket functions, a generic socket address structure is used as argument of 
+these functions for any of the supported communication protocol families, sockaddr.
+
+<blockquote>
+<div class="cuadro">
+<pre>struct sockaddr { 
+     sa_family_t sa_family;       /* Address family */
+     char sa_data[14];            /* protocol-specific address */
+};
+</pre>
+</div>
+</blockquote>
+
+
+Although socket functions handle generic socket address structure, 
+developers must fill the adequate socket address structure according to the 
+communication protocol they are using to establish the socket. Concretely, the 
+IPv4 sockets use the following structure, sockaddr_in:
+
+<blockquote>
+<div class="cuadro">
+<pre>typedef uint32_t in_addr_t;
+struct in_addr  {
+    in_addr_t s_addr;                    /* IPv4 address */
+};
+
+struct sockaddr_in {
+     sa_family_t sin_family;             /* AF_INET */
+     in_port_t sin_port;                 /* Port number.  */
+     struct in_addr sin_addr;            /* Internet address.  */
+
+     /* Pad to size of `struct sockaddr'.  */
+     unsigned char sin_zero[sizeof (struct sockaddr) -
+                            sizeof (sa_family_t) -
+                            sizeof (in_port_t) -
+                            sizeof (struct in_addr)];
+};
+</pre>
+</div>
+</blockquote>
+
+And the IPv6 sockets use the following structure, sockaddr_in6, with a new 
+address family AF_INET6:
+
+<blockquote>
+<div class="cuadro">
+<pre>struct in6_addr {
+    union {
+        uint8_t u6_addr8[16];
+        uint16_t u6_addr16[8];
+        uint32_t u6_addr32[4];
+    } in6_u;
+
+    #define s6_addr                 in6_u.u6_addr8
+    #define s6_addr16               in6_u.u6_addr16
+    #define s6_addr32               in6_u.u6_addr32
+};
+
+struct sockaddr_in6 {
+    sa_family_t sin6_family;    /* AF_INET6 */
+    in_port_t sin6_port;        /* Transport layer port # */
+    uint32_t sin6_flowinfo;     /* IPv6 flow information */
+    struct in6_addr sin6_addr;  /* IPv6 address */
+    uint32_t sin6_scope_id;     /* IPv6 scope-id */
+};
+</pre>
+</div>
+</blockquote>
+
+The sockaddr_in or sockaddr_in6 structures are utilized when using respectively IPv4 
+or IPv6. Existing applications are written assuming IPv4, using sockaddr_in structure. 
+They can be easily ported changing this structure by sockaddr_in6. However, when writing 
+portable code, it is preferable to eliminate protocol version dependencies from source 
+code. There is a new data structure, sockaddr_storage large enough to store all supported 
+protocol-specific address structures and adequately aligned to be cast to the a specific 
+address structure.
+
+<blockquote>
+<div class="cuadro">
+<pre>/* Structure large enough to hold any socket address (with the historical exception of 
+AF_UNIX). 128 bytes reserved.  */
+
+#if ULONG_MAX &gt; 0xffffffff
+# define __ss_aligntype __uint64_t
+#else
+# define __ss_aligntype __uint32_t
+#endif
+#define _SS_SIZE        128
+#define _SS_PADSIZE     (_SS_SIZE - (2 * sizeof (__ss_aligntype)))
+
+struct sockaddr_storage
+{
+    sa_family_t ss_family;      /* Address family */
+    __ss_aligntype __ss_align;  /* Force desired alignment.  */
+    char __ss_padding[_SS_PADSIZE];
+};
+</pre>
+</div>
+</blockquote>
+
+Hence, portable applications should use sockaddr_storage structure to store their 
+addresses, IPv4 or IPv6 ones. This new structure hides the specific socket address 
+structure that the application is using. <br>
+
+<h2><a name="functions">Socket functions</a></h2>
+The socket API has not been changed since it handles generic address structures, 
+independent from the protocol it is using. However, applications should change the 
+arguments used to call the socket functions. First, applications should allocate 
+enough memory to store the appropriate socket address structure. And, before calling 
+the socket functions, the specific socket address structure should be cast to the 
+generic one, which is accepted by the socket functions as an argument.
+
+
+<blockquote>
+<div class="cuadro">
+<pre>int     socket  (int domain, int type, int protocol);
+
+int     listen  (int s, int backlog);
+
+ssize_t write   (int fd, const void *buf, size_t count);
+
+int     send    (int s, const void *msg, size_t len, int flags);
+
+int     sendmsg (int s, const struct msghdr *msg, int flags);
+
+ssize_t read    (int fd, void *buf, size_t count);
+
+int     recv    (int s, void *buf, size_t len, int flags);
+
+int     recvmsg (int s, struct msghdr *msg, int flags);
+
+int     close   (int fd);
+
+int     shutdown(int s, int how);
+</pre>
+</div>
+</blockquote>
+
+
+
+SOCKET ADDRESS STRUCTURE PASSED FROM APPLICATION TO KERNEL
+
+<blockquote>
+<div class="cuadro">
+<pre>int bind   (int sockfd, struct sockaddr *my_addr, socklen_t addrlen);
+
+int connect(int sockfd, const struct sockaddr *serv_addr, 
+            socklen_t addrlen);
+
+int sendto (int s, const void *msg, size_t len, int flags, 
+            const struct sockaddr *to, socklen_t tolen);
+</pre>
+</div>
+</blockquote>
+
+
+SOCKET ADDRESS STRUCTURE PASSED FROM KERNEL TO APPLICATION
+
+<blockquote>
+<div class="cuadro">
+<pre>int  accept     (int s, struct sockaddr *addr, socklen_t *addrlen);
+
+int  recvfrom   (int s,  void  *buf, size_t len, int flags, 
+                 struct sockaddr *from, socklen_t *fromlen);
+
+int  getpeername(int s, struct sockaddr *name, socklen_t *namelen);
+
+int  getsockname(int s, struct sockaddr *name, socklen_t *namelen);
+</pre>
+</div>
+</blockquote>
+
+
+Required modifications when porting to IPv6
+When porting to IPv6, some modifications related to the socket API are required in the 
+network applications.Three modification types to be made when porting source code to 
+IPv6 have been identified:
+<ul>
+   <li>Creating a socket.
+   </li><li>Socket address structure passed from application to kernel.
+   </li><li>Socket address structure passed from kernel to application.
+</li></ul>
+These are the three kind of operations to be changed in the source code. There are 
+some examples below of these types of operation.
+	
+<ul>
+<li><b>Creating a socket</b><br>
+The difference between creating an IPv4 and an IPv6 socket is the value of the family 
+argument in the socket call.<br>
+IPv4 source code:<br>
+
+<blockquote>
+<div class="cuadro">
+<pre>socket(PF_INET, SOCK_STREAM, 0);  /* TCP socket */
+socket(PF_INET, SOCK_DGRAM,  0);  /* UDP socket */
+</pre>
+</div>
+</blockquote>
+
+IPv6 source code: <br>
+
+<blockquote>
+<div class="cuadro">
+<pre>socket(PF_INET6, SOCK_STREAM, 0); /* TCP socket */
+socket(PF_INET6, SOCK_DGRAM,  0); /* UDP socket */
+</pre>
+</div>
+</blockquote>
+	
+</li><li><b>Socket address structure passed from application to kernel</b><br>
+Socket address structure is filled before calling the socket function.<br>
+IPv4 source code:<br>
+
+<blockquote>
+<div class="cuadro">
+<pre>struct sockaddr_in addr;
+socklen_t          addrlen = sizeof(addr);
+
+/* 
+   fill addr structure using an IPv4 address before calling socket
+    function
+*/
+
+bind(sockfd,(struct sockaddr *)&amp;addr, addrlen);
+</pre>
+</div></blockquote>
+
+IPv6 source code:
+
+<blockquote>
+<div class="cuadro">
+<pre>struct sockaddr_in6 addr;
+socklen_t           addrlen = sizeof(addr);
+
+/* 
+   fill addr structure using an IPv6 address before calling socket
+   function
+*/
+
+bind(sockfd,(struct sockaddr *)&amp;addr, addrlen);
+</pre>
+</div>
+</blockquote>
+
+Portable source code:
+
+<blockquote>
+<div class="cuadro">
+<pre>struct sockaddr_storage addr;
+socklen_t               addrlen;
+
+/* 
+   fill addr structure using an IPv4/IPv6 address and
+   fill addrlen before calling socket function
+*/
+
+bind(sockfd,(struct sockaddr *)&amp;addr, addrlen);
+</pre>
+</div>
+</blockquote>
+
+</li><li><b>Socket address structure passed from kernel to application</b><br>
+When calling this kind of socket functions, the socket address structure is filled 
+in with the address of the source entity.<br>
+IPv4 source code:<br>
+
+<blockquote>
+<div class="cuadro">
+<pre>struct sockaddr_in addr;
+socklen_t          addrlen = sizeof(addr);
+
+accept(sockfd,(struct sockaddr *)&amp;addr, &amp;addrlen);
+
+/* 
+   addr structure contains an IPv4 address
+*/
+</pre>
+</div>
+</blockquote>
+
+IPv6 source code:
+
+<blockquote>
+<div class="cuadro">
+<pre>struct sockaddr_in6 addr;
+socklen_t           addrlen = sizeof(addr);
+
+accept(sockfd,(struct sockaddr *)&amp;addr, &amp;addrlen);
+
+/* 
+   addr structure contains an IPv4 address
+*/
+</pre>
+</div>
+</blockquote>
+
+Portable source code:
+
+<blockquote>
+<div class="cuadro">
+<pre>struct sockaddr_storage addr;
+socklen_t               addrlen = sizeof(addr);
+
+accept(sockfd,(struct sockaddr *)&amp;addr, &amp;addrlen);
+
+/* 
+   addr structure contains an IPv4/IPv6 address
+   addrlen contains the size of the addr structure returned
+ */
+</pre>
+</div>
+</blockquote>
+</li></ul>
+
+<h2><a name="conversion">Address conversion functions</a></h2>
+The address conversion functions convert between binary and text address representation. 
+Binary representation is the network byte ordered binary value which is stored in the 
+socket address structure and the text representation, named presentation, is an ASCII 
+string.<br>
+The IPv4 address conversion functions are the following ones:<br>
+
+<blockquote>
+<div class="cuadro">
+<pre>/* 
+   From text to IPv4 binary representation
+*/
+int       inet_aton (const char *cp, struct in_addr *inp);
+in_addr_t inet_addr( const char *cp);
+
+/*
+   From IPv4 binary to text representation
+*/
+char 	   *inet_ntoa(struct in_addr in);
+</pre>
+</div>
+</blockquote>
+
+The new address conversion functions which work with both IPv4 and IPv6 addresses are 
+the following ones:
+
+<blockquote>
+<div class="cuadro">
+<pre>/* 
+   From presentation to IPv4/IPv6 binary representation
+*/
+int inet_pton(int family, const char *src, void *dst);
+
+/*
+   From IPv4/IPv6 binary to presentation
+*/
+const char *inet_ntop(int family, const void *src,
+                      char *dst, size_t cnt);
+</pre>
+</div>
+</blockquote>
+
+
+IPv4 source code example:
+
+<blockquote>
+<div class="cuadro">
+<pre>struct sockaddr_in addr;
+char *straddr;
+
+memset(&amp;addr, 0, sizeof(addr));
+addr.sin_family = AF_INET;        // family
+addr.sin_port = htons(MYPORT);    // port, networt byte order
+
+/*
+   from text to binary representation
+*/
+inet_aton("138.4.2.10", &amp;(addr.sin_addr));
+
+/*
+   from binary to text representation
+*/
+straddr = inet_ntoa(addr.sin_addr);
+</pre>
+</div>
+</blockquote>
+
+IPv6 source code example:
+
+<blockquote>
+
+<div class="cuadro">
+<pre>struct sockaddr_in6 addr;
+char straddr[INET6_ADDRSTRLEN];
+
+memset(&amp;addr, 0, sizeof(addr));
+addr.sin6_family = AF_INET6;        // family
+addr.sin6_port = htons(MYPORT);    // port, networt byte order
+
+/*
+   from presentation to binary representation
+*/
+inet_pton(AF_INET6, "2001:720:1500:1::a100", 
+          &amp;(addr.sin6_addr));
+
+/*
+   from binary representation to presentation
+*/
+inet_ntop(AF_INET6, &amp;addr.sin6_addr, straddr,
+          sizeof(straddr));
+</pre>
+</div>
+</blockquote>
+
+
+
+<h2><a name="resolution">Resolving names</a></h2>
+
+Applications should use names instead of addresses for hosts. Names are easier to 
+remember and remain the same, but numeric addresses could change more frequently.<p>
+
+From applications point of view the name resolution is a system-independent process. 
+Applications call functions in a system library known as the resolver, typically 
+gethostbyname and gethostbyaddr, which is linked into the application when the 
+application is built. The resolver code is the burden of making the resolution 
+dependent of the system configuration.</p><p>
+
+
+<img src="Porting%20applications%20to%20IPv6%20HowTo_datoteke/conversion.jpg"></p><p>
+Figure. Address Conversion Functions.</p><p>
+
+There are two new functions to make name and address conversions protocol independent, 
+getaddrinfo and getnameinfo. Besides, the use of these new ones instead of gethostbyname 
+and gethostbyaddr is recommended because the latter are not normally reentrant and could 
+provoke problems in threaded applications.</p><p>
+
+The getaddrinfo function returns a linked list of addrinfo structures which 
+contains information requested for a specific set of hostname, service and additional 
+information stored in an addrinfo structure.</p><p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>struct addrinfo {
+    int     ai_flags;           /* AI_PASSIVE, AI_CANONNAME */
+    int     ai_family;          /* AF_UNSPEC, AF_INET, AF_INET6 */
+    int     ai_socktype;        /* SOCK_STREAM, SOCK_DGRAM ... */
+    int     ai_protocol;        /* IPPROTO_IP, IPPROTO_IPV6 */
+    size_t  ai_addrlen;         /* length of ai_addr */
+    struct sockaddr ai_addr;    /* socket address structure */
+    char   ai_canonname;        /* cannonical name */
+    struct addrinfo ai_next;    /* next addrinfo structure */
+};
+
+
+/* function to get socket address structures */
+ 
+int getaddrinfo(const char *node, const char *service,
+                const struct addrinfo *hints,
+                struct addrinfo **res);
+
+</pre>
+</div>
+</blockquote>
+
+When writing a typical client application, node and service are normally specified. 
+When writing a server application, they both can be specified too, but in many cases 
+only service is specified allowing clients to connect to any node interfaces.<p>
+ 
+Applications should examine the linked list returned by getaddrinfo to use the adequate 
+structure. In some cases, not all the addresses returned by this function can be used 
+to create a socket. </p><p>
+
+The getaddrinfo function allocates a set of resources for the returned linked list. 
+The freeaddrinfo function frees these resources.</p><p>
+
+</p><blockquote>
+<pre>/* function to free the resources allocated by getaddrinfo */
+
+void freeaddrinfo(struct addrinfo *res);
+</pre>
+</blockquote>
+
+
+Next, an example of getaddrinfo and freeaddrinfo usage.
+
+<blockquote>
+<div class="cuadro">
+<pre>n = getaddrinfo(hostname, service, &amp;hints, &amp;res);
+
+/*
+    Try open socket with each address getaddrinfo returned,
+    until getting a valid socket.
+*/
+
+resave = res;
+
+while (res) {
+    sockfd = socket(res-&gt;ai_family,
+                    res-&gt;ai_socktype,
+                    res-&gt;ai_protocol);
+
+    if (!(sockfd &lt; 0))
+        break;
+
+    res = res-&gt;ai_next;
+}
+
+freeaddrinfo(ressave);
+</pre>
+</div>
+</blockquote>
+
+The getnameinfo function provides from a socket address structure the address and 
+service as character strings.
+
+<blockquote>
+<div class="cuadro">
+<pre>char clienthost   [NI_MAXHOST];
+char clientservice[NI_MAXSERV];
+
+/* ... */
+
+/* listenfd is a server socket descriptor waiting connections 
+   from clients 
+*/
+
+connfd = accept(listenfd,
+                (struct sockaddr *)&amp;clientaddr,
+                &amp;addrlen);
+
+getnameinfo((struct sockaddr *)&amp;clientaddr, addrlen,
+            clienthost, sizeof(clienthost),
+            clientservice, sizeof(clientservice),
+            NI_NUMERICHOST);
+
+printf("Received request from host=[%s] port=[%s]\n",
+       clienthost, clientservice);
+</pre>
+</div>
+</blockquote>
+
+
+Typically applications do not require to know the version of the IP they are using. 
+Hence, applications only should try to establish the communication using each address 
+returned by resolver until it works. However, applications could have a different 
+behavior when using IPv4, IPv6, IPv4-compatible-IPv6 or IPv4-mapped, etc. addresses.<p>
+
+There are defined some macros to help applications to test the type of address they 
+are using, see Table 2. </p><p>
+Table 2. Macros for testing type of addresses </p><p>
+
+<table>
+<tbody><tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_UNSPECIFIED</td>   
+    <td>(const struct in6_addr *);</td>
+</tr>
+<tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_LOOPBACK </td>
+    <td>(const struct in6_addr *);</td>
+</tr>
+<tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_MULTICAST</td>  
+    <td>(const struct in6_addr *);</td>
+</tr>
+<tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_LINKLOCAL</td>
+    <td>(const struct in6_addr *);</td>
+</tr>
+<tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_SITELOCAL</td>
+    <td>(const struct in6_addr *);</td>
+</tr>
+<tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_V4MAPPED</td>
+    <td>(const struct in6_addr *);</td>
+</tr>
+<tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_V4COMPAT</td>
+    <td>(const struct in6_addr *);</td>
+</tr>
+<tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_MC_NODELOCAL</td>
+    <td>(const struct in6_addr *);</td>
+</tr>
+<tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_MC_LINKLOCAL</td>
+    <td>(const struct in6_addr *);</td>
+</tr>
+<tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_MC_SITELOCAL</td>
+    <td>(const struct in6_addr *);</td>
+</tr>
+<tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_MC_ORGLOCAL</td>
+    <td>(const struct in6_addr *);</td>
+</tr>
+<tr>
+    <td>int </td> 
+    <td>IN6_IS_ADDR_MC_GLOBAL</td>
+    <td>(const struct in6_addr *);</td>
+</tr>
+</tbody></table>
+
+
+</p><h2><a name="multicast">Multicasting</a></h2>
+
+When using UDP multicast facilities some changes must be carried out to support IPv6. 
+First application must change the multicast IPv4 addresses to the IPv6 ones, and second, 
+the socket configuration options.<p>
+
+IPv6 multicast addresses begin with the following two octets: FF0X.</p><p>
+
+The multicast socket options are used to configure some of parameters for sending 
+multicast packets, see Table 3.</p><p>
+
+
+Table 3. Multicast socket options</p><p>
+
+<table col="3" border="">
+<tbody><tr>
+    <td> IPV6 OPTION</td>
+</tr>
+<tr>
+    <td>IPV6_MULTICAST_IF </td>
+    <td>Interface to use for outgoing multicast packets.</td>
+</tr>
+<tr>
+    <td>IPV6_MULTICAST_HOPS</td>
+    <td>Hop limit for multicast packets.</td>
+</tr>
+<tr>
+    <td>IPV6_MULTICAST_LOOP</td>
+    <td>Multicast packets are looped back to the local application.</td>
+</tr>
+<tr>
+    <td>IPV6_ADD_MEMBERSHIP</td>
+    <td>Join a multicast group.</td>
+</tr>
+<tr>
+    <td>IPV6_DROP_MEMBERSHIP</td>
+    <td>Leave a multicast group.</td>
+</tr>
+<tr>
+</tr></tbody></table>
+
+</p><p>Applications using multicast communication open a socket and need to configure it to 
+receive muticast packets. In the following section some multicast examples over IPv4 
+and IPv6 networks will be seen.<br>
+
+
+</p><h2> <a name="guidelines"> New applications design guidelines</a></h2>
+
+Today the Internet is predominantly based on IPv4. As a result, most of end systems 
+and network devices are able to exchange packets all together in a global network. 
+However, there is no a single global IPv6 network on the same scale and it will take 
+some time to get it. Therefore, new applications should be designed to work in all 
+environments: single IPv4, single IPv6 or mixed communication when group collaborative 
+applications are considered.<p>
+
+In the design of applications to use IPv6 some characteristics must be 
+taken into account. First of all it is necessary to separate the 
+transport module from the rest of application functional modules. This 
+separation makes the application independent on the network system used.
+ Then, if the network protocol is changed, only the transport module 
+should be modified. Transport module should provide the communication 
+channel abstraction with basic channel operations and generic data 
+structures to represent the addresses. These abstractions could be 
+instantiated as different implementations depending on the network 
+protocol required at any moment. The application will deal with this 
+generic communication channel interface without knowing the network 
+protocol used. Using this design if a new network protocol is added, 
+application developers only need to implement a new instance of the 
+channel abstraction which manages the features of this new protocol.</p><p>
+ 
+Once the transport module has been designed, there are some implementation details 
+related to the type of the nodes which will run the application: IPv4-only nodes, 
+IPv6-only nodes or both, dual stack.</p><p>
+
+Within the transport module the use of the new API with extensions for IPv6 is 
+mandatory, but it is strongly recommended to make the program protocol independent 
+(for instance, using the BSD socket API consider getaddrinfo and getnameinfo instead 
+of gethostbyname and gethostbyaddr). The new IPv6 functions are only valid if this 
+protocol is supported by all installed systems. IPv6 is now reaching maturity and 
+most popular systems provide it as default in their standard distributions. However, 
+IPv6 support does not force to use it, only after the complete network configuration 
+is defined, applications will use IPv4 or IPv6. </p><p>
+
+Protocol independent code is feasible if design is based on the principal building block 
+for transitioning, the dual stack. Dual stacks maintain two protocol stacks that 
+operate in parallel and thus it is allowed to operate via either protocol. The operating 
+system running dual stack translates IPv4 addresses to IPv4-mapped IPv6 ones when 
+communicating to IPv4 remote applications. In the following sections the connections 
+between IPv6 server and IPv6 client applications when they are running on a dual stack 
+node will be analyzed.</p><p>
+
+If a server application is running bound to the IPv6 wildcard address and a known port 
+on a dual stack node, it will be able to accept connections from IPv4 and IPv6 clients, 
+see Figure 2. When an IPv4 client is connecting to this IPv6 server, the dual stack 
+kernel converts the client IPv4 address to the IPv4-mapped IPv6 address since the IPv6 
+server can only deal with IPv6 connections. The communication between the IPv4 client 
+and the IPv6 server will take place using IPv4 datagrams, but the server will not know 
+that it is communicating with an IPv4 client, unless the server explicitly checks it.</p><p>
+
+When running an IPv6 client application on a dual stack node, the client can connect 
+to an IPv6 or IPv4 server. Since the client node runs dual stack, client will try to 
+open an IPv6 connection to the server. If  server is running over IPv4, the resolved 
+server address returned by the resolver system is the IPv4-mapped IPv6 one. Then, the 
+communication between IPv4 server and IPv6 client, which is running on the dual stack, 
+is carried out using IPv4 but the IPv6 client will not know it, unless the client 
+explicitly checks it.</p><p>
+
+<img src="Porting%20applications%20to%20IPv6%20HowTo_datoteke/ipv6Server.jpg"></p><p>
+Figure. IPv6 Server on Dual-Stack node</p><p>
+
+<img src="Porting%20applications%20to%20IPv6%20HowTo_datoteke/ipv6Client.jpg"></p><p>
+Figure. IPv6 Client on Dual-Stack node</p><p>
+
+Although applications are written following program protocol independent rules, 
+other points have to be considered such as the movement of binary code between 
+IPv4-only nodes, dual stacks nodes or IPv6-only nodes.</p><p>
+
+Compilation options (#ifdefs in C language) can be provided throughout the code to 
+select the proper use environment. If IPv6 is not supported the IPv4-only code will 
+be selected for compilation during installation process. However, if IPv6 is 
+supported (Kernel level support) by installed systems, the code for IPv6 or the 
+IPv4 could be selected for compilation, depending on the requirements of applications. 
+Notice that if IPv6 is supported by the kernel, it only means the IPv6 option could 
+be activated and while this option is disabled the node will be only use IPv4 stack. 
+During the transition period nodes are usually running dual stack, both IPv4 and 
+IPv6 stacks. The problem with the conditional compilation approach is that the code 
+becomes littered with compilation options very quickly and harder to follow and 
+maintain.</p><p>
+
+If an application is compiled on a system which supports dual stack and move the 
+binary code to an IPv4-only node without IPv6 kernel support, the source code must be 
+recompiled to use the original IPv4 API. The binary code generated on the dual stack 
+uses the new system functions which are not supported in the IPv4-only node.</p><p>
+
+If the binary code is moved, which has been compiled on a dual stack, to an IPv4-only 
+node with IPv6 kernel support and IPv6 stack not activated, recompilation is not 
+required. Since the IPv6 stack is not activated, the node can not establish IPv6 
+connections. However, the  resolver system could return an IPv6 address to an 
+application query and the application should be prepared to discard this IPv6 address 
+and select the IPv4 one to open connections.<br>
+
+All these alternatives are summarized in Table 4.</p><p>
+
+Table 4. IPv4 or IPv6 activation<br>
+
+<table cols="3" border="">
+<tbody><tr>
+    <td colspan="2"><center>NODE </center></td>
+    <td colspan="2"><center>APPLICATION </center></td>
+    <td colspan="2"><center>CONNECTIONS </center></td>
+</tr>
+<tr>
+    <td>IPv6 kernel support</td>
+    <td>Dual stack activated</td>
+    <td>Network API used</td>
+    <td>Application type</td>
+    <td>IPv4 connection</td>
+    <td>IPv6 connection</td>
+</tr>
+<tr>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>IPv6 extensions (portable code)</td>
+    <td>IPv6-enabled</td>
+    <td>IPv4 stack</td>
+    <td>IPv6 stack</td>
+</tr>
+<tr>
+    <td>Yes</td>
+    <td>No</td>
+    <td>IPv6 extensions (portable code)</td>
+    <td>IPv6-enabled</td>
+    <td>IPv4 stack</td>
+    <td>IPv6 address resolution. Connection error.</td>
+</tr>
+<tr>
+    <td>No</td>
+    <td>No</td>
+    <td>Without IPv6 extensions (old API) </td>
+    <td>IPv4-only (compiled with IPv4 options)</td>
+    <td>IPv4 stack</td>
+    <td>Error</td>
+</tr>
+</tbody></table>
+
+</p><p>In summary, if applications follow the recommendations explained above, using 
+a separated protocol independent transport module, which provides a generic 
+communication API, it is easy to adapt them to new network protocols. Besides, 
+the generic communication API could be implemented as a communication library to 
+be used for many applications. This solution encourages the code reusability and 
+makes communication modules of applications easy to maintain.</p><p>
+
+</p><h2><a name="conclusions">Conclusions</a></h2>
+Today the Internet is predominantly based on IPv4. However, a big effort has been 
+done to set up more and more IPv6 experiments. At the present moment, there is 
+no a single global IPv6 network on the same scale and it will take some time to 
+get it. Therefore, new applications should be designed to work in all environments: 
+single IPv4, single IPv6 or mixed communication when group collaborative 
+applications are considered. <p>
+
+The principal building block during transitioning is the availability of dual 
+stack. Dual stack mechanisms do not, by themselves, solve the IPv4 and IPv6 
+interworking problems; other important  building block, addresses translation, 
+is required many times. Translation refers to the direct translation of protocols, 
+including headers and sometimes protocol payload. Protocol translation often 
+results in features loss. For instance, translation of IPv6 header into an IPv4 
+header will lead to the loss of the IPv6 flow label. Translation can be complemented 
+with tunneling; which used to bridge compatible networks across incompatible ones.<br>
+
+However, all previous solutions depend on applications availability. 
+This document provides general recommendations to port applications smoothly. 
+The general objectives to fulfill are the following:</p><p>
+
+</p><ul>
+<li>Communications management is isolated from the rest of the application.
+</li><li>Network compilation options are not dispersed all over the code.
+</li><li>Application is independent of the IP addresses management.
+</li><li>Application use only names, never IP addresses to select remote node.
+</li><li>Code updating of new protocol advanced features is much simpler.
+</li></ul>
+
+All these requirements can be implemented as a single library. It is a middleware 
+network interface to isolate communications from the rest of functional 
+application modules. This solution simplifies future maintenance operations and 
+it can be used as a general network interface for similar applications. This is 
+interesting when a complete environment should be ported.<br>
+
+
+<h2><a name="appendix">Appendix: Real examples of porting process</a></h2>
+
+This appendix is devoted to show some simple applications which can be used to 
+illustrate porting procedures. This appendix is used to review characteristics 
+and methods described in previous sections.<br>
+
+Migration guidelines are valid for any programming language, however for 
+simplicity, application porting examples are provided only in C language. All 
+these examples have been tested in a SuSE Linux 7.3 distribution, kernel version 
+2.4.10. Deliverable D3.1 includes detailed rules and sockets interface description 
+for most popular programming languages.<br>
+
+<h4><a name="originalDaytime">1. Original daytime version</a></h4>
+
+Daytime is a simple utility, which returns the time and date of a node in a 
+human-readable format. It is defined in RFC 867 and it works in the port number 13.<p>
+
+It is a good example to show porting guidelines with a very simple application. 
+Like most of distributed applications, daytime is composed of a client and a 
+server programs. It can operate over TCP and UDP.</p><p>
+
+<b><a name="daytimeServer4">1.1. IPv4 Daytime server (TCP/UDP)</a></b></p><p>
+
+The server is composed of a main program and communication library, which is 
+reduced to a simple function.</p><p>
+
+The main program is devoted to get program parameters and call listen_server 
+function. Each connection restarts the process and local time and date is returned 
+to the client.</p><p>
+
+The difference between TCP and UDP versions is the listen_server call: accept 
+(which is replaced by receivefrom) and write (which is replaced by sendto)</p><p>
+
+
+</p><blockquote>
+<div class="cuadro">
+<pre>const char *DAYTIME_PORT="13";
+
+int
+main(int argc, char *argv[])
+{
+    int listenfd, connfd, port;
+    socklen_t addrlen;
+    char timeStr[256];
+    char *clienthost;
+    struct sockaddr_in clientaddr;
+    time_t now;
+
+    /* local server socket listening at daytime port=13 */
+    listenfd = listen_server(NULL,DAYTIME_PORT,AF_INET,SOCK_STREAM);
+
+    if (listenfd &lt; 0) {
+         fprintf(stderr,
+                 "listen_socket error:: could not create listening "
+                 "socket\n");
+         return -1;
+    }
+
+    for ( ; ;) {
+        addrlen = sizeof(clientaddr);
+
+        /* accept daytime client connections */
+        connfd = accept(listenfd, 
+                        (struct sockaddr *)&amp;clientaddr, 
+                        &amp;addrlen);
+
+        if (connfd &lt; 0) 
+            continue;
+
+        clienthost = inet_ntoa(clientaddr.sin_addr);
+        port = ntohs(clientaddr.sin_port);
+        printf("Received request from host=[%s] port=[%d]\n",
+               clienthost, port);
+
+        /* process daytime request from a client */
+        memset(timeStr, 0, sizeof(timeStr));
+        time(&amp;now);
+        sprintf(timeStr, "%s", ctime(&amp;now));
+        write(connfd, timeStr, strlen(timeStr));
+        close(connfd);
+    }
+
+    return 0;
+}
+
+</pre>
+</div>
+</blockquote>
+
+
+First of all, network libraries should be included:<p>
+
+</p><blockquote>
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;time.h&gt;
+#include &lt;unistd.h&gt;
+
+#include "listen_server.h"
+</pre>
+</blockquote>
+
+The core of communications is the listen_server function. It is devoted to setup 
+the server and wait for clients connections. It initializes the server socket and 
+blocks the process waiting for a client connection. The function returns when a 
+client appears.<p>
+
+If IP number should be used, it is managed inside listen_server, not outside in 
+the main program.</p><p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>
+#include &lt;types.h&gt;
+#include &lt;socket.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+
+#include "listen_server.h"
+
+const int LISTEN_QUEUE=128;
+
+int
+listen_server(const char *hostname, 
+              const char *service, 
+              int         family,
+              int         socktype)
+{
+
+    struct sockaddr_in sin;
+    struct hostent *phe;
+    struct servent *pse;
+    struct protoent *ppe;
+    int sockfd;
+    char *protocol;
+    
+    memset(&amp;sin, 0, sizeof(sin));
+
+    sin.sin_family=AF_INET;
+
+    switch(socktype) {
+
+        case SOCK_DGRAM:
+            protocol= "udp";
+            break;
+        case SOCK_STREAM:
+            protocol= "tcp";
+            break;
+        default:
+            fprintf(stderr, "listen_server:: unknown socket type=[%d]\n", socktype);
+            return -1;
+    }
+
+
+    if ( pse = getservbyname(service, protocol) ) {
+        sin.sin_port = pse-&gt;s_port;
+
+    } else if ( (sin.sin_port = htons((u_short)atoi(service))) ==0) {
+         fprintf(stderr, "listen_server:: could not get service=[%s]\n", service);
+         return -1;
+    }
+
+    if (!hostname) {
+        sin.sin_addr.s_addr= INADDR_ANY;
+
+    } else {
+        if (phe = gethostbyname(hostname)) {
+            memcpy(&amp;sin.sin_addr, phe-&gt;h_addr, phe-&gt;h_length);
+
+        } else if ( (sin.sin_addr.s_addr = inet_addr(hostname)) == INADDR_NONE) {
+             fprintf(stderr, "listen_server:: could not get host=[%s]\n", hostname);
+             return -1;
+        }
+    }
+
+    if ((ppe = getprotobyname(protocol)) == 0) {
+         fprintf(stderr, "listen_server:: could not get protocol=[%s]\n", protocol);
+         return -1;
+    }
+     
+    if ((sockfd = socket(PF_INET, socktype, ppe-&gt;p_proto)) &lt; 0) {  
+        fprintf(stderr, "listen_server:: could not open socket\n");
+        return -1;
+    }
+
+    if (bind(sockfd, (struct sockaddr *)&amp;sin, sizeof(sin)) != 0) {
+        fprintf(stderr, "listen_server:: could not bind socket\n");
+        close(sockfd);
+        return -1;
+    }
+
+    listen(sockfd, LISTEN_QUEUE); 
+
+    return sockfd;
+}
+</pre>
+</div>
+</blockquote>
+
+
+<b><a name="daytimeClient4">1.2. IPv4 Daytime client (TCP/UDP)</a></b><p>
+
+The daytime service is reduced to a request from the client and an answer from 
+the server. In TCP version, the request is combined with connection a request. 
+Therefore, the protocol answer is also combined with a connection acceptance message.</p><p>
+
+The daytime client is structured in two parts: connection phase and operation phase. 
+Connection phase is grouped in one function (connect_client) and operation phase is 
+reduced to a single read (or a receivefrom in the UDP version).</p><p>
+
+
+</p><blockquote>
+<div class="cuadro">
+<pre>
+#include &lt;types.h&gt;
+#include &lt;socket.h&gt;
+#include &lt;b.h&gt;
+#include &lt;o.h&gt;
+#include &lt;o.h&gt;
+#include &lt;td.h&gt;
+
+#include "connect_client.h"
+
+const char *DAYTIME_PORT="13";
+
+
+int
+main(int argc, char *argv[])
+{
+    int connfd;
+    char *myhost;
+    char timeStr[256];
+
+    myhost = "127.0.0.1";
+    if (argc &gt; 1)
+        myhost = argv[1];
+
+    connfd = connect_client(myhost, DAYTIME_PORT, AF_UNSPEC, SOCK_STREAM);
+
+    if (connfd &lt; 0) {
+         fprintf(stderr, "client error:: could not create connected socket\n");
+         return -1;
+    }
+
+    memset(timeStr, 0, sizeof(timeStr));
+
+    while (read(connfd, timeStr, sizeof(timeStr)) &gt; 0) 
+        printf("%s", timeStr);
+
+    close(connfd);
+
+    return 0;
+}
+</pre>
+</div>
+</blockquote>
+
+Like listen_server function, the connect_client function is devoted to solve the 
+connection phase in the client.<p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>
+#include <sys types.h="">
+#include <sys socket.h="">
+#include <netdb.h>
+#include <stdio.h>
+
+#include "connect_client.h"
+
+int 
+connect_client (const char *hostname, 
+                const char *service, 
+                int         family, 
+                int         socktype)
+{
+    struct sockaddr_in sin;
+    struct hostent *phe;
+    struct servent *pse;
+    struct protoent *ppe;
+    int sockfd;
+    char *protocol;
+    
+    memset(&amp;sin, 0, sizeof(sin));
+
+    sin.sin_family=AF_INET;
+
+    switch(socktype) {
+
+        case SOCK_DGRAM:
+            protocol= "udp";
+            break;
+        case SOCK_STREAM:
+            protocol= "tcp";
+            break;
+        default:
+            fprintf(stderr, "listen_server:: unknown socket type=[%d]\n", socktype);
+            return -1;
+    }
+
+
+    if ( pse = getservbyname(service, protocol) ) {
+        sin.sin_port = pse-&gt;s_port;
+
+    } else if ((sin.sin_port = htons((u_short)atoi(service)))==0) {
+         fprintf(stderr, "connec_client:: could not get service=[%s]\n",
+                 service);
+         return -1;
+    }
+
+
+    if (!hostname) {
+        fprintf(stderr, "connect_client:: there should be a hostname!\n");
+        return -1;
+                
+    } else {
+        if (phe = gethostbyname(hostname)) {
+            memcpy(&amp;sin.sin_addr, phe-&gt;h_addr, phe-&gt;h_length);
+
+        } else if ( (sin.sin_addr.s_addr = inet_addr(hostname)) == 
+						INADDR_NONE) {
+             fprintf(stderr, "connect_client:: could not get host=[%s]\n", hostname);
+             return -1;
+        }
+    }
+
+    if ((ppe = getprotobyname(protocol)) == 0) {
+         fprintf(stderr, "connect_client:: could not get protocol=[%s]\n", protocol);
+         return -1;
+    }
+     
+    if ((sockfd = socket(PF_INET, socktype, ppe-&gt;p_proto)) &lt; 0) {  
+        fprintf(stderr, "connect_client:: could not open socket\n");
+        return -1;
+    }
+
+    if (connect(sockfd,(struct sockaddr *)&amp;sin, sizeof(sin)) &lt; 0) {
+        fprintf(stderr, "connect_client:: could not connect to host=[%s]\n", hostname);
+        return -1;
+    }
+
+    return sockfd;            
+}
+</stdio.h></netdb.h></sys></sys></pre>
+</div>
+</blockquote>
+<p>
+
+
+<b><a name="unicastDaytime">2. The unicast daytime ported to IPv6</a></b><br>
+
+In the following sections it is shown how daytime service is ported from IPv4 to 
+IPv6. Following  previous described porting guidelines and after previous program 
+analysis, the code should be reviewed to support IPv4 and IPv6 without compilation.</p><p>
+
+IPv6 sockets library is similar to IPv4 version, therefore server or client code 
+does not change for the operation phase. The connection phase maintain the same 
+connection model, however the code to set up connections should be adapted.</p><p>
+
+<b><a name="daytimeServer6">2.1. IPv6 Daytime server (TCP/UDP)</a></b><br>
+
+The TCP and UDP versions of the daytime server program use a common 
+function to create the server socket, the listen_server function. This 
+function generates a server socket from a hostname, the service, socket 
+family (IPv4 or IPv6) and socket type (TCP or UDP) parameters.</p><p>
+
+2.1.1. File "listen_server.h"</p><p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>#ifndef listen__server__h__
+#define listen__server__h__
+
+/*
+    listen_server
+        creates a server server socket listening at a hostname:service
+        using the family and socket type specified in the function
+        arguments.
+*/
+
+int
+listen_server(const char *hostname,
+              const char *service,
+              int         family,
+              int         socktype);
+
+#endif
+</pre>
+</div>
+</blockquote>
+
+2.1.2 File "listen_server.cpp"<br>
+
+<blockquote>
+<div class="cuadro">
+<pre>#include &lt;types.h&gt;
+#include &lt;socket.h&gt;
+#include &lt;b.h&gt;
+#include &lt;o.h&gt;
+
+#include "listen_server.h"
+
+const int LISTEN_QUEUE=128;
+
+int
+listen_server(const char *hostname,
+              const char *service,
+              int         family,
+              int         socktype)
+{
+    struct addrinfo hints, *res, *ressave;
+    int n, sockfd;
+
+    memset(&amp;hints, 0, sizeof(struct addrinfo));
+
+    /*
+       AI_PASSIVE flag: the resulting address is used to bind
+       to a socket for accepting incoming connections.
+       So, when the hostname==NULL, getaddrinfo function will
+       return one entry per allowed protocol family containing
+       the unspecified address for that family.
+    */
+
+    hints.ai_flags    = AI_PASSIVE;
+    hints.ai_family   = family;
+    hints.ai_socktype = socktype;
+
+    n = getaddrinfo(hostname, service, &amp;hints, &amp;res);
+
+    if (n &lt;0) {
+        fprintf(stderr,
+                "getaddrinfo error:: [%s]\n",
+                gai_strerror(n));
+        return -1;
+    }
+
+    ressave=res;
+
+    /*
+       Try open socket with each address getaddrinfo returned,
+       until getting a valid listening socket.
+    */
+    sockfd=-1;
+    while (res) {
+        sockfd = socket(res-&gt;ai_family,
+                        res-&gt;ai_socktype,
+                        res-&gt;ai_protocol);
+
+        if (!(sockfd &lt; 0)) {
+            if (bind(sockfd, res-&gt;ai_addr, res-&gt;ai_addrlen) == 0)
+                break;
+
+            close(sockfd);
+            sockfd=-1;
+        }
+        res = res-&gt;ai_next;
+    }
+
+    if (sockfd &lt; 0) {
+        freeaddrinfo(ressave);
+        fprintf(stderr,
+                "socket error:: could not open socket\n");
+        return -1;
+    }
+
+    listen(sockfd, LISTEN_QUEUE);
+
+    freeaddrinfo(ressave);
+
+    return sockfd;
+}
+</pre>
+</div>
+</blockquote>
+
+The TCP daytime server uses listen_server with SOCK_STREAM and PF_UNSPEC parameters 
+to obtain a server socket, which will accept connections to all of the interfaces. 
+When clients connect to the server, it will answer with the daytime information and 
+close the client connection.<p>
+
+2.1.3. File "tcp_daytime_server.cpp"</p><p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;time.h&gt;
+#include &lt;unistd.h&gt;
+
+#include "listen_server.h"
+
+const char *DAYTIME_PORT="13";
+
+int
+main(int argc, char *argv[])
+{
+    int listenfd, connfd;
+    socklen_t addrlen;
+    char timeStr[256];
+    struct sockaddr_storage clientaddr;
+    time_t now;
+    char clienthost[NI_MAXHOST];
+    char clientservice[NI_MAXSERV];
+
+    /* local server socket listening at daytime port=13 */
+    listenfd = listen_server( NULL, DAYTIME_PORT,
+                              AF_UNSPEC, SOCK_STREAM);
+
+    if (listenfd &lt; 0) {
+         fprintf(stderr,
+                 "listen_socket error:: could not create listening "
+                 "socket\n");
+         return -1;
+    }
+
+    for ( ; ;) {
+        addrlen = sizeof(clientaddr);
+
+        /* accept daytime client connections */
+        connfd = accept(listenfd,
+                        (struct sockaddr *)&amp;clientaddr,
+                        &amp;addrlen);
+
+        if (connfd &lt; 0)
+            continue;
+
+        memset(clienthost, 0, sizeof(clienthost));
+        memset(clientservice, 0, sizeof(clientservice));
+
+        getnameinfo((struct sockaddr *)&amp;clientaddr, addrlen,
+                    clienthost, sizeof(clienthost),
+                    clientservice, sizeof(clientservice),
+                    NI_NUMERICHOST);
+
+        printf("Received request from host=[%s] port=[%s]\n",
+               clienthost, clientservice);
+
+        /* process daytime request from a client */
+        memset(timeStr, 0, sizeof(timeStr));
+        time(&amp;now);
+        sprintf(timeStr, "%s", ctime(&amp;now));
+        write(connfd, timeStr, strlen(timeStr));
+        close(connfd);
+    }
+
+    return 0;
+}
+</pre>
+</div>
+</blockquote>
+
+
+The UDP daytime server uses listen_server with SOCK_DGRAM and PF_UNSPEC parameters 
+to obtain a server socket, which will receive connections to all of the interfaces. 
+When clients connect to the server, it will answer with the daytime information and 
+close the client connection.<p>
+
+2.1.4. File "udp_daytime_server.cpp"</p><p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>#include &lt;types.h&gt;
+#include &lt;socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;time.h&gt;
+
+#include "listen_server.h"
+
+const char *DAYTIME_PORT="13";
+
+int
+main(int argc, char *argv[])
+{
+    int listenfd, n;
+    socklen_t addrlen;
+    char *myhost;
+    char timeStr[256];
+    struct sockaddr_storage clientaddr;
+    time_t now;
+    char b[256];
+    char clienthost[NI_MAXHOST];
+    char clientservice[NI_MAXSERV];
+
+    myhost=NULL;
+    if (argc &gt; 1)
+        myhost=argv[1];
+
+    listenfd= listen_server(myhost, DAYTIME_PORT, AF_UNSPEC, SOCK_DGRAM);
+
+    if (listenfd &lt; 0) {
+         fprintf(stderr,
+                 "listen_server error:: could not create listening "
+                 "socket\n");
+         return -1;
+    }
+
+    addrlen = sizeof(clientaddr);
+    for ( ; ;) {
+        n = recvfrom(listenfd,
+                     b,
+                     sizeof(b),
+                     0,
+                     (struct sockaddr *)&amp;clientaddr,
+                     &amp;addrlen);
+
+        if (n &lt; 0)
+            continue;
+
+        memset(clienthost, 0, sizeof(clienthost));
+        memset(clientservice, 0, sizeof(clientservice));
+
+        getnameinfo((struct sockaddr *)&amp;clientaddr, addrlen,
+                    clienthost, sizeof(clienthost),
+                    clientservice, sizeof(clientservice),
+                    NI_NUMERICHOST);
+
+        printf("Received request from host=[%s] port=[%s]\n",
+               clienthost, clientservice);
+
+        memset(timeStr, 0, sizeof(timeStr));
+        time(&amp;now);
+        sprintf(timeStr, "%s", ctime(&amp;now));
+
+        n = sendto(listenfd, timeStr, sizeof(timeStr), 0,
+                   (struct sockaddr *)&amp;clientaddr,
+                   addrlen);
+    }
+
+    return 0;
+}
+</pre>
+</div>
+</blockquote>
+
+Migration process is simple because all main changes are grouped inside listen_server 
+function. If application is not correctly structured porting effort increases. 
+Sometimes, it is much better to review the program structure that only to change 
+functions calls to make the adaptation.<p>
+This is the reason why scripts to change code automatically are not recommended. 
+Automatic scripts look for concrete functions and change them by new function version 
+however, program structure is not analyzed and many times the result is very poor.</p><p>
+
+<b><a name="daytimeClient6">2.2. IPv6 Daytime client (TCP/UDP).</a></b></p><p>
+
+The TCP and UDP versions of the daytime client program use a common function to 
+create the client socket, the connect_client function. This function generates a 
+client socket from a hostname, the service, socket family (IPv4 or IPv6) and socket 
+type (TCP or UDP) parameters.</p><p>
+
+2.2.1. File "connect_client.h"</p><p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>#ifndef connect__client__h__
+#define connect__client__h__
+
+int
+connect_client (const char *hostname,
+                const char *service,
+                int         family,
+                int         socktype);
+#endif
+</pre>
+</div>
+</blockquote>
+
+
+2.2.2. File "connect_client.cpp"<p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+
+#include "connect_client.h"
+
+int
+connect_client (const char *hostname,
+                const char *service,
+                int         family,
+                int         socktype)
+{
+    struct addrinfo hints, *res, *ressave;
+    int n, sockfd;
+
+    memset(&amp;hints, 0, sizeof(struct addrinfo));
+
+    hints.ai_family = family;
+    hints.ai_socktype = socktype;
+
+    n = getaddrinfo(hostname, service, &amp;hints, &amp;res);
+
+    if (n &lt;0) {
+        fprintf(stderr,
+                "getaddrinfo error:: [%s]\n",
+                gai_strerror(n));
+        return -1;
+    }
+
+    ressave = res;
+
+    sockfd=-1;
+    while (res) {
+        sockfd = socket(res-&gt;ai_family,
+                        res-&gt;ai_socktype,
+                        res-&gt;ai_protocol);
+
+        if (!(sockfd &lt; 0)) {
+            if (connect(sockfd, res-&gt;ai_addr, res-&gt;ai_addrlen) == 0)
+                break;
+
+            close(sockfd);
+            sockfd=-1;
+        }
+    res=res-&gt;ai_next;
+    }
+
+    freeaddrinfo(ressave);
+    return sockfd;
+}
+</pre>
+</div>
+</blockquote>
+
+The TCP daytime server uses connect_client with the following input parameter 
+values: SOCK_STREAM, PF_UNSPEC, the hostname and the port where TCP daytime server 
+is listening. The client socket connects to this server using IPv4 or IPv6 depending 
+on if the server hostname is resolved to an IPv4 or an IPv6 address. Clients will 
+wait for the daytime answer from the server.<p>
+
+2.2.3. File "tcp_daytime_client.cpp"</p><p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;unistd.h&gt;
+
+#include "connect_client.h"
+
+const char *DAYTIME_PORT="13";
+
+
+int
+main(int argc, char *argv[])
+{
+    int connfd;
+    char *myhost;
+    char timeStr[256];
+
+    myhost = "localhost";
+    if (argc &gt; 1)
+        myhost = argv[1];
+
+    connfd= connect_client(myhost, DAYTIME_PORT, AF_UNSPEC, SOCK_STREAM);
+
+    if (connfd &lt; 0) {
+         fprintf(stderr,
+                 "client error:: could not create connected socket "
+                 "socket\n");
+         return -1;
+    }
+
+    memset(timeStr, 0, sizeof(timeStr));
+
+    while (read(connfd, timeStr, sizeof(timeStr)) &gt; 0)
+        printf("%s", timeStr);
+
+    close(connfd);
+
+    return 0;
+}
+</pre>
+</div>
+</blockquote>
+
+The UDP daytime server uses connect_client with the following input parameter 
+values: SOCK_DGRAM, PF_UNSPEC, the hostname and the port where TCP daytime server 
+is listening. And the same as in the TCP case, the client socket connects to this 
+server using IPv4 or IPv6 depending on if the server hostname is resolved to an IPv4 
+or an IPv6 address. Clients will wait for the daytime answer from the server.<p>
+
+2.2.4. File "udp_daytime_client.cpp"</p><p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;unistd.h&gt;
+
+#include "connect_client.h"
+
+const char *DAYTIME_PORT="13";
+
+int
+main(int argc, char *argv[])
+{
+    int connfd, n, m;
+    char *myhost;
+    char timeStr[256];
+    char letter;
+
+    myhost = "localhost";
+    if (argc &gt; 1)
+        myhost=argv[1];
+
+    connfd = connect_client(myhost, DAYTIME_PORT, AF_UNSPEC, SOCK_DGRAM);
+
+    if (connfd &lt; 0) {
+         fprintf(stderr,
+                 "client error:: could not create connected socket "
+                 "socket\n");
+         return -1;
+    }
+
+    letter = '1';
+    m= write(connfd, &amp;letter, sizeof(letter));
+
+    memset(timeStr, 0, sizeof(timeStr));
+
+    n = read(connfd,
+             timeStr,
+             sizeof(timeStr));
+
+    printf("%s\n", timeStr);
+
+    close(connfd);
+
+    return 0;
+}
+</pre>
+</div>
+</blockquote>
+
+<b><a name="multicastDaytime">3. The multicast daytime</a></b><br>
+
+In this section daytime utility is used to analyze porting problems related to 
+multicast applications. Also,  daytime service is used to show this porting process. 
+Daytime is a very simple service which is easy to be adapted to multicast.<p>
+
+First some useful functions that will be used in the multicast server/client examples 
+are explained. The get_addr function returns a sockaddr_storage struct filled with a 
+valid socket address struct for the address, service, family and socket type input 
+parameters. The joinGroup function configures the socket with useful multicast options.</p><p>
+
+The file mcastutil.h defines the basic multicast socket interface. It defines the 
+following functions:</p><p>
+
+get_addr fills the sockaddress_storage struct, addr, with information related to 
+the hostname, service, family and socktype.</p><p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>int
+get_addr (const char *hostname,
+          const char *service,
+          int         family,
+          int         socktype,
+          struct sockaddr_storage *addr);
+</pre>
+</div>
+</blockquote>
+
+joinGroup specifies the address group to be used in the application. 
+It configures the socket with some useful multicast options like loopBack and 
+mcastHop.<p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>int
+joinGroup(int sockfd, int loopBack, int mcastHop,
+          struct sockaddr_storage *addr);
+</pre>
+</div>
+</blockquote>
+
+isMulticast checks if an address is a valid multicast group.<p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>int
+isMulticast(struct sockaddr_storage *addr);
+</pre>
+</div>
+</blockquote>
+
+3.1. File "mcastutil.cpp"<p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;time.h&gt;
+
+#include "mcastutil.h"
+
+int
+get_addr (const char *hostname,
+          const char *service,
+          int         family,
+          int         socktype,
+          struct sockaddr_storage *addr)
+{
+    struct addrinfo hints, *res, *ressave;
+    int n, sockfd, retval;
+
+    retval = -1;
+
+    memset(&amp;hints, 0, sizeof(struct addrinfo));
+    hints.ai_family = family;
+    hints.ai_socktype = socktype;
+
+    n = getaddrinfo(hostname, service, &amp;hints, &amp;res);
+
+    if (n &lt;0) {
+        fprintf(stderr,
+                "getaddrinfo error:: [%s]\n",
+                gai_strerror(n));
+        return retval;
+    }
+
+    ressave = res;
+
+    sockfd=-1;
+    while (res) {
+        sockfd = socket(res-&gt;ai_family,
+                        res-&gt;ai_socktype,
+                        res-&gt;ai_protocol);
+
+        if (!(sockfd &lt; 0)) {
+            if (bind(sockfd, res-&gt;ai_addr, res-&gt;ai_addrlen) == 0) {
+                close(sockfd);
+                memcpy(addr, res-&gt;ai_addr, sizeof(*addr);
+                retval=0;
+                break;
+            }
+
+            close(sockfd);
+            sockfd=-1;
+        }
+        res=res-&gt;ai_next;
+    }
+
+    freeaddrinfo(ressave);
+
+    return retval;
+}
+
+int
+joinGroup(int sockfd, int loopBack, int mcastTTL,
+          struct sockaddr_storage *addr)
+{
+    int r1, r2, r3, retval;
+
+    retval=-1;
+
+    switch (addr-&gt;ss_family) {
+        case AF_INET: {
+            struct ip_mreq      mreq;
+
+            mreq.imr_multiaddr.s_addr=
+                ((struct sockaddr_in *)addr)-&gt;sin_addr.s_addr;
+            mreq.imr_interface.s_addr= INADDR_ANY;
+
+            r1= setsockopt(sockfd, IPPROTO_IP, IP_MULTICAST_LOOP,
+                           &amp;loopBack, sizeof(loopBack));
+            if (r1&lt;0)
+                perror("joinGroup:: IP_MULTICAST_LOOP:: ");
+
+            r2= setsockopt(sockfd, IPPROTO_IP, IP_MULTICAST_TTL,
+                           &amp;mcastTTL, sizeof(mcastTTL));
+            if (r2&lt;0)
+               perror("joinGroup:: IP_MULTICAST_TTL:: ");
+
+            r3= setsockopt(sockfd, IPPROTO_IP, IP_ADD_MEMBERSHIP,
+                           (const void *)&amp;mreq, sizeof(mreq));
+            if (r3&lt;0)
+                perror("joinGroup:: IP_ADD_MEMBERSHIP:: ");
+
+        } break;
+
+        case AF_INET6: {
+           struct ipv6_mreq    mreq6;
+
+           memcpy(&amp;mreq6.ipv6mr_multiaddr,
+                  &amp;(((struct sockaddr_in6 *)addr)-&gt;sin6_addr),
+                  sizeof(struct in6_addr));
+
+           mreq6.ipv6mr_interface= 0; // cualquier interfaz
+
+           r1= setsockopt(sockfd, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, 
+                          &amp;loopBack, sizeof(loopBack));
+           if (r1&lt;0)
+               perror("joinGroup:: IPV6_MULTICAST_LOOP:: ");
+
+           r2= setsockopt(sockfd, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, 
+                          &amp;mcastTTL, sizeof(mcastTTL));
+           if (r2&lt;0)
+               perror("joinGroup:: IPV6_MULTICAST_HOPS::  ");
+
+           r3= setsockopt(sockfd, IPPROTO_IPV6,
+                          IPV6_ADD_MEMBERSHIP, &amp;mreq6, sizeof(mreq6));
+           if (r3&lt;0)
+              perror("joinGroup:: IPV6_ADD_MEMBERSHIP:: ");
+
+        } break;
+
+        default:
+            r1=r2=r3=-1;
+    }
+
+    if ((r1&gt;=0) &amp;&amp; (r2&gt;=0) &amp;&amp; (r3&gt;=0))
+        retval=0;
+
+    return retval;
+}
+
+
+int
+isMulticast(struct sockaddr_storage *addr)
+{
+    int retVal;
+
+    retVal=-1;
+
+    switch (addr-&gt;ss_family) {
+        case AF_INET: {
+            struct sockaddr_in *addr4=(struct sockaddr_in *)addr;
+            retVal = IN_MULTICAST(ntohl(addr4-&gt;sin_addr.s_addr));
+        } break;
+
+        case AF_INET6: {
+            struct sockaddr_in6 *addr6=(struct sockaddr_in6 *)addr;
+            retVal = IN6_IS_ADDR_MULTICAST(&amp;addr6-&gt;sin6_addr);
+        } break;
+
+        default:
+           ;
+    }
+
+    return retVal;
+} 
+</pre>
+</div>
+</blockquote>
+
+The multicast server is similar to unicast server. It initializes the service, it 
+stops the process (receivefrom) waiting for client connections and it answers 
+immediately after any request.<p>
+
+3.2. File "mcastserver.cpp"</p><p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;time.h&gt;
+
+#include "mcastutil.h"
+
+const char *DAYTIME_PORT="13";
+
+int
+main(int argc, char *argv[])
+{
+    int sockfd, n;
+    char *mcastaddr;
+    char timeStr[256];
+    char b[256];
+    struct sockaddr_storage clientaddr, addr;
+    socklen_t addrlen;
+    time_t now;
+    char clienthost[NI_MAXHOST];
+    char clientservice[NI_MAXSERV];
+
+    mcastaddr = "FF01::1111";
+    if (argc ==2)
+        mcastaddr=argv[1];
+
+    memset(&amp;addr, 0, sizeof(addr));
+
+    if (get_addr(mcastaddr, DAYTIME_PORT, PF_UNSPEC, 
+                 SOCK_DGRAM, &amp;addr) &lt;0) 
+    {
+        fprintf(stderr, "get_addr error:: could not find multicast "
+                "address=[%s] port=[%s]\n", mcastaddr, DAYTIME_PORT);
+        return -1;
+    }
+
+    if (isMulticast(&amp;addr)&lt;0) {
+        fprintf(stderr, 
+                "This address does not seem a multicast address [%s]\n",
+                mcastaddr);
+        return -1;
+    }
+
+    sockfd = socket(addr.ss_family, SOCK_DGRAM, 0);
+
+    if (bind(sockfd, (struct sockaddr *)&amp;addr, sizeof(addr)) &lt; 0) {
+        perror("bind error:: ");
+        close(sockfd);
+        return -1;
+    }
+
+    if (joinGroup(sockfd, 0 , 8, &amp;addr) &lt;0) {
+        close(sockfd);
+        return -1;
+    }
+
+    addrlen=sizeof(clientaddr);
+    for ( ; ;) {
+        n = recvfrom(sockfd,
+                     b,
+                     sizeof(b),
+                     0,
+                     (struct sockaddr *)&amp;clientaddr,
+                     &amp;addrlen);
+
+        if (n &lt;0)
+            continue;
+
+        memset(clienthost, 0, sizeof(clienthost));
+        memset(clientservice, 0, sizeof(clientservice));
+
+        getnameinfo((struct sockaddr *)&amp;clientaddr, addrlen,
+                    clienthost, sizeof(clienthost),
+                    clientservice, sizeof(clientservice),
+                    NI_NUMERICHOST);
+
+        printf("Received request from host=[%s] port=[%s]\n",
+               clienthost, clientservice);
+
+        memset(timeStr, 0, sizeof(timeStr));
+        time(&amp;now);
+        sprintf(timeStr, "%s", ctime(&amp;now));
+
+        n = sendto(sockfd, timeStr, sizeof(timeStr), 0,
+                   (struct sockaddr *)&amp;addr,
+                   sizeof(addr));
+        if (n&lt;1)
+            perror("sendto error:: \n");
+
+    }
+    return 0;
+}
+</pre>
+</div>
+</blockquote>
+
+The multicast client joins the multicast group and waits announcements received by 
+the multicast group.<p>
+
+3.3. File "mcastclient.cpp"</p><p>
+
+</p><blockquote>
+<div class="cuadro">
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdlib.h&gt;
+
+#include "mcastutil.h"
+
+const char *DAYTIME_PORT="13";
+
+int
+main(int argc, char *argv[])
+{
+    int sockfd, n;
+    char *myhost;
+    char timeStr[256];
+    char letter;
+    struct sockaddr_storage addr, clientaddr;
+    int addrlen;
+    socklen_t clientaddrlen;
+
+
+    myhost = "FF01::1111";
+    if (argc == 2)
+        myhost=argv[1];
+
+    addrlen=sizeof(addr);
+    memset(&amp;addr, 0, addrlen);
+
+    get_addr(myhost, DAYTIME_PORT, PF_UNSPEC, SOCK_DGRAM, &amp;addr);
+
+    sockfd = socket(addr.ss_family, SOCK_DGRAM, 0);
+
+    if (bind(sockfd, (struct sockaddr *)&amp;addr, addrlen) &lt;0) {
+        perror("bind error:: \n");
+        close(sockfd);
+        return -1;
+    }
+
+    if (joinGroup(sockfd, 0 , 8, &amp;addr) &lt;0) {
+        close(sockfd);
+        return -1;
+    }
+
+    letter = '1';
+    n = sendto(sockfd, &amp;letter, sizeof(letter), 0,
+              (struct sockaddr *)&amp;addr,
+              addrlen);
+
+    if (n&lt;0) {
+        perror("sendto error:: ");
+        close(sockfd);
+        return -1;
+    }
+
+    memset(timeStr, 0, sizeof(timeStr));
+    clientaddrlen=sizeof(clientaddr);
+
+    n = recvfrom(sockfd,
+                 timeStr,
+                 sizeof(timeStr),
+                 0,
+                 (struct sockaddr *)&amp;clientaddr,
+                 &amp;clientaddrlen);
+
+
+    if (n&lt;0) {
+        perror("sendto error:: ");
+        close(sockfd);
+        return -1;
+    }
+
+    printf("%s\n", timeStr);
+
+    close(sockfd);
+    return 0;
+}
+</pre>
+</div>
+</blockquote>
+
+<h3><a name="glossary">Glossary and Abbreviations</a></h3>
+
+<table col="3" border="">
+<tbody><tr>
+<td>ADU</td>		<td>Application Data Unit.</td>
+</tr>
+<tr>
+<td>API</td>			<td>Application Program Interface.</td>
+</tr>
+<tr>
+<td>ASCII</td>		<td>American Standard Code for Information Interchange.</td>
+</tr>
+<tr>
+<td>BSD</td>		<td>Berkeley System Distribution.</td>
+</tr>
+<tr>
+<td>FQDN</td>		<td>Fully Qualified Domain Name.</td>
+</tr>
+<tr>
+<td>IP</td>			<td>Internet Protocol.</td>
+</tr>
+<tr>
+<td>IPv4</td>		<td>Internet Protocol version 4.</td>
+</tr>
+<tr>
+<td>IPv6</td>		<td>Internet Protocol version 6.</td>
+</tr>
+<tr>
+<td>MTU</td>		<td>Maximum Transfer Unit.</td>
+</tr>
+<tr>
+<td>PMTU</td>		<td>Path Maximum Transfer Unit.</td>
+</tr>
+<tr>
+<td>PMTU-D</td>	<td>Path Maximum Transfer Unit Discovery.</td>
+</tr>
+<tr>
+<td>TCP</td>		<td>Transport Control Protocol.</td>
+</tr>
+<tr>
+<td>TU</td>			<td>Transfer Unit.</td>
+</tr>
+<tr>
+<td>UDP</td>		<td>User Datagram Protocol.</td>
+</tr>
+
+</tbody></table>
+
+<h2><a name="references">References</a></h2>
+
+[1]Advanced Sockets API for IPv6. W. Stevens, M. Thomas. February 1998. 
+RFC2292. (Format: TXT=152077 bytes) (Status: INFORMATIONAL)<p>
+[2]Basic Socket Interface Extensions for IPv6. R. Gilligan, S., Thomson,
+ J. Bound, W. Stevens. March 1999. RFC2553. (Format: TXT=89215 bytes) 
+(Obsoletes RFC2133) (Status: INFORMATIONAL)</p><p>
+[3]Format for Literal IPv6 Addresses in URL's. R. Hinden, B., Carpenter,
+ L. Masinter. December 1999. RFC2732. (Format: TXT=7984 bytes) (Status: 
+PROPOSED STANDARD)</p><p>
+[4]Router Renumbering for IPv6. M. Crawford. August 2000. RFC2894. (Format: TXT=69135 bytes) (Status: PROPOSED STANDARD)</p><p>
+[5]Daytime Protocol. J. Postel. May-01-1983. RFC867. (Format: TXT=2405 bytes) (Also STD0025) (Status: STANDARD)</p><p>
+[6]Path MTU Discovery for IP version 6. J. McCann, S. Deering, J. Mogul.
+ August 1996. RFC1981. (Format: TXT=34088 bytes) (Status: PROPOSED 
+STANDARD)</p><p>
+[7]IP Version 6 Addressing Architecture. R. Hinden, S. Deering. July 
+1998. RFC2373. (Format: TXT=52526 bytes) (Obsoletes RFC1884) (Status: 
+PROPOSED STANDARD)</p><p>
+[8]Advanced Sockets API for IPv6. W. Richard Stevens. Expires: October 19, 2002. Obsoletes RFC 2292. INTERNET-DRAFT: <draft-ietf-ipngwg-rfc2292bis-07.txt></draft-ietf-ipngwg-rfc2292bis-07.txt></p><p>
+[9]Basic Socket Interface Extensions for IPv6. R.E. Gilligan. 
+INTERNET-DRAFT: draft-ietf-ipngwg-rfc2553bis-05. Obsoletes RFC 2553. 
+February 2002</p><p>
+[10]Default Address Selection for IPv6. Richard Draves. INTERNET-DRAFT: 
+draft-ietf-ipv6-default-addr-select-08.txt. June 17, 2002.</p><p>
+[11]The Unix Network Programming - Volume 1. Richard Stevens.</p><p>
+
+</p><hr>
+Author: Eva M. Castro<br>
+<a href="mailto:eva@gsyc.escet.urjc.es">eva@gsyc.escet.urjc.es</a>
+
+</body></html>

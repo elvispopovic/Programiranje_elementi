@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1480496267 source:c:\epc\programiranje\code__block experimenti\fft\fft dll\za programera dll\fastfourierclass.cpp
+	<iostream>
+	<cmath>
+	<cstring>
+	"fastFourier.h"
+
+1480497540 c:\epc\programiranje\code__block experimenti\fft\fft dll\za programera dll\fastfourier.h
+	"fft_dll.h"
+
+1480497896 source:c:\epc\programiranje\code__block experimenti\fft\fft dll\za programera dll\fft_dll.cpp
+	"fft_dll.h"
+	"fastFourier.h"
+
+1480499877 c:\epc\programiranje\code__block experimenti\fft\fft dll\za programera dll\fft_dll.h
+	<windows.h>
+

@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1579190069 source:d:\programiranje\c\stabla\stablo\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+

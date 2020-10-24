@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1478996390 source:c:\foi\zavrsni_razvoj\guielementi\codeblocks_test\test\main.cpp
+	<iostream>
+	<windows.h>
+	"..\\..\\RADGui.h"
+	"test.h"
+
+1478994527 c:\foi\zavrsni_razvoj\guielementi\codeblocks_test\test\test.h
+

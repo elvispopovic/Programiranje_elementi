@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1579535067 source:d:\programiranje\c\grafovi\graf\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+

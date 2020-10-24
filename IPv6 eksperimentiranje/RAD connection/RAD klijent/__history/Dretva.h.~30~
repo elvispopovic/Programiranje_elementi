@@ -1,0 +1,26 @@
+//---------------------------------------------------------------------------
+
+#ifndef DretvaH
+#define DretvaH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.StdCtrls.hpp>
+//---------------------------------------------------------------------------
+class Dretva : public TThread
+{
+private:
+    volatile long dStop;
+	SOCKET server;
+	TMemo *memo;
+	wchar_t *ispis;
+    char *recvbuffer;
+	void __fastcall Ispisi();
+public:
+	__fastcall Dretva(TMemo* m, SOCKET s);
+	__fastcall ~Dretva();
+	void __fastcall Dretva::Execute();
+	void __fastcall Dretva::Stop();
+
+};
+//---------------------------------------------------------------------------
+#endif

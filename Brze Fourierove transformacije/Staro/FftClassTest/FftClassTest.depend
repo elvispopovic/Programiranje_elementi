@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1479801401 source:c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftclasstest\main.cpp
+	<iostream>
+	"fastFourier.h"
+
+1479801401 c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftclasstest\fastfourier.h
+
+1479801401 source:c:\epc\programiranje\code__block experimenti\fft\fft_nerekurzivni\fftclasstest\fastfourierclass.cpp
+	<cmath>
+	"fastFourier.h"
+

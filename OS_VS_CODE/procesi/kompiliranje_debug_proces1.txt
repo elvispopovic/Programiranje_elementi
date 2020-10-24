@@ -1,0 +1,2 @@
+gcc -Wall -g  -c proces1.c -o obj/Debug/proces1.o
+g++  -o bin/Debug/proces1.a obj/Debug/proces1.o 

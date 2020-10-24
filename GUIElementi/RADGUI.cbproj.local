@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.840,C:\FOI\Zavrsni_razvoj\GUIElementi\GUI_unit1.cpp=C:\FOI\Zavrsni_razvoj\GUIElementi\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.269,C:\FOI\Zavrsni_razvoj\GUIElementi\GUI_unit1.cpp=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.244,C:\FOI\Zavrsni_razvoj\GUIElementi\RADGUIPCH1.h=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Project2PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.511,C:\FOI\Zavrsni_razvoj\GUIElementi\RADGUIProjekt.cpp=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\File2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.011,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.840,C:\FOI\Zavrsni_razvoj\GUIElementi\GUI_unit1.h=C:\FOI\Zavrsni_razvoj\GUIElementi\Unit1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.460,C:\FOI\Zavrsni_razvoj\GUIElementi\RADGUI.cbproj=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Project2.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.192,=C:\FOI\Zavrsni_razvoj\GUIElementi\File1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.751,C:\FOI\Zavrsni_razvoj\GUIElementi\RADGui.h=C:\FOI\Zavrsni_razvoj\GUIElementi\File1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.840,C:\FOI\Zavrsni_razvoj\GUIElementi\GUI_unit1.fmx=C:\FOI\Zavrsni_razvoj\GUIElementi\Unit1.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.253,=C:\FOI\Zavrsni_razvoj\GUIElementi\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.220,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\DetailView.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.743,=C:\FOI\Zavrsni_razvoj\GUIElementi\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.958,=C:\FOI\Zavrsni_razvoj\GUIElementi\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.988,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Project2PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.901,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\GridView.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.118,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\File2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.113,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Project2PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.807,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Project2PCH1.h</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.715,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Project2PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.988,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Project2PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.972,=C:\FOI\RAD Builder\DLL_dvostrani\File1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.901,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\GridView.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.742,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\File2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.807,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Project2PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.011,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.110,C:\FOI\RAD Builder\DLL_dvostrani\DLL_main.cpp=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\File2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.084,C:\FOI\RAD Builder\DLL_dvostrani\DLL.h=C:\FOI\RAD Builder\DLL_dvostrani\File1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.415,C:\FOI\RAD Builder\DLL_dvostrani\Project2.cbproj=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Project2.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.220,=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\DetailView.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.911,C:\FOI\RAD Builder\DLL_dvostrani\Project2PCH1.h=C:\Users\EPC\Documents\Embarcadero\Studio\Projects\Project2PCH1.h</Transaction>
+  </Transactions>
+</BorlandProject>

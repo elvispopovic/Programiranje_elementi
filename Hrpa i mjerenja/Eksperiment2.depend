@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1479460892 source:c:\epc\programiranje\code__block experimenti\exp2\eksperiment2\main.cpp
+	<iostream>
+	<random>
+	<ctime>
+	<windows.h>
+
+1479466820 source:c:\epc\programiranje\code__block experimenti\exp2\eksperiment2\heapsortmjerenje.cpp
+	<iostream>
+	<random>
+	<chrono>
+	<functional>
+

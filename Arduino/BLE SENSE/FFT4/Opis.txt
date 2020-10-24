@@ -1,0 +1,23 @@
+Arduino projekt koji koristi algoritme za brze fourierove transformacije.
+Implementirane su DST, DCT i DFT.
+Broj bitova je varijabilan.
+
+Za Arduino UNO, do 4 bita a za MKR1010 do 8 bita.
+Sinusi, kosinusi, fazne rampe i bitovi za redoslijed se izračunavaju unaprijed.
+
+Algoritam je usklađen sa FFTW bibliotekom (daje jednake rezultate).
+Ugrađena testna funkcija za 16 uzoraka (4 bita).
+Testira se sve:
+DCT, IDCT, DST, IDST, DFT, IDFT
+Ugrađen primjer koji uzima uzorke sa analognih pinova.
+
+Ovaj primjer je posebno dizajniran za serial plot.
+
+*  Posebno prilagodjeno Arduino Nano 33 BLE Sense
+*  Uzima signal sa mikrofona, i obavlja diskretne Fourierove transformacije (realno u kompleksno)
+*  Prikazuje realni ulaz (signal sa mikrofona), te realni i imaginarni dio kompleksnog izlaza
+*  u Serial plotteru
+*  Uz to mjeri i vrijeme obavljanja transformacija (oko 1 ms za BLE Sense s ARM Cortex M4F jezgrama)
+*  DFT nisu posebno optimizirane za realno->kompleksno racunanje zbog jednostavnosti programa
+*  Jezgru programa cini DFT kompleksno->kompleksno uz dodane DCT i DFT u oba smjera (IDCT i IDST)
+

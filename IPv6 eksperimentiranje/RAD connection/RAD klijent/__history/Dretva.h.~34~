@@ -1,0 +1,31 @@
+//---------------------------------------------------------------------------
+
+#ifndef DretvaH
+#define DretvaH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.StdCtrls.hpp>
+USEFORM("Klijent.cpp", Form2);
+
+//---------------------------------------------------------------------------
+class Dretva : public TThread
+{
+private:
+	volatile long dStop;
+	SOCKET server;
+	TForm2 *form;
+	TMemo *memo;
+	int recvbufferlen;
+	wchar_t *ispis;
+	char *recvbuffer;
+	wchar_t *primljeno;
+	void __fastcall Ispisi();
+public:
+	__fastcall Dretva(TForm2* f, SOCKET s);
+	__fastcall ~Dretva();
+	void __fastcall Dretva::Execute();
+	void __fastcall Dretva::Stop();
+
+};
+//---------------------------------------------------------------------------
+#endif

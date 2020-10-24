@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1480778545 source:c:\foi\zavrsni_razvoj\ipv6 eksperimentiranje\udp\klijent\klijentudp\klijentudp.cpp
+	<iostream>
+	<winsock2.h>
+	<windows.h>
+	<ws2tcpip.h>
+	<Mstcpip.h>
+	<thread>
+

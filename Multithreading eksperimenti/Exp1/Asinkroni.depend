@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1474469995 source:c:\foi\zavrsni_razvoj\multithreading eksperimenti\osnovni\exp1\main.cpp
+	<iostream>
+	<chrono>
+	<thread>
+	<future>
+
+1474471028 source:c:\foi\zavrsni_razvoj\multithreading eksperimenti\osnovni\exp1\klasa_sa_operatorom_funkcije.cpp
+	<iostream>
+	<chrono>
+	<thread>
+	<future>
+

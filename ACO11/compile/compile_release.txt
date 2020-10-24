@@ -1,0 +1,10 @@
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "ACO.cpp" -o obj/Release/ACO.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "checks.cpp" -o obj/Release/checks.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "Cars.cpp" -o obj/Release/Cars.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "Passengers.cpp" -o obj/Release/Passengers.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "display.cpp" -o obj/Release/display.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "init.cpp" -o obj/Release/init.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "main.cpp" -o obj/Release/main.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "parser.cpp" -o obj/Release/parser.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "probabilities.cpp" -o obj/Release/probabilities.o
+g++  -o bin/Release/ACO11 obj/Release/ACO.o obj/Release/checks.o obj/Release/Cars.o obj/Release/Passengers.o obj/Release/display.o obj/Release/init.o obj/Release/main.o obj/Release/parser.o obj/Release/probabilities.o  -m64 -s 

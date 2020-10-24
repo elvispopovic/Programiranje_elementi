@@ -1,0 +1,4 @@
+Projekt je prilagodjen Code::Blocks razvojnom okruženju i nadograđen iz osnovnog nacrta za izradu DLL-a.
+Code::Blocks projekt koristi MinGW-w64 SEH kompiler, ali nije uvjet.
+
+Projekt je podijeljen na Klijent dio koji učitava dll i dinamički dio koji kreira dll. Dijele isto zaglavlje (header).

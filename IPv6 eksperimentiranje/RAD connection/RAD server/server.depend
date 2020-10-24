@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1478356430 source:c:\foi\zavrsni_razvoj\ipv6 eksperimentiranje\server\main.cpp
+	<iostream>
+	<winsock2.h>
+	<windows.h>
+	<ws2tcpip.h>
+	<Mstcpip.h>
+	<thread>
+
+1478457940 source:c:\foi\zavrsni_razvoj\ipv6 eksperimentiranje\rad server\main.cpp
+	<iostream>
+	<winsock2.h>
+	<windows.h>
+	<ws2tcpip.h>
+	<Mstcpip.h>
+	<thread>
+	"podaci.h"
+
+1478374521 c:\foi\zavrsni_razvoj\ipv6 eksperimentiranje\rad server\podaci.h
+

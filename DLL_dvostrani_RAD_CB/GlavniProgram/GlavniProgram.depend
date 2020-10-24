@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1478933806 source:c:\foi\rad builder\dll_dvostrani\glavniprogram\main.cpp
+	<iostream>
+	<windows.h>
+	"DLL.h"
+
+1478891325 c:\foi\rad builder\dll_dvostrani\glavniprogram\main.h
+
+1478933806 c:\foi\rad builder\dll_dvostrani\glavniprogram\dll.h
+

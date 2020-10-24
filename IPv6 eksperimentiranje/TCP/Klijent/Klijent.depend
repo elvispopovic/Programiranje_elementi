@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1478128438 source:c:\foi\zavrsni_razvoj\ipv6 eksperimentiranje\klijent\main.cpp
+	<iostream>
+	<winsock2.h>
+	<windows.h>
+	<ws2tcpip.h>
+	<Mstcpip.h>
+	<thread>
+
+1478357153 source:c:\foi\zavrsni_razvoj\ipv6 eksperimentiranje\tcp\klijent\main.cpp
+	<iostream>
+	<winsock2.h>
+	<windows.h>
+	<ws2tcpip.h>
+	<Mstcpip.h>
+	<thread>
+

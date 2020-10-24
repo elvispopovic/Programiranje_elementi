@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1578071561 source:d:\programiranje\dll i cvorovi\klijent\main.cpp
+	<iostream>
+	"Dinamicka.h"
+
+1514140574 d:\programiranje\dll i cvorovi\dinamicka\main.h
+	<windows.h>
+
+1577749192 d:\programiranje\dll i cvorovi\dinamicka\dinamicka.h
+	<windows.h>
+

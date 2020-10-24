@@ -1,0 +1,11 @@
+object GUI_form: TGUI_form
+  Left = 0
+  Top = 0
+  Caption = 'GUI forma'
+  ClientHeight = 480
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+end

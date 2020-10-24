@@ -1,0 +1,11 @@
+Program od Arduino UNO do MKR1010 WiFi i drugih 32 bitnih.
+
+Upravlja diodama preko shift registara (konkretno, u ovom slučaju 16 dioda, dva 74HC595 ulančana shift registra, i tranzistori kao sklopke).
+
+Razni efekti poput trčećeg svjetla, policijskih/hitna pomoć bljeskalica, fibonaccijevog niza, zavjesa, prolazaka, posvjetljavanja i zatamnjivanja...
+Ugrađen i stog ali se ne koristi.
+
+Finalne funkcije scenacija su u polju i pristupa im se preko funkcijskih pokazivača (kazala, pointera). Moguć slučajni odabir.
+
+
+

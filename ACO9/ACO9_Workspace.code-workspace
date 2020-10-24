@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "/home/epc/Programiranje/Istrazivacki/ACO/ACO9"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"cmath": "cpp",
+			"iostream": "cpp"
+		}
+	}
+}

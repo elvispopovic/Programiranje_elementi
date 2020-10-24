@@ -1,0 +1,177 @@
+Init...
+FeroQ: 82900
+Init done.
+Iteration: 1
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V2, 767.405, C0, 0, 215, 215, 0)
+; 
+(V3, 2894.33, C0, 1, 57, 57, 0)
+; 
+(V1, 2660.92, C0, 7, 62, 12.4, 0)
+P5->V0, P8->V0, P7->V0, P2->V0, ; 
+(V0, 2796.22, C1, 2, 59, 59, 58)
+; 
+(V2,-)
+Cars (name, pheromone, passengers): 
+(C0, 165.069, 0/5), (C1, 165.069, 0/4), 
+Passengers (name, tau):
+P5, 0.1, P8, 0.1, P7, 0.1, P2, 0.1, 
+>>> Cost: 401.4 (451 without passengers)
+==============
+Iteration: 101
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V3, 73832.4, C0, 1, 57, 57, 0)
+P0->V2, P1->V2, ; 
+(V1, 85741.5, C0, 7, 62, 10.3333, 0)
+P6->V2, P5->V0, P8->V0, P7->V0, P2->V0, ; 
+(V0, 90101.4, C1, 2, 59, 14.75, 92)
+P6->V2, P0->V2, P1->V2, P2->V0, ; 
+(V2, 81307.3, C1, 0, 53, 53, 0)
+; 
+(V3,-)
+Cars (name, pheromone, passengers): 
+(C0, 5316.01, 0/5), (C1, 5316.01, 0/4), 
+Passengers (name, tau):
+P6, 2.61447, P5, 0.1, P8, 0.1, P7, 0.1, P2, 0.1, P0, 0.1, P1, 0.1, 
+>>> Cost: 227.083 (323 without passengers)
+==============
+Iteration: 201
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V3, 99289.6, C0, 1, 57, 57, 0)
+P0->V2, P1->V2, ; 
+(V1, 116152, C0, 7, 62, 10.3333, 0)
+P6->V2, P5->V0, P8->V0, P7->V0, P2->V0, ; 
+(V0, 122058, C1, 2, 59, 14.75, 92)
+P6->V2, P0->V2, P1->V2, P2->V0, ; 
+(V2, 107054, C1, 0, 53, 53, 0)
+; 
+(V3,-)
+Cars (name, pheromone, passengers): 
+(C0, 7201.42, 0/5), (C1, 7201.42, 0/4), 
+Passengers (name, tau):
+P6, 0.1, P5, 0.1, P8, 0.1, P7, 0.1, P2, 0.1, P0, 0.1, P1, 0.1, 
+>>> Cost: 227.083 (323 without passengers)
+==============
+Iteration: 301
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V3, 109975, C0, 1, 57, 57, 0)
+P0->V2, P1->V2, ; 
+(V1, 127283, C0, 7, 62, 10.3333, 0)
+P6->V2, P5->V0, P8->V0, P7->V0, P2->V0, ; 
+(V0, 133755, C1, 2, 59, 14.75, 92)
+P6->V2, P0->V2, P1->V2, P2->V0, ; 
+(V2, 117485, C1, 0, 53, 53, 0)
+; 
+(V3,-)
+Cars (name, pheromone, passengers): 
+(C0, 7891.54, 0/5), (C1, 7891.54, 0/4), 
+Passengers (name, tau):
+P6, 2.61447, P5, 0.1, P8, 0.1, P7, 0.1, P2, 0.1, P0, 0.1, P1, 0.1, 
+>>> Cost: 227.083 (323 without passengers)
+==============
+Iteration: 401
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V3, 116080, C0, 1, 57, 57, 0)
+P0->V2, P1->V2, ; 
+(V1, 131357, C0, 7, 62, 10.3333, 0)
+P6->V2, P5->V0, P8->V0, P7->V0, P2->V0, ; 
+(V0, 136490, C1, 2, 59, 14.75, 92)
+P6->V2, P0->V2, P1->V2, P2->V0, ; 
+(V2, 124863, C1, 0, 53, 53, 0)
+; 
+(V3,-)
+Cars (name, pheromone, passengers): 
+(C0, 8144.14, 0/5), (C1, 8144.14, 0/4), 
+Passengers (name, tau):
+P6, 2.61447, P5, 0.1, P8, 0.1, P7, 0.1, P2, 0.1, P0, 0.1, P1, 0.1, 
+>>> Cost: 227.083 (323 without passengers)
+==============
+Iteration: 501
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V3, 113524, C0, 1, 57, 57, 0)
+P0->V2, P1->V2, ; 
+(V1, 132848, C0, 7, 62, 10.3333, 0)
+P6->V2, P5->V0, P8->V0, P7->V0, P2->V0, ; 
+(V0, 138550, C1, 2, 59, 14.75, 92)
+P6->V2, P0->V2, P1->V2, P2->V0, ; 
+(V2, 127779, C1, 0, 53, 53, 0)
+; 
+(V3,-)
+Cars (name, pheromone, passengers): 
+(C0, 8236.62, 0/5), (C1, 8236.62, 0/4), 
+Passengers (name, tau):
+P6, 2.61447, P5, 0.1, P8, 0.1, P7, 0.1, P2, 0.1, P0, 0.1, P1, 0.1, 
+>>> Cost: 227.083 (323 without passengers)
+==============
+Iteration: 601
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V3, 110430, C0, 1, 57, 57, 0)
+P0->V2, P1->V2, ; 
+(V1, 133394, C0, 7, 62, 10.3333, 0)
+P6->V2, P5->V0, P8->V0, P7->V0, P2->V0, ; 
+(V0, 139140, C1, 2, 59, 14.75, 92)
+P6->V2, P0->V2, P1->V2, P2->V0, ; 
+(V2, 125481, C1, 0, 53, 53, 0)
+; 
+(V3,-)
+Cars (name, pheromone, passengers): 
+(C0, 8270.47, 0/5), (C1, 8270.47, 0/4), 
+Passengers (name, tau):
+P6, 2.61447, P5, 0.1, P8, 0.1, P7, 0.1, P2, 0.1, P0, 0.1, P1, 0.1, 
+>>> Cost: 227.083 (323 without passengers)
+==============
+Iteration: 701
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V3, 109446, C0, 1, 57, 57, 0)
+P0->V2, P1->V2, ; 
+(V1, 133594, C0, 7, 62, 10.3333, 0)
+P6->V2, P5->V0, P8->V0, P7->V0, P2->V0, ; 
+(V0, 138266, C1, 2, 59, 14.75, 92)
+P6->V2, P0->V2, P1->V2, P2->V0, ; 
+(V2, 129200, C1, 0, 53, 53, 0)
+; 
+(V3,-)
+Cars (name, pheromone, passengers): 
+(C0, 8282.87, 0/5), (C1, 8282.87, 0/4), 
+Passengers (name, tau):
+P6, 2.61447, P5, 0.1, P8, 0.1, P7, 0.1, P2, 0.1, P0, 0.1, P1, 0.1, 
+>>> Cost: 227.083 (323 without passengers)
+==============
+Iteration: 801
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V3, 115550, C0, 1, 57, 57, 0)
+P0->V2, P1->V2, ; 
+(V1, 133667, C0, 7, 62, 10.3333, 0)
+P6->V2, P5->V0, P8->V0, P7->V0, P2->V0, ; 
+(V0, 138914, C1, 2, 59, 14.75, 92)
+P6->V2, P0->V2, P1->V2, P2->V0, ; 
+(V2, 129245, C1, 0, 53, 53, 0)
+; 
+(V3,-)
+Cars (name, pheromone, passengers): 
+(C0, 8287.42, 0/5), (C1, 8287.42, 0/4), 
+Passengers (name, tau):
+P6, 49.3991, P5, 0.1, P8, 0.1, P7, 0.1, P2, 0.1, P0, 0.1, P1, 0.1, 
+>>> Cost: 227.083 (323 without passengers)
+==============
+Iteration: 901
+Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): 
+(V3, 121954, C0, 1, 57, 57, 0)
+P0->V2, P1->V2, ; 
+(V1, 133694, C0, 7, 62, 10.3333, 0)
+P6->V2, P5->V0, P8->V0, P7->V0, P2->V0, ; 
+(V0, 139925, C1, 2, 59, 14.75, 92)
+P6->V2, P0->V2, P1->V2, P2->V0, ; 
+(V2, 127185, C1, 0, 53, 53, 0)
+; 
+(V3,-)
+Cars (name, pheromone, passengers): 
+(C0, 8289.08, 0/5), (C1, 8289.08, 0/4), 
+Passengers (name, tau):
+P6, 0.1, P5, 0.1, P8, 0.1, P7, 0.1, P2, 0.1, P0, 0.1, P1, 0.1, 
+>>> Cost: 227.083 (323 without passengers)
+==============
+Cleanup...
+Cleanup done.
+Free data...
+Data freeing done.
