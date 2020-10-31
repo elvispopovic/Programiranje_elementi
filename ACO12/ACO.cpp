@@ -356,7 +356,7 @@ void UpdatePheromoneTrails()
 
         /* update node car picks pheromone */
         ptNode = &nodes[ptTourArc->a->row];
-        if(ptTourArc->c != ptCar)
+        if(ptTourArc->c != ptCar) // changed car
         {
             ptCar = ptTourArc->c;
             ptFloat = &(ptNode->tau_cars[ptCar->n]);
@@ -368,8 +368,31 @@ void UpdatePheromoneTrails()
             else if(*ptFloat < tau_min)
                 (*ptFloat) = tau_min;
             */
+            
         }
     }
+    /* for each 100 iteration update pheromone for global best tour */
+    if((ptBestAnt->t.iteration % 100)==99)
+        for(ptTourArc = globalBestCostTour.arcs, ptCar=nullptr; ptTourArc->a != nullptr; ptTourArc++)
+        {
+            ptTourArc->a->tau += fc; //pheromone deposit
+            ptNode = &nodes[ptTourArc->a->row];
+            if(ptTourArc->c != ptCar)
+            {
+                ptCar = ptTourArc->c;
+                ptFloat = &(ptNode->tau_cars[ptCar->n]);
+                (*ptFloat) += fc;
+
+                /*
+                if(*ptFloat > tau_max)
+                    (*ptFloat) = tau_max;
+                else if(*ptFloat < tau_min)
+                    (*ptFloat) = tau_min;
+                */
+                
+            }
+        }
+
     /* cars on tour */
     for(pptCar=ptBestAnt->t.carList; *pptCar != nullptr; pptCar++)
     {
