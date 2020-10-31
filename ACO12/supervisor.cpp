@@ -2,7 +2,7 @@
 
 using namespace std;
 
-char bestHeader[][8]={"Iter","Rbacks","Cost","CostN/P","Best","BestN/P","Min","Max","Ncar","Npas"};
+char bestHeader[][8]={"Iter","Rbacks","Cost","CostN/P","Best","BestN/P","Min","Max","fc","Ncar","Npas"};
 char antHeader[][8]={"Iter","Ant", "Rbacks", "TauMin", "TauMax", "Cost", "CostN/P", "Best", "BestN/P", "Nnodes", "Ncar","Npass", "Best"};
 char arcHeader[][8]={"Iter","Row", "Column","SrcNode", "DstNode", "PhMin", "PhMax", "Phero"};
 char carHeader[][9]={"Iter","Car","RentNode","Phero"};
@@ -81,6 +81,7 @@ void writeBestData()
             (globalBestCostTour.cost) << " " << (globalBestCostTour.costNoPass) << " " <<
             (localBestCostTour.tauMin) << " " <<
             (localBestCostTour.tauMax) << " " <<
+            (localBestCostTour.fc) << " " <<
             i << " " << j << endl;
 }
 

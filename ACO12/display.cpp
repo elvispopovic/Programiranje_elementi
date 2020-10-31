@@ -95,10 +95,6 @@ void displayBestTour(tour* ptTour)
     for(i=0, pptPass=ptTour->passList; i<prData.nPass && *pptPass!=nullptr; i++, pptPass++)
         cout << (*pptPass)->name << ", " << (*pptPass)->tau << ", ";
     cout << endl;
-    cout << "Choices list:" << endl;
-    for(i=0, ptFloat=ptTour->choiceProbList; i<prData.dim; i++, ptFloat++)
-        cout << (*ptFloat) << ", ";
-    cout << endl;
     cout << ">>> Cost: " << ptTour->cost << ", (" << ptTour->costNoPass << " without passengers)" << ", ";
     calculateCostsFromTour(ptTour, wcost, ccost); //check
     cout << "check - written: " << wcost << ", calculated: " << ccost << (wcost == ccost? " O.K.":" ERR") << endl;

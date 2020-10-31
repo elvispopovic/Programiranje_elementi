@@ -51,7 +51,7 @@ uint CalculateCarProbabilities(car* currentCar, node* currentNode, uint remainNo
         * eta = (1/sum(max_row_cost+max_return_fee) * remain_nodes/number_of_nodes) * (car_passenger_limit/max_passenger_limit)
         */
         eta = ptCar->invCostSum * remainToDim * (float)(prData.carPassLimit[ptCar->n])* invMaxCarPassLimit;
-        tau = ptCar->tau * currentNode->tau_cars[ptCar->n];
+        tau = /*ptCar->tau * */ currentNode->tau_cars[ptCar->n];
         ptProb->p = pow(tau, ALPHA)* //pheromone part
                     pow(eta , BETA ); //heuristic part     
         if(ptCar == currentCar)

@@ -43,6 +43,7 @@ bool Solution(uint iter)
     uint counter;
     uniform_int_distribution<int> distribution(0,prData.dim-1);
     startNode = distribution(*mersenneGenerator);
+    //startNode = 0;
     
     for(k=0, ptAnt = ants; k<N_ANTS; k++, ptAnt++)
     {
@@ -195,6 +196,7 @@ void updateBestCostTour(ant* ptAnt, tour* ptTour)
     ptTour->iteration = ptAnt->t.iteration;
     ptTour->tauMax = ptAnt->t.tauMax;
     ptTour->tauMin = ptAnt->t.tauMin;
+    ptTour->fc = ptAnt->t.fc;
     ptTour->rollbacks = ptAnt->t.rollbacks;
 
     /* update arc and car list in best tour arcs */
@@ -271,10 +273,12 @@ void updateAllTrails()
     /* all cars */
     for(j=0, ptCar = cars; j<prData.nCars; j++, ptCar++)
     {
+        /*
         if(ptCar->tau > tau_max) 
             ptCar->tau = tau_max;
         else if(ptCar->tau < tau_min) 
             ptCar->tau = tau_min;
+        */
     }
 }
 
@@ -337,12 +341,14 @@ void UpdatePheromoneTrails()
     /* best ant's min and max */
     ptBestAnt->t.tauMin = tau_min;
     ptBestAnt->t.tauMax = tau_max;
+    ptBestAnt->t.fc = fc;
 
     /* now, update pheromones on best ant tour */
     /* arcs on tour */
     for(ptTourArc=ptBestAnt->t.arcs, ptCar=nullptr; ptTourArc->a != nullptr; ptTourArc++)
     {
         ptTourArc->a->tau += fc; //pheromone deposit
+
         if(ptTourArc->a->tau > tau_max)
             ptTourArc->a->tau = tau_max;
         else if(ptTourArc->a->tau < tau_min)
@@ -355,10 +361,13 @@ void UpdatePheromoneTrails()
             ptCar = ptTourArc->c;
             ptFloat = &(ptNode->tau_cars[ptCar->n]);
             (*ptFloat) += fc;
+
+            /*
             if(*ptFloat > tau_max)
                 (*ptFloat) = tau_max;
             else if(*ptFloat < tau_min)
                 (*ptFloat) = tau_min;
+            */
         }
     }
     /* cars on tour */

@@ -11,12 +11,12 @@
 
 #define TAU_0 10.0 //initial pheromone trail, set to big enough
 #define RHO 0.1 //pheromone evaporation
-#define ALPHA 0.5 //pheromone exponent >= 0
-#define BETA 2.0 //heuristic exponent >= 1
-#define N_ANTS 1000
-#define N_ITER 1000
+#define ALPHA 3 //pheromone exponent >= 0
+#define BETA 1 //heuristic exponent >= 1
+#define N_ANTS 50
+#define N_ITER 10000
 #define PASS_ITER 32
-#define CAR_PERSIST 3 //current car probability factor
+#define CAR_PERSIST 4 //current car probability factor
 
 
 typedef unsigned int uint;
@@ -153,6 +153,7 @@ struct tour
     uint iteration;
     float tauMin;
     float tauMax;
+    float fc;
     uint ant;
 };
 
