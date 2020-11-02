@@ -35,11 +35,12 @@ int main(int argc, char* argv[])
         Solution(i); //solution, starting from arbitrary node
         UpdatePheromoneTrails();
         /* supervisor */
-        
+        /*
         writeAntsData();
         writeArcsData(i);
         writeCarsData(i);
         writePassData(i);
+        */
         writeBestData();
         //if(i%2 == 1)
         {

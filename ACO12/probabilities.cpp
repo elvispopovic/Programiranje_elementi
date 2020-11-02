@@ -35,7 +35,7 @@ uint CalculateArcProbabilities(arc* arcs, car* currentCar)
 }
 
 /* creates probability distribution for cars in node and store it in carProbArray (global array) */
-uint CalculateCarProbabilities(car* currentCar, node* currentNode, uint remainNodes)
+uint CalculateCarProbabilities(car* currentCar, node* currentNode, uint remainNodes, uchar carPersist)
 {
     register uint i;
     uint counter;
@@ -55,7 +55,7 @@ uint CalculateCarProbabilities(car* currentCar, node* currentNode, uint remainNo
         ptProb->p = pow(tau, ALPHA)* //pheromone part
                     pow(eta , BETA ); //heuristic part     
         if(ptCar == currentCar)
-            ptProb->p = ptProb->p * CAR_PERSIST;
+            ptProb->p = ptProb->p * carPersist; // force current car
         ptProb->c = ptCar;
         ptProb++;
         counter++;

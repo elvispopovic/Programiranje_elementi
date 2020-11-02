@@ -134,11 +134,12 @@ uint nodeTraversal(ant* currentAnt, uint startNode, float& arcCost, float& carCo
     antCars = currentAnt->t.carList;
     antChoices = currentAnt->t.choiceProbList;
     arcCost = carCost = 0.0;
+    uniform_int_distribution<int> distributionCar(1, prData.nCars-1);
     while(1) //graph traversal
     {
         antTour->a = nullptr; //ant tour end
         antTour->c = nullptr; //ant tour end
-        n1 = CalculateCarProbabilities(currentCar, &nodes[currentNodeIndex], remainNodes);
+        n1 = CalculateCarProbabilities(currentCar, &nodes[currentNodeIndex], remainNodes, distributionCar(*mersenneGenerator));
         if(n1 == 0) //no cars
             break;
         carSelected = CarSelect(n1);
@@ -246,7 +247,7 @@ void updateAllTrails()
 {
     node *ptNode;
     arc **pptArc, *ptArc;
-    car *ptCar;
+
     float *ptFloat;
     uint i, j;
 
@@ -271,15 +272,15 @@ void updateAllTrails()
         }
         
     /* all cars */
+    /*
     for(j=0, ptCar = cars; j<prData.nCars; j++, ptCar++)
     {
-        /*
         if(ptCar->tau > tau_max) 
             ptCar->tau = tau_max;
         else if(ptCar->tau < tau_min) 
             ptCar->tau = tau_min;
-        */
     }
+    */
 }
 
 /* pheromone evaporation for arcs and cars */
@@ -288,15 +289,16 @@ void PheromoneEvaporation()
     register uint i, j;
     node *ptNode;
     arc **pptArc, *ptArc;
-    car *ptCar;
     float *ptFloat;
     /* arc select */
     for(j=0, pptArc=arcs; j<prData.dim; j++, pptArc++)
         for(i=0, ptArc=*pptArc; i<prData.dim; i++, ptArc++)
             ptArc->tau = (1.0-RHO) * (ptArc->tau);
     /* car select */
+    /*
     for(j=0, ptCar=cars; j<prData.nCars; j++, ptCar++)
         ptCar->tau = (1.0-RHO) * (ptCar->tau);
+    */
     /* car in particular node select */
     for(j=0, ptNode = nodes; j < prData.dim; j++, ptNode++)
         for(i=0, ptFloat=ptNode->tau_cars; i<prData.nCars; i++, ptFloat++)
@@ -345,10 +347,9 @@ void UpdatePheromoneTrails()
 
     /* now, update pheromones on best ant tour */
     /* arcs on tour */
-    for(ptTourArc=ptBestAnt->t.arcs, ptCar=nullptr; ptTourArc->a != nullptr; ptTourArc++)
+    for(ptTourArc=ptBestAnt->t.arcs, ptCar=nullptr, ptFloat = nullptr; ptTourArc->a != nullptr; ptTourArc++)
     {
         ptTourArc->a->tau += fc; //pheromone deposit
-
         if(ptTourArc->a->tau > tau_max)
             ptTourArc->a->tau = tau_max;
         else if(ptTourArc->a->tau < tau_min)
@@ -359,21 +360,20 @@ void UpdatePheromoneTrails()
         if(ptTourArc->c != ptCar) // changed car
         {
             ptCar = ptTourArc->c;
-            ptFloat = &(ptNode->tau_cars[ptCar->n]);
+            ptFloat = &(ptNode->tau_cars[ptCar->n]);          
+        }
+        if(ptFloat != nullptr)
+        {
             (*ptFloat) += fc;
-
-            /*
             if(*ptFloat > tau_max)
                 (*ptFloat) = tau_max;
             else if(*ptFloat < tau_min)
-                (*ptFloat) = tau_min;
-            */
-            
-        }
+                (*ptFloat) = tau_min; 
+        } 
     }
     /* for each 100 iteration update pheromone for global best tour */
-    if((ptBestAnt->t.iteration % 100)==99)
-        for(ptTourArc = globalBestCostTour.arcs, ptCar=nullptr; ptTourArc->a != nullptr; ptTourArc++)
+    if((ptBestAnt->t.iteration % GLOB_BEST_PHERO_UPDATE) == (GLOB_BEST_PHERO_UPDATE-1))
+        for(ptTourArc = globalBestCostTour.arcs, ptCar=nullptr, ptFloat = nullptr; ptTourArc->a != nullptr; ptTourArc++)
         {
             ptTourArc->a->tau += fc; //pheromone deposit
             ptNode = &nodes[ptTourArc->a->row];
@@ -381,15 +381,14 @@ void UpdatePheromoneTrails()
             {
                 ptCar = ptTourArc->c;
                 ptFloat = &(ptNode->tau_cars[ptCar->n]);
+            }
+            if(ptFloat != nullptr)
+            {
                 (*ptFloat) += fc;
-
-                /*
                 if(*ptFloat > tau_max)
                     (*ptFloat) = tau_max;
                 else if(*ptFloat < tau_min)
                     (*ptFloat) = tau_min;
-                */
-                
             }
         }
 

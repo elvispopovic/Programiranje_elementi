@@ -11,12 +11,12 @@
 
 #define TAU_0 10.0 //initial pheromone trail, set to big enough
 #define RHO 0.1 //pheromone evaporation
-#define ALPHA 3 //pheromone exponent >= 0
+#define ALPHA 4 //pheromone exponent >= 0
 #define BETA 1 //heuristic exponent >= 1
-#define N_ANTS 50
-#define N_ITER 10000
+#define N_ANTS 1000
+#define N_ITER 5000
 #define PASS_ITER 32
-#define CAR_PERSIST 4 //current car probability factor
+#define GLOB_BEST_PHERO_UPDATE 20 //update pheromones from global best at this number of iterations
 
 
 typedef unsigned int uint;
@@ -228,7 +228,7 @@ void UpdatePheromoneTrails();
 
 /* probabilities for nodes, cars, passengers */
 uint selectFromFreqArray(float sum, uint n);
-uint CalculateCarProbabilities(car* currentCar, node* currentNode, uint remainNodes);
+uint CalculateCarProbabilities(car* currentCar, node* currentNode, uint remainNodes, uchar carPersist);
 uint CalculateArcProbabilities(arc* arcs, car* currentCar);
 
 /* selecting arcs, cars, passengers */
