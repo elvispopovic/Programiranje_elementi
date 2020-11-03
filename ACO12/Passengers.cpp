@@ -232,11 +232,24 @@ tourArc* rollbackToBasePoint(ant *currentAnt, uchar &nPickedPassengers, float& c
 bool solvePassengers(ant *currentAnt, float& cost)
 {
     tourArc *ptTourArc;
+    car *ptCurrentCar;
     pass *ptPass, **pptPass;
     node *ptNode;
     uint i, j, radius;
     ushort k;
     bool result;
+
+    /* there is no passengers at all */
+    if(prData.nPass == 0)
+    {
+        for(ptTourArc = currentAnt->t.arcs, cost =0.0; ptTourArc->a!=nullptr; ptTourArc++)
+        {
+            ptCurrentCar = ptTourArc->c;
+            ptTourArc->cost = prData.edgeWeightMatrices[ptCurrentCar->n][ptTourArc->a->row][ptTourArc->a->column];
+            cost += ptTourArc->cost;
+        }
+        return true;
+    }
     
     /* reset passengers' current budget and pheromone */
     for(j=0, ptNode = nodes; j<prData.dim; j++, ptNode++)

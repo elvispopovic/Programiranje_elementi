@@ -14,9 +14,9 @@
 #define ALPHA 4 //pheromone exponent >= 0
 #define BETA 1 //heuristic exponent >= 1
 #define N_ANTS 1000
-#define N_ITER 5000
+#define N_ITER 1000
 #define PASS_ITER 32
-#define GLOB_BEST_PHERO_UPDATE 20 //update pheromones from global best at this number of iterations
+#define GLOB_BEST_PHERO_UPDATE 50 //update pheromones from global best at this number of iterations
 
 
 typedef unsigned int uint;

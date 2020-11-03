@@ -42,8 +42,8 @@ bool Solution(uint iter)
     float carCost, arcCost, passCost;
     uint counter;
     uniform_int_distribution<int> distribution(0,prData.dim-1);
-    startNode = distribution(*mersenneGenerator);
-    //startNode = 0;
+    //startNode = distribution(*mersenneGenerator);
+    startNode = 0;
     
     for(k=0, ptAnt = ants; k<N_ANTS; k++, ptAnt++)
     {
