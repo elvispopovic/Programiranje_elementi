@@ -25,7 +25,7 @@ uint CalculateArcProbabilities(arc* arcs, car* currentCar)
         {
             // eta = 1/d_i,j
             eta = 1.0/prData.edgeWeightMatrices[currentCar->n][ptArc->row][ptArc->column];
-            ptArcProb->p = pow(ptArc->tau, ALPHA) * pow(eta, BETA);
+            ptArcProb->p = pow(ptArc->tau[currentCar->n], ALPHA) * pow(eta, BETA);
             ptArcProb->a = ptArc;
             ptArcProb++;
             counter++;

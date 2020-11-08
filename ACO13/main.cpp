@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
         writeCarsData(i);
         writePassData(i);
         */
-        //writeBestData();
+        writeBestData();
         //if(i%2 == 1)
         {
             displayBestTour(&localBestCostTour);

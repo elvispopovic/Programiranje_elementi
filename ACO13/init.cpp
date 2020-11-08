@@ -80,7 +80,7 @@ void Cleanup()
 {
     uint i, j;
     tourArc* ptTourArc;
-    arc** pptArc;
+    arc **pptArc, *ptArc;;
     node* ptNode;
     ant* ptAnt;
     cout << "Cleanup..." << endl;
@@ -92,8 +92,13 @@ void Cleanup()
     /* arcs */
     if(arcs != nullptr)
     {
-        for(i=0, pptArc=arcs; i<prData.dim; i++, pptArc++)
+        for(j=0, pptArc=arcs; j<prData.dim; j++, pptArc++)
+        {
+            ptArc = *pptArc;
+            for(i=0, ptArc=*pptArc; i<prData.dim; i++, ptArc++)
+                delete[] ptArc->tau;
             delete[] *pptArc;
+        }
         delete[] arcs;
     }
 
@@ -238,21 +243,25 @@ void setCars()
 
 void setArcs()
 {
-    uint i, j;
+    uint i, j, k;
     arc** pptArc;
     arc* ptArc;
+    float* ptFloat;
     arcs = new arc*[prData.dim];
-    for(j=0, pptArc=arcs; j<prData.dim; j++, pptArc++)
+    for(k=0, pptArc=arcs; k<prData.dim; k++, pptArc++)
     {
         ptArc = *pptArc = new arc[prData.dim];
-        for(i=0; i<prData.dim; i++, ptArc++)
+        for(j=0; j<prData.dim; j++, ptArc++)
         {
-            ptArc->row = j;
-            ptArc->column = i;
-            if(i!=j)
-                ptArc->tau = TAU_0;
+            ptArc->row = k;
+            ptArc->column = j;
+            ptArc->tau = new float[prData.nCars];
+            if(j!=k)
+                for(i=0, ptFloat=ptArc->tau; i<prData.nCars; i++, ptFloat++)
+                    *ptFloat = TAU_0;
             else
-                ptArc->tau = 0.0;
+                for(i=0, ptFloat=ptArc->tau; i<prData.nCars; i++, ptFloat++)
+                    *ptFloat = 0.0;
         }
     }
 }

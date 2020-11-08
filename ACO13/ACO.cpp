@@ -44,7 +44,6 @@ bool Solution(uint iter)
     uniform_int_distribution<int> distribution(0,prData.dim-1);
     //startNode = distribution(*mersenneGenerator);
     startNode = 0;
-    
     for(k=0, ptAnt = ants; k<N_ANTS; k++, ptAnt++)
     {
         counter = 0;
@@ -231,7 +230,7 @@ void updateAllTrails()
     arc **pptArc, *ptArc;
 
     float *ptFloat;
-    uint i, j;
+    uint i, j, k;
 
     /* all cars picked in nodes */
     for(j=0, ptNode = nodes; j < prData.dim; j++, ptNode++)
@@ -244,43 +243,29 @@ void updateAllTrails()
         }
 
     /* all arcs */
-    for(j=0, pptArc=arcs; j<prData.dim; j++, pptArc++)
-        for(i=0, ptArc=*pptArc; i<prData.dim; i++, ptArc++)
-        {
-            if(ptArc->tau > tau_max)
-                ptArc->tau = tau_max;
-            else if(ptArc->tau < tau_min)
-                ptArc->tau = tau_min;
-        }
-        
-    /* all cars */
-    /*
-    for(j=0, ptCar = cars; j<prData.nCars; j++, ptCar++)
-    {
-        if(ptCar->tau > tau_max) 
-            ptCar->tau = tau_max;
-        else if(ptCar->tau < tau_min) 
-            ptCar->tau = tau_min;
-    }
-    */
+    for(k=0, pptArc=arcs; k<prData.dim; k++, pptArc++)
+        for(j=0, ptArc=*pptArc; j<prData.dim; j++, ptArc++)
+            for(i=0, ptFloat=ptArc->tau; i<prData.nCars; i++, ptFloat++)
+            {
+                if(*ptFloat > tau_max)
+                    (*ptFloat) = tau_max;
+                else if(*ptFloat < tau_min)
+                    (*ptFloat) = tau_min;
+            }
 }
 
 /* pheromone evaporation for arcs and cars */
 void PheromoneEvaporation()
 {
-    register uint i, j;
+    register uint i, j, k;
     node *ptNode;
     arc **pptArc, *ptArc;
     float *ptFloat;
     /* arc select */
-    for(j=0, pptArc=arcs; j<prData.dim; j++, pptArc++)
-        for(i=0, ptArc=*pptArc; i<prData.dim; i++, ptArc++)
-            ptArc->tau = (1.0-RHO) * (ptArc->tau);
-    /* car select */
-    /*
-    for(j=0, ptCar=cars; j<prData.nCars; j++, ptCar++)
-        ptCar->tau = (1.0-RHO) * (ptCar->tau);
-    */
+    for(k=0, pptArc=arcs; k<prData.dim; k++, pptArc++)
+        for(j=0, ptArc=*pptArc; j<prData.dim; j++, ptArc++)
+            for(i=0, ptFloat=ptArc->tau; i<prData.nCars; i++, ptFloat++) //arcs in car planes
+                *ptFloat = (1.0-RHO) * (*ptFloat);
     /* car in particular node select */
     for(j=0, ptNode = nodes; j < prData.dim; j++, ptNode++)
         for(i=0, ptFloat=ptNode->tau_cars; i<prData.nCars; i++, ptFloat++)
@@ -291,8 +276,8 @@ void PheromoneEvaporation()
 
 void UpdatePheromoneTrails()
 {
-    register uint j;
-    float sum, fc, *ptFloat;
+    register uint i, j;
+    float sum, fc, *ptFloat, *ptFloat2;
     ant *ptAnt, *ptBestAnt;
     node *ptNode;
     tourArc* ptTourArc;
@@ -331,18 +316,12 @@ void UpdatePheromoneTrails()
     /* arcs on tour */
     for(ptTourArc=ptBestAnt->t.arcs, ptCar=nullptr, ptFloat = nullptr; ptTourArc->a != nullptr; ptTourArc++)
     {
-        ptTourArc->a->tau += fc; //pheromone deposit
-        if(ptTourArc->a->tau > tau_max)
-            ptTourArc->a->tau = tau_max;
-        else if(ptTourArc->a->tau < tau_min)
-            ptTourArc->a->tau = tau_min;
-
         /* update node car picks pheromone */
         ptNode = &nodes[ptTourArc->a->row];
-        if(ptTourArc->c != ptCar) // changed car
+        if(ptTourArc->c != ptCar) // changed car, need to update current car, and node car select
         {
             ptCar = ptTourArc->c;
-            ptFloat = &(ptNode->tau_cars[ptCar->n]);          
+            ptFloat = (ptNode->tau_cars)+ptCar->n;          
         }
         if(ptFloat != nullptr)
         {
@@ -352,12 +331,23 @@ void UpdatePheromoneTrails()
             else if(*ptFloat < tau_min)
                 (*ptFloat) = tau_min; 
         } 
+        /* update arc pheromone level on car plane */
+        if(ptCar!=nullptr)
+        {
+            ptFloat2 = ptTourArc->a->tau+ptCar->n;
+            *ptFloat2 += fc; //pheromone deposit
+            if(*ptFloat2 > tau_max)
+                *ptFloat2 = tau_max;
+            else if(*ptFloat2 < tau_min)
+                *ptFloat2 = tau_min;
+        }
     }
     /* for each 100 iteration update pheromone for global best tour */
     if((ptBestAnt->t.iteration % GLOB_BEST_PHERO_UPDATE) == (GLOB_BEST_PHERO_UPDATE-1))
         for(ptTourArc = globalBestCostTour.arcs, ptCar=nullptr, ptFloat = nullptr; ptTourArc->a != nullptr; ptTourArc++)
         {
-            ptTourArc->a->tau += fc; //pheromone deposit
+            for(i=0, ptFloat2=ptTourArc->a->tau; i<prData.nCars; i++, ptFloat2++)
+                *ptFloat2 += fc; //pheromone deposit
             ptNode = &nodes[ptTourArc->a->row];
             if(ptTourArc->c != ptCar)
             {
@@ -379,7 +369,7 @@ void UpdatePheromoneTrails()
     */
     if(ptBestAnt->t.cost < globalBestCostTour.cost ) 
     {
-        updateAllTrails();
+        updateAllTrails(); //TODO: mora li biti u zagradi?
         updateBestCostTour(ptBestAnt, &globalBestCostTour);
     }
     /* update local best tour also */

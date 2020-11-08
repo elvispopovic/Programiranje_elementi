@@ -11,11 +11,11 @@
 
 #define TAU_0 100.0 //initial pheromone trail, set to large enough
 #define RHO 0.1 //pheromone evaporation
-#define ALPHA 2 //pheromone exponent >= 0
+#define ALPHA 4 //pheromone exponent >= 0
 #define BETA 1 //heuristic exponent >= 1
-#define N_ANTS 2000
-#define N_ITER 1000
-#define PASS_ITER 32
+#define N_ANTS 1
+#define N_ITER 3
+#define PASS_ITER 16
 #define GLOB_BEST_PHERO_UPDATE 10 //update pheromones from global best at this number of iterations
 
 
@@ -63,7 +63,7 @@ struct arc
 {
     uint row;
     uint column;
-    float tau; //pheromone deposition
+    float* tau; //pheromone deposition array (for each car different)
 };
 
 /* car structure */

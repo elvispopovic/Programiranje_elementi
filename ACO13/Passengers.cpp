@@ -155,10 +155,6 @@ void setBasePoint(tourArc* ta, pass** passList, float currentCost, float& shorta
     rollBack.lastCost = currentCost;
     rollBack.counter = 0; //reset rollback counter
     shortage = 0;
-    #ifdef ACO_VERBOSE
-    cout << ">>> Zero passenger point at " << nodes[ta->a->row].name << ", shortage: " << shortage 
-                << ", cost: " << currentCost << endl;
-    #endif
 }
 
 tourArc* rollbackToBasePoint(ant *currentAnt, uchar &nPickedPassengers, float& cost, float& shortage)
@@ -330,12 +326,7 @@ bool nodeTraversal2(ant* currentAnt, float& cost)
         n = CalculatePassengerProbabilities(ptTourArc);
         
         if(nPickedPassengers>ptCurrentCar->carPassLimit) //replaced with too small car
-        {
-            #ifdef ACO_VERBOSE
-            cout << "!!! New car is too small for picked passengers." << endl;
-            #endif
             return false;
-        }
 
         /* pick passengers, gradually expell one by one trying to improve solution */
         if(rollBack.dontPick == false)

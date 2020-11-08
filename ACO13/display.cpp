@@ -55,9 +55,10 @@ void displayNodes()
 /* global or local best */
 void displayBestTour(tour* ptTour)
 {
-    uint i,j;
+    uint i,j,k;
     float wcost, ccost, *ptFloat;
     tourArc* ptTourArc;
+    arc **pptArc, *ptArc;
     car **pptCar, *ptCar;
     pass** pptPass; 
     if(ptTour->arcs->a == nullptr)
@@ -67,11 +68,12 @@ void displayBestTour(tour* ptTour)
     //cout << ", avg: " << ants[ptTour->ant].avg << ", nRtProb: " << ants[ptTour->ant].nRtProb;
     cout << ", tau_min: " << tau_min << ", tau_max: " << tau_max;
     cout << ", rollbacks: " << ptTour->rollbacks << endl;
-    cout << "Nodes (name, pheromone, car name, picks, arc cost, shared cost, car cost): " << endl;
+    cout << "Arcs (name, pheromone, car name, picks, arc cost, shared cost, car cost): " << endl;
     for(j=0, ptTourArc=ptTour->arcs; j<=prData.dim && ptTourArc->a!=nullptr; j++, ptTourArc++)
     {
-        cout << "(" << nodes[ptTourArc->a->row].name << ", " << ptTourArc->a->tau << ", " << ptTourArc->c->name << ", " << 
-        nodes[ptTourArc->a->row].nPass << ", " <<
+        cout << "(" << nodes[ptTourArc->a->row].name << "->" << nodes[ptTourArc->a->column].name << ", " << 
+        ptTourArc->a->tau[ptTourArc->c->n] << ", " <<
+        ptTourArc->c->name << ", " << nodes[ptTourArc->a->row].nPass << ", " <<
         prData.edgeWeightMatrices[ptTourArc->c->n][ptTourArc->a->row][ptTourArc->a->column] << 
         ", " << ptTourArc->cost << ", " << ptTourArc->carReturnCost << ")" << endl;
         cout << "car pick pheromones: ";
@@ -86,6 +88,17 @@ void displayBestTour(tour* ptTour)
 
     if(ptTourArc > ptTour->arcs)
         cout << "(" << nodes[(ptTourArc-1)->a->column].name << ",-)" << endl;
+
+    cout << "All arcs:" << endl;
+    for(k=0, pptArc=arcs; k<prData.dim; k++, pptArc++)
+        for(j=0, ptArc=*pptArc; j<prData.dim; j++, ptArc++)
+        {
+            if(k==j) continue;
+            cout << "(" << nodes[ptArc->row].name << "->" << nodes[ptArc->column].name << "), (";
+            for(i=0; i<prData.nCars; i++)
+                 cout << ptArc->tau[i] << ",";
+            cout << ")" << endl;
+        }
     cout << "Cars (name, passengers): " << endl;
     for(i=0, pptCar=ptTour->carList; i<prData.nCars && *pptCar!=nullptr; i++, pptCar++)
         cout << "(" << (*pptCar)->name << " " << (int)(*pptCar)->nPass << "/" << (int)(*pptCar)->carPassLimit << "), ";
