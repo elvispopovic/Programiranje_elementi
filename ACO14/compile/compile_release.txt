@@ -1,0 +1,7 @@
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "init.cpp" -o obj/Release/init.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "main.cpp" -o obj/Release/main.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "parser.cpp" -o obj/Release/parser.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "display.cpp" -o obj/Release/display.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "supervisor.cpp" -o obj/Release/supervisor.o
+g++ -Wall -std=c++11 -m64 -fexceptions -O2  -c "ACO.cpp" -o obj/Release/ACO.o
+g++  -o bin/Release/ACO14 obj/Release/main.o obj/Release/init.o obj/Release/parser.o obj/Release/ACO.o obj/Release/display.o obj/Release/supervisor.o -m64 -s 
