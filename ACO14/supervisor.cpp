@@ -46,18 +46,25 @@ void writeProblemData()
     problemDataStr << "Dimension: " << (int)prData.dim << endl;
     problemDataStr << "Cars: " << (int)prData.nCars << ", passengers: " << (int)prData.nPass << endl;
     problemDataStr << "Edge Weight Matrices: " << endl;
+
     for(i=0; i<prData.nCars; i++)
         displayMatrix(prData.edgeWeightMatrices, i, prData.dim);
     problemDataStr << "Return rate Matrices: " << endl;
     for(i=0; i<prData.nCars; i++)
         displayMatrix(prData.returnRateMatrices, i, prData.dim);
-    problemDataStr << "Passenger's limits (car capacities):" << endl;
-    for(i=0, pt1=prData.carPassLimit; i<prData.nCars; i++, pt1++)
-        problemDataStr << "(car:" << i << ", cap:" << (int)*pt1 << ") ";
-    problemDataStr << endl << "Passengers: " << endl;
-    for(i=0, ptPass=prData.passengers; i<prData.nPass; i++, ptPass++)
-        problemDataStr << ptPass->startNode << " " << ptPass->destinationNode << " " << ptPass->budget << endl;
+
+    if(prData.nPass > 0) // we can not write passengers if there are no any
+    {
+        problemDataStr << "Passenger's limits (car capacities):" << endl;
+        for(i=0, pt1=prData.carPassLimit; i<prData.nCars; i++, pt1++)
+            problemDataStr << "(car:" << i << ", cap:" << (int)*pt1 << ") ";
+
+        problemDataStr << endl << "Passengers: " << endl;
+        for(i=0, ptPass=prData.passengers; i<prData.nPass; i++, ptPass++)
+            problemDataStr << ptPass->startNode << " " << ptPass->destinationNode << " " << ptPass->budget << endl;
+    }
     problemDataStr << "END" << endl;
+
 }
 
 void writeInitData()

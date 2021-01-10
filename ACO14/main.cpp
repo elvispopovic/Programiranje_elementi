@@ -17,7 +17,10 @@ int main(int argc, char* argv[])
         return 0;
     }
     beginSupervisor("./outputData/stat");
+
+    
     writeProblemData();
+
 
     init();
     writeInitData();
@@ -26,6 +29,8 @@ int main(int argc, char* argv[])
     cleanup();
 
     endSupervisor();
+
+    
     /* cleans parser memory space */
     freeData();
     return 0;
