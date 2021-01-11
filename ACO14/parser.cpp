@@ -29,17 +29,22 @@ bool loadData(const char* filename)
     ifstream dataFile(filename);
     if(!dataFile.is_open())
         return false;
-    prData.nCars = 0;   // if nCars unchanged, then data type no cars
-    prData.nPass = 0;
+    prData.nCars = 1;       // at least one car must exist
+    prData.nPass = 0;       // zero passengers by default
     while(getline(dataFile, line))
     {
-        /* try to find token with border ": " */
-        token = parseHeaderToken(line.substr(0, pos=line.find(": ")).c_str());
-        if(token==-1) // not found, so try " : "
-            token = parseHeaderToken(line.substr(0, pos=line.find(" : ")).c_str());
-        if(pos>0 && (int)line.size() > pos+2)
+        /* try to find token with border " : " */
+        pos=line.find(" : ");
+        if(pos < 0)
         {
-            element = line.substr(pos+2);
+            pos=line.find(": ");
+            pos2 = pos+2;
+        }
+        else pos2=pos+3;
+        token = parseHeaderToken(line.substr(0, pos).c_str());
+        if(pos>0 && (int)line.size() > pos2)
+        {
+            element = line.substr(pos2);
             switch(token)
             {
             case 0: strncpy(prData.name, element.c_str(), element.size());
@@ -52,10 +57,7 @@ bool loadData(const char* filename)
                     break;
             case 4: prData.nCars = stoi(element); // cars number
                     if(prData.nCars > 0 && prData.dim > 0)
-                    {
-                        allocateMatrices(prData.nCars, prData.dim);
                         prData.carPassLimit = new uchar[prData.nCars];
-                    }
                     break;
             case 5: prData.nPass = stoi(element);
                     if(prData.nPass > 0)
@@ -74,20 +76,21 @@ bool loadData(const char* filename)
             }
         }
         else if(pos < 0 && (int)line.find(" ")==-1)
+        {
             switch(token)
             {
             case 10:    // edge weight 
-                if(prData.nCars > 0) // if we have car Number data
+                allocateMatrices(prData.nCars, prData.dim);
+                if(strncmp(prData.type, "CaRSP", 6)==0) // if CarSP, we have cars
                     parseMatrix1(dataFile, prData.edgeWeightMatrices, prData.nCars, prData.dim);
-                else                // if not we set car number as 1 and use different matrix parser
+                else if(strncmp(prData.type, "ATSP",5)==0)   // if not, use different matrix parser
                 {
-                    prData.nCars = 1;
-                    allocateMatrices(prData.nCars, prData.dim);
                     parseMatrix2(dataFile, prData.edgeWeightMatrices, prData.dim);
+                    fillReturnRates();  // construct missing return rates
                 }
                 break;
             case 11:    // return rates
-                if(prData.nCars > 0)
+                if(strncmp(prData.type, "CaRSP", 6)==0)
                     parseMatrix1(dataFile, prData.returnRateMatrices, prData.nCars, prData.dim);
                 break;
             case 12:    // passenger limit
@@ -118,6 +121,7 @@ bool loadData(const char* filename)
                 dataFile.close();
                 return true;
             }
+        }
     };
     dataFile.close();
     return false;

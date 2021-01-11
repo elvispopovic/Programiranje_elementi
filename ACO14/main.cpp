@@ -16,23 +16,29 @@ int main(int argc, char* argv[])
         cout << "Data file error." << endl;
         return 0;
     }
+    cout << "Data loaded." << endl;
     beginSupervisor("./outputData/stat");
 
-    
     writeProblemData();
-
-
+    cout << "Problem data written." << endl;
     init();
     writeInitData();
+    cout << "Init data written" << endl;
+    cout << "Ant simulation will commence..." << endl;
+
+    /* put ACO loop here */
 
 
+
+    cout << "Ant simulation ended." << endl;
     cleanup();
-
+    cout << "Init cleanup done." << endl;
     endSupervisor();
 
     
     /* cleans parser memory space */
     freeData();
+    cout << "Loaded data freeing done." << endl;
     return 0;
 }
 
