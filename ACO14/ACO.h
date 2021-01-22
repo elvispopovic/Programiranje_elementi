@@ -61,25 +61,52 @@ struct pass
     uint endNode;
 };
 
-/* algorithm node structure */
+/* problem node structure - static */
 struct node
 {
     char name[6];
     uint index;
-    bool visited;
     float *pheroNeighbours;
     float *pheroCars;
     uint nPassengers;
     pass** passengers;
 };
 
+struct car
+{
+    char name[6];
+    uint index;
+    ushort carPassLimit;
+};
+
+/* ant node structure - dynamic */
+struct antNode
+{
+    node *curNode;     // pointer to problem node
+    node *prevNode, *nextNode; // previous and next nodes
+    bool visited;   // already on tour
+    short carIn;    // car intering node
+    short carOut;    // car leaving node
+    uint nPickedPassengers; // passengers on board
+    pass** pickedPassengers; 
+
+};
+
+struct ant
+{
+    antNode *nodes;
+    float price;
+};
 
 
 
 extern std::mt19937* mersenneGenerator;
 extern problemData prData;
+/* declaration in ACO.cpp */
 extern node* nodes;
+extern car* cars;
 extern pass* passengers;
+extern ant* ants;
 
 
 
@@ -93,6 +120,10 @@ void freeData();
 /* initializer */
 void init();
 void cleanup();
+
+/* algorithm part */
+bool Solution(uint iter);
+void nodeTraversal(node *node);
 
 
 /* display part */

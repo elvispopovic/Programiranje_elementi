@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     cout << "Ant simulation will commence..." << endl;
 
     /* put ACO loop here */
-
+    Solution(0);
 
 
     cout << "Ant simulation ended." << endl;
