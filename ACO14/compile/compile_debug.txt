@@ -4,6 +4,7 @@ g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "parser.cpp" -o obj
 g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "display.cpp" -o obj/Debug/display.o
 g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "supervisor.cpp" -o obj/Debug/supervisor.o
 g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "ACO.cpp" -o obj/Debug/ACO.o
-g++  -o bin/Debug/ACO14 obj/Debug/main.o obj/Debug/init.o obj/Debug/parser.o obj/Debug/ACO.o obj/Debug/display.o obj/Debug/supervisor.o -m64  
+g++ -D ACO_VERBOSE -Wall -std=c++11 -m64 -fexceptions -g  -c "probability.cpp" -o obj/Debug/probability.o
+g++  -o bin/Debug/ACO14 obj/Debug/main.o obj/Debug/init.o obj/Debug/parser.o obj/Debug/ACO.o obj/Debug/probability.o obj/Debug/display.o obj/Debug/supervisor.o -m64  
 
  

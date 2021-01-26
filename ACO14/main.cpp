@@ -28,6 +28,16 @@ int main(int argc, char* argv[])
 
     /* put ACO loop here */
     Solution(0);
+    updatePheromones(&ants[0]);
+
+    for(uint j=0; j<ants[0].nodeCounter-1; j++)
+    {
+        uint i;
+        cout << "Node " << ants[0].nodes[j].curNode->name << ":" << endl;
+        for(i=0; i<prData.dim-1; i++)
+            cout << ants[0].nodes[j].curNode->pheroNeighbours[i] << ", ";
+        cout << ants[0].nodes[j].curNode->pheroNeighbours[i] << endl;
+    }
 
 
     cout << "Ant simulation ended." << endl;

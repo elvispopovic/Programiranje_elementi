@@ -76,28 +76,33 @@ struct car
 {
     char name[6];
     uint index;
-    ushort carPassLimit;
+    uchar carPassLimit;
 };
 
 /* ant node structure - dynamic */
 struct antNode
 {
     node *curNode;     // pointer to problem node
-    node *prevNode, *nextNode; // previous and next nodes
-    bool visited;   // already on tour
-    short carIn;    // car intering node
+    node *prevNode, *nextNode; // previous and next node
+    short carIn;    // car entering node
     short carOut;    // car leaving node
     uint nPickedPassengers; // passengers on board
     pass** pickedPassengers; 
 
 };
 
+
+
+/* ant structure */
 struct ant
 {
+    uint nodeCounter;
     antNode *nodes;
+    bool *nodeVisited;
+    uint *nodeCandidatesIndices;
+    float *nodeCandidateProbs;
     float price;
 };
-
 
 
 extern std::mt19937* mersenneGenerator;
@@ -107,6 +112,7 @@ extern node* nodes;
 extern car* cars;
 extern pass* passengers;
 extern ant* ants;
+
 
 
 
@@ -123,7 +129,11 @@ void cleanup();
 
 /* algorithm part */
 bool Solution(uint iter);
-void nodeTraversal(node *node);
+bool updatePheromones(ant *bestAnt);
+
+/* probabilitiy */
+int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentCar);
+uint selectFromFreqArray(float sum, uint n, float *probabilities);
 
 
 /* display part */
