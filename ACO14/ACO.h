@@ -13,7 +13,7 @@
 #define RHO 0.1 //pheromone evaporation
 #define ALPHA 1 //pheromone exponent >= 0
 #define BETA 1 //heuristic exponent >= 1
-#define N_ANTS 17 //number of ants
+#define N_ANTS 10 //number of ants
 #define N_ITER 1000 //number of iterations
 
 typedef unsigned int uint;
@@ -91,17 +91,16 @@ struct antNode
 
 };
 
-
-
 /* ant structure */
 struct ant
 {
     uint nodeCounter;
     antNode *nodes;
     bool *nodeVisited;
+    float price;
+    /* calc temporary arrays */
     uint *nodeCandidatesIndices;
     float *nodeCandidateProbs;
-    float price;
 };
 
 
@@ -130,6 +129,7 @@ void cleanup();
 /* algorithm part */
 bool Solution(uint iter);
 bool updatePheromones(ant *bestAnt);
+int findBestAnt();
 
 /* probabilitiy */
 int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentCar);

@@ -9,7 +9,7 @@ car* cars = nullptr;
 ant* ants = nullptr;
 
 
-
+void resetAnts();
 bool nodeTraversal(node *startNode, ant *currentAnt);
 
 bool Solution(uint iter)
@@ -19,7 +19,8 @@ bool Solution(uint iter)
 
     /* add ant loop here */
 
-    for(antIndex = 0; antIndex < 1; antIndex++)
+    resetAnts();
+    for(antIndex = 0; antIndex < N_ANTS; antIndex++)
     {
         success = nodeTraversal(&nodes[0], &ants[antIndex]);
 
@@ -28,11 +29,8 @@ bool Solution(uint iter)
 
         for(uint i=0; i<=prData.dim; i++)
         {
-            if(ants[0].nodes[i].curNode == nullptr)
+            if(ants[antIndex].nodes[i].curNode == nullptr)
                 break;
-            cout << "Node: " << ants[0].nodes[i].curNode->name << 
-            ", prev: " << (ants[0].nodes[i].prevNode==nullptr?"-":ants[0].nodes[i].prevNode->name) <<
-            ", next: " << (ants[0].nodes[i].nextNode==nullptr?"-":ants[0].nodes[i].nextNode->name) << endl;
         }
     }
     return true;
@@ -44,8 +42,6 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
     float value;
     node *currentNode;
     car *currentCar;
-    
-    cout << "Node " << startNode->index << ": " << startNode->name << ", neighbours:" << endl;
 
     /* start node is visited, and counted as passed */
     currentNode = startNode;
@@ -63,7 +59,6 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
     do /* node traversal loop starts here */
     {
         picked = CalculateNodeProbabilities(currentAnt, currentNode, &cars[0]);
-        cout << "Picked: " << picked << endl;
         if(picked >= 0)
         {
             currentAnt->price += (float)prData.edgeWeightMatrices[currentCar->index][currentNode->index][nodes[picked].index];
@@ -77,7 +72,6 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
         else //try to connect to start node (if link exists)
         {
             value = prData.edgeWeightMatrices[currentCar->index][currentNode->index][startNode->index];
-            cout << "Current node: " << currentNode->index << ", last value: " << value << endl;
             if(value != 0.0 && value < 9999)
             {
                 currentAnt->price += (float)prData.edgeWeightMatrices[currentCar->index][currentNode->index][startNode->index];
@@ -90,11 +84,7 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
             }
         }
         
-        cout << "Selected: " << currentNode->index << ": " << currentNode->name << endl;
-        cout << "Price: " << currentAnt->price << endl;
-        
     } while (picked >= 0);
-    cout << "Ant price: " << currentAnt->price << endl;
     if(currentAnt->nodeCounter == prData.dim+1)
         return true;
     return false;
@@ -118,5 +108,34 @@ bool updatePheromones(ant *bestAnt)
     }
 
     return true;
+}
+
+int findBestAnt()
+{
+    int result = -1;
+    uint i;
+    ant* ptAnt;
+    float minPrice = numeric_limits<float>::max();
+    for(i=0, ptAnt=ants; i<N_ANTS; i++, ptAnt++)
+        if(ptAnt->nodeCounter == prData.dim+1 && ptAnt->price < minPrice)
+        {
+            minPrice = ptAnt->price;
+            result = i;
+        }
+    return result;
+}
+
+void resetAnts()
+{
+    uint i, j;
+    ant *ptAnt;
+    bool *ptBool;
+    for(j=0, ptAnt=ants; j<N_ANTS; j++, ptAnt++)
+    {
+        ptAnt->price = 0.0;
+        ptAnt->nodeCounter = 0;
+        for(i=0, ptBool=ptAnt->nodeVisited; i<prData.dim; i++, ptBool++)
+            *ptBool = false;
+    }
 }
 

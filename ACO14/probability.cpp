@@ -24,7 +24,6 @@ uint selectFromFreqArray(float sum, uint n, float *probabilities)
             right = center;
         center = (left+right)>>1;
     }
-    cout << "r: " << r << ", ";
     return center;
 }
 
@@ -42,7 +41,6 @@ int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentC
         i<prData.dim; 
         i++, ptFloat2++, ptBool++)
     {
-        cout << prData.edgeWeightMatrices[currentCar->index][currentNode->index][i] << " ";
         if(*ptFloat2 != 0.0 && *ptFloat2 < 9999 && *ptBool == false)
         {
             *(ptUint++) = i;
@@ -52,14 +50,10 @@ int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentC
             nNeighbours++;
         }
     }
-    cout << endl;
-    cout << "nNeighbours: " << nNeighbours << endl;
     if(nNeighbours == 0)
         return -1;
     else if(nNeighbours == 1)
         return currentAnt->nodeCandidatesIndices[0];
     i = selectFromFreqArray(sum, nNeighbours, currentAnt->nodeCandidateProbs);
-    cout << "array prob: " << currentAnt->nodeCandidateProbs[i] << endl;
-    cout << "Array element: " << i << ", node index: " << currentAnt->nodeCandidatesIndices[i] << endl;
     return currentAnt->nodeCandidatesIndices[i];
 }
