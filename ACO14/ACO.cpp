@@ -24,8 +24,11 @@ bool Solution(uint iter)
     {
         success = nodeTraversal(&nodes[0], &ants[antIndex]);
 
-    
-        cout << "Passed nodes: " << ants[antIndex].nodeCounter << ", success: " << (success?"SUCCESS":"FAIL") << endl;
+    /*
+        cout << "Passed nodes: " << ants[antIndex].nodeCounter << 
+        ", price: " << ants[antIndex].price <<
+        ", success: " << (success?"SUCCESS":"FAIL") << endl;
+        */
 
         for(uint i=0; i<=prData.dim; i++)
         {
@@ -48,7 +51,7 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
     currentAnt->nodes[currentAnt->nodeCounter].prevNode = nullptr;
     currentAnt->nodes[currentAnt->nodeCounter].curNode = currentNode;   
     currentAnt->nodeCounter++;
-    currentAnt->nodeVisited[currentNode->index] = true;
+    currentAnt->nodesVisited[currentNode->index] = true;
 
     /* temporary */
     currentCar = &cars[0];
@@ -67,7 +70,7 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
             currentAnt->nodes[currentAnt->nodeCounter-1].nextNode = currentNode;
             currentAnt->nodes[currentAnt->nodeCounter].curNode = currentNode;
             currentAnt->nodeCounter++;
-            currentAnt->nodeVisited[picked] = true;            
+            currentAnt->nodesVisited[picked] = true;            
         }
         else //try to connect to start node (if link exists)
         {
@@ -134,7 +137,7 @@ void resetAnts()
     {
         ptAnt->price = 0.0;
         ptAnt->nodeCounter = 0;
-        for(i=0, ptBool=ptAnt->nodeVisited; i<prData.dim; i++, ptBool++)
+        for(i=0, ptBool=ptAnt->nodesVisited; i<prData.dim; i++, ptBool++)
             *ptBool = false;
     }
 }

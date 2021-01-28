@@ -50,7 +50,7 @@ void cleanup()
             delete[] ptAnt->nodes;
             delete[] ptAnt->nodeCandidateProbs;
             delete[] ptAnt->nodeCandidatesIndices;
-            delete[] ptAnt->nodeVisited;
+            delete[] ptAnt->nodesVisited;
         }
         delete[] ants;
     }
@@ -142,8 +142,8 @@ void initAnts()
         ptAnt->nodes = new antNode[prData.dim+1]; //first and last node are same
 
         ptAnt->nodeCounter = 0;
-        ptAnt->nodeVisited = new bool[prData.dim];
-        for(i=0, ptBool=ptAnt->nodeVisited; i<prData.dim; i++, ptBool++)
+        ptAnt->nodesVisited = new bool[prData.dim];
+        for(i=0, ptBool=ptAnt->nodesVisited; i<prData.dim; i++, ptBool++)
         {
             *ptBool = false;
         }

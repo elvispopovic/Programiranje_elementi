@@ -32,20 +32,24 @@ int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentC
     uint i, nNeighbours;
     uint *ptUint;
     float sum, p=0.0;
-    float *ptFloat, *ptFloat2;
+    float eta, tau;
+    float *ptFloat, *ptFloat2, *ptFloat3;
     bool *ptBool;
     /* edgeWeightMatrices[car][node][neighbour] */
-    for(i=0, nNeighbours=0, ptFloat2=prData.edgeWeightMatrices[currentCar->index][currentNode->index], 
-        ptBool = currentAnt->nodeVisited, 
+    for(i=0, nNeighbours=0, ptFloat2=prData.edgeWeightMatrices[currentCar->index][currentNode->index],
+        ptFloat3 = currentNode->pheroNeighbours,
+        ptBool = currentAnt->nodesVisited, 
         ptUint = currentAnt->nodeCandidatesIndices, ptFloat = currentAnt->nodeCandidateProbs, sum=0.0;
         i<prData.dim; 
         i++, ptFloat2++, ptBool++)
     {
         if(*ptFloat2 != 0.0 && *ptFloat2 < 9999 && *ptBool == false)
         {
-            *(ptUint++) = i;
-            p = 1.0/(*ptFloat2);
-            *(ptFloat++) = sum;
+            *(ptUint++) = i;        //freq array index
+            eta = 1.0/(*ptFloat2);
+            tau = *ptFloat3;
+            p = pow(eta, ALPHA) * pow(tau, BETA);
+            *(ptFloat++) = sum;     //freq array probability (cumulative)
             sum += p;
             nNeighbours++;
         }

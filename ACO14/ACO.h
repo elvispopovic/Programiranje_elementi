@@ -9,11 +9,11 @@
 #include <limits>
 #include <algorithm>
 
-#define TAU_0 100.0 //initial pheromone trail, to large value
+#define TAU_0 0.001 //initial pheromone trail, to large value
 #define RHO 0.1 //pheromone evaporation
-#define ALPHA 1 //pheromone exponent >= 0
+#define ALPHA 2 //pheromone exponent >= 0
 #define BETA 1 //heuristic exponent >= 1
-#define N_ANTS 10 //number of ants
+#define N_ANTS 5 //number of ants
 #define N_ITER 1000 //number of iterations
 
 typedef unsigned int uint;
@@ -94,11 +94,11 @@ struct antNode
 /* ant structure */
 struct ant
 {
-    uint nodeCounter;
-    antNode *nodes;
-    bool *nodeVisited;
+    uint nodeCounter;  //passed nodes counter
+    antNode *nodes;    //passed nodes
+    bool *nodesVisited; //all nodes visited flags
     float price;
-    /* calc temporary arrays */
+    /* temporary calc arrays */
     uint *nodeCandidatesIndices;
     float *nodeCandidateProbs;
 };
