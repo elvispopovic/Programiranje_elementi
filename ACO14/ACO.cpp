@@ -93,6 +93,17 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
     return false;
 }
 
+void PheromoneEvaporation()
+{
+    uint i, j;
+    node *ptNode;
+    float *ptFloat;
+    for(j=0, ptNode=nodes; j<prData.dim; j++, ptNode++)
+        for(i=0, ptFloat=ptNode->pheroNeighbours; i<prData.dim; i++, ptFloat++)
+            if(i!=j)
+                *ptFloat = (1.0-RHO) * (*ptFloat);
+}
+
 bool updatePheromones(ant *bestAnt)
 {
     uint i;

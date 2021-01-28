@@ -9,12 +9,12 @@
 #include <limits>
 #include <algorithm>
 
-#define TAU_0 0.001 //initial pheromone trail, to large value
+#define TAU_0 100.0 //initial pheromone trail
 #define RHO 0.1 //pheromone evaporation
 #define ALPHA 2 //pheromone exponent >= 0
 #define BETA 1 //heuristic exponent >= 1
 #define N_ANTS 5 //number of ants
-#define N_ITER 1000 //number of iterations
+#define N_ITER 10000 //number of iterations
 
 typedef unsigned int uint;
 typedef unsigned char uchar;
@@ -128,6 +128,7 @@ void cleanup();
 
 /* algorithm part */
 bool Solution(uint iter);
+void PheromoneEvaporation();
 bool updatePheromones(ant *bestAnt);
 int findBestAnt();
 

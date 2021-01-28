@@ -31,6 +31,7 @@ int main(int argc, char* argv[])
     /* put ACO loop here */
     for(iter=0; iter < N_ITER; iter++)
     {
+        PheromoneEvaporation();
         Solution(0);
         bestAnt = findBestAnt();
         if(bestAnt >= 0)
