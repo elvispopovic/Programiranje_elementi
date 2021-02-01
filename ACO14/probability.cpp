@@ -48,7 +48,7 @@ int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentC
             *(ptUint++) = i;        //freq array index
             eta = 1.0/(*ptFloat2);
             tau = *ptFloat3;
-            p = pow(eta, ALPHA) * pow(tau, BETA);
+            p = pow(eta, parData.alpha) * pow(tau, parData.beta);
             *(ptFloat++) = sum;     //freq array probability (cumulative)
             sum += p;
             nNeighbours++;

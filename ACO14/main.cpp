@@ -6,14 +6,16 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     uint iter;
-    int bestAnt;
+    int bestAnt = 0;
     if(argc < 2)
     {
         cout << "No filename parameter." << endl;
-        cout << "Usage: " << argv[0] << " " << "filename" << endl;
+        cout << "Usage: " << argv[0] << " " << "[-d] filename (-tau | -t) tau (-alpha | -a) alpha  (-beta | -b) beta " <<
+        "(-ants | -na) nAnts (-iter | -ni) nIter" << endl;
         return 0;
     }
-    if(!loadData(argv[1]))
+    setParameters(argc, argv);
+    if(!loadData(parData.fileName))
     {
         cout << "Data file error." << endl;
         return 0;
@@ -29,7 +31,7 @@ int main(int argc, char* argv[])
     cout << "Ant simulation will commence..." << endl;
 
     /* put ACO loop here */
-    for(iter=0; iter < N_ITER; iter++)
+    for(iter=0; iter < parData.nIter; iter++)
     {
         PheromoneEvaporation();
         Solution(0);

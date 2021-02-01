@@ -9,6 +9,7 @@
 #include <limits>
 #include <algorithm>
 
+/* default only - if value from command line not available */
 #define TAU_0 100.0 //initial pheromone trail
 #define RHO 0.1 //pheromone evaporation
 #define ALPHA 2 //pheromone exponent >= 0
@@ -23,6 +24,18 @@ typedef unsigned short ushort;
 enum symmetry:unsigned char {SYMMETRIC, ASYMMETRIC};
 
 struct dataPass;    //passengers from readed data
+
+/* parameters */
+struct parameters
+{
+    uint argc;
+    float tau; //initial pheromone trail
+    float rho;
+    float alpha, beta;
+    uint nAnts;
+    uint nIter;
+    char fileName[128];
+};
 
 
 /* file data structure */
@@ -105,6 +118,7 @@ struct ant
 
 
 extern std::mt19937* mersenneGenerator;
+extern parameters parData;
 extern problemData prData;
 /* declaration in ACO.cpp */
 extern node* nodes;
@@ -116,10 +130,11 @@ extern ant* ants;
 
 
 /* parser functions */
-int parseHeaderToken(const char* name);
-bool parseMatrix(std::ifstream& dataFile, float*** matrix, int nMatrix, int dim);
+bool setParameters(int argc, char** argv);
 bool loadData(const char* filename);
 void freeData();
+int parseHeaderToken(const char* name);
+bool parseMatrix(std::ifstream& dataFile, float*** matrix, int nMatrix, int dim);
 
 
 /* initializer */

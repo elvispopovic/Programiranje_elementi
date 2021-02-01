@@ -20,7 +20,7 @@ bool Solution(uint iter)
     /* add ant loop here */
 
     resetAnts();
-    for(antIndex = 0; antIndex < N_ANTS; antIndex++)
+    for(antIndex = 0; antIndex < parData.nAnts; antIndex++)
     {
         success = nodeTraversal(&nodes[0], &ants[antIndex]);
 
@@ -101,7 +101,7 @@ void PheromoneEvaporation()
     for(j=0, ptNode=nodes; j<prData.dim; j++, ptNode++)
         for(i=0, ptFloat=ptNode->pheroNeighbours; i<prData.dim; i++, ptFloat++)
             if(i!=j)
-                *ptFloat = (1.0-RHO) * (*ptFloat);
+                *ptFloat = (1.0-parData.rho) * (*ptFloat);
 }
 
 bool updatePheromones(ant *bestAnt)
@@ -130,7 +130,7 @@ int findBestAnt()
     uint i;
     ant* ptAnt;
     float minPrice = numeric_limits<float>::max();
-    for(i=0, ptAnt=ants; i<N_ANTS; i++, ptAnt++)
+    for(i=0, ptAnt=ants; i<parData.nAnts; i++, ptAnt++)
         if(ptAnt->nodeCounter == prData.dim+1 && ptAnt->price < minPrice)
         {
             minPrice = ptAnt->price;
@@ -144,7 +144,7 @@ void resetAnts()
     uint i, j;
     ant *ptAnt;
     bool *ptBool;
-    for(j=0, ptAnt=ants; j<N_ANTS; j++, ptAnt++)
+    for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
     {
         ptAnt->price = 0.0;
         ptAnt->nodeCounter = 0;

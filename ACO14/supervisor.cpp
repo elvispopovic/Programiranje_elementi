@@ -39,7 +39,15 @@ void writeProblemData()
     uint i;
     uchar *pt1;
     dataPass *ptPass;
-    problemDataStr << "Problem data parameters:" << endl;
+    problemDataStr << "Parameters (argc=" << parData.argc << "):" << endl;
+    problemDataStr << "Data file: " << parData.fileName << endl;
+    problemDataStr << "tau: " << parData.tau << endl;
+    problemDataStr << "rho: " << parData.rho << endl;
+    problemDataStr << "alpha: " << parData.alpha << endl;
+    problemDataStr << "beta: " << parData.beta << endl;
+    problemDataStr << "nAnts: " << parData.nAnts << endl;
+    problemDataStr << "nIter: " << parData.nIter << endl;
+    problemDataStr << "------------------------\nProblem data parameters:" << endl;
     problemDataStr << "Name: " << prData.name << endl;
     problemDataStr << "Type: " << prData.type << endl;
     problemDataStr << "Comment: " << prData.comment << endl;

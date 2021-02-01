@@ -45,7 +45,7 @@ void cleanup()
     
     if(ants != nullptr)
     {
-        for(j=0, ptAnt=ants; j<N_ANTS; j++, ptAnt++)
+        for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
         {
             delete[] ptAnt->nodes;
             delete[] ptAnt->nodeCandidateProbs;
@@ -78,10 +78,10 @@ void initNodes()
             if(i==j)
                 *ptFloat = 0.0;
             else
-                *ptFloat = TAU_0;            
+                *ptFloat = parData.tau;            
         }
         for(i=0, ptFloat=ptNode->pheroCars; i<prData.nCars; i++, ptFloat++)
-            *ptFloat = TAU_0;
+            *ptFloat = parData.tau;
         ptNode->nPassengers = 0;
     }
     /* number of passengers */
@@ -136,8 +136,8 @@ void initAnts()
     uint i, j;
     ant* ptAnt;
     bool* ptBool;
-    ants = new ant[N_ANTS];
-    for(j=0, ptAnt=ants; j<N_ANTS; j++, ptAnt++)
+    ants = new ant[parData.nAnts];
+    for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
     {
         ptAnt->nodes = new antNode[prData.dim+1]; //first and last node are same
 

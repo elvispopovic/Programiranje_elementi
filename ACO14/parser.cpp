@@ -10,6 +10,7 @@ char headerTokens[][48] =
     "EOF"
 };
 
+parameters parData;
 problemData prData;
 
 int parseHeaderToken(const char* name);
@@ -18,6 +19,68 @@ bool parseMatrix2(ifstream& dataFile, float*** matrix, int dim);
 void allocateMatrices(int nCars, int dim);
 void fillReturnRates();
 
+bool setParameters(int argc, char** argv)
+{
+    int i;
+    float p1;
+    uint p2;
+    parData.argc = argc;
+    if(argv[1][0]!='-')
+        strncpy(parData.fileName, argv[1], 128);
+    else 
+        for(i=1; i<argc; i++)
+            if(strcmp(argv[i],"-d")==0 && i<argc-1)
+                strncpy(parData.fileName, argv[i+1], 128);
+    /* default values */
+    parData.tau =   TAU_0;
+    parData.rho =   RHO;
+    parData.alpha = ALPHA;
+    parData.beta =  BETA;
+    parData.nAnts = N_ANTS;
+    parData.nIter = N_ITER;
+    
+    for(i=1; i<argc; i++)
+    {
+        if((strcmp(argv[i],"-tau")==0 || strcmp(argv[i],"-t")==0) && i<argc-1)
+        {
+            p1 = atof(argv[i+1]);
+            if(p1 > 0.0)
+                parData.tau = p1;            
+        }
+        if((strcmp(argv[i],"-rho")==0 || strcmp(argv[i],"-r")==0) && i<argc-1)
+        {
+            p1 = atof(argv[i+1]);
+            if(p1 > 0.0)
+                parData.rho = p1;           
+        }
+        if((strcmp(argv[i],"-alpha")==0 || strcmp(argv[i],"-a")==0) && i<argc-1)
+        {
+            p1 = atof(argv[i+1]);
+            if(p1 > 0.0)
+                parData.alpha = p1;           
+        }
+        if((strcmp(argv[i],"-beta")==0 || strcmp(argv[i],"-b")==0) && i<argc-1)
+        {
+            p1 = atof(argv[i+1]);
+            if(p1 > 0.0)
+                parData.beta = p1;           
+        }
+        if((strcmp(argv[i],"-ants")==0 || strcmp(argv[i],"-na")==0) && i<argc-1)
+        {
+            p2 = (uint)atoi(argv[i+1]);
+            if(p2 > 0)
+                parData.nAnts = p2;           
+        }
+        if((strcmp(argv[i],"-iter")==0 || strcmp(argv[i],"-ni")==0) && i<argc-1)
+        {
+            p2 = (uint)atoi(argv[i+1]);
+            if(p2 > 0)
+                parData.nIter = p2;           
+        }
+    }
+
+    return true;
+};
 
 bool loadData(const char* filename)
 {

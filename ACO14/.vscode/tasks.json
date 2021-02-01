@@ -1,7 +1,7 @@
 {
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
-    "version": "13.0",
+    "version": "14.0",
     "tasks": [
         {
             "label": "CB style debug",
