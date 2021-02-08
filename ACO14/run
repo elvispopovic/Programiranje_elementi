@@ -1,1 +1,1 @@
-./bin/Release/ACO14 inputData/ftv70.atsp -t 99 -a 2 -b 1 -na 3 -ni 5000
+./bin/Release/ACO14 inputData/ftv70.atsp -t 100 -r 0.1 -a 2 -b 1 -na 20 -ni 5000

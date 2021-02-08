@@ -34,10 +34,13 @@ int main(int argc, char* argv[])
     for(iter=0; iter < parData.nIter; iter++)
     {
         PheromoneEvaporation();
-        Solution(0);
+        Solution(0, &nodes[0]);
         bestAnt = findBestAnt();
         if(bestAnt >= 0)
+        {
+            updateBestPath(bestAnt);
             updatePheromones(&ants[bestAnt]);
+        }
 
         /*
         uint j,k;
@@ -58,17 +61,19 @@ int main(int argc, char* argv[])
             cout << ants[k].nodes[j].curNode->name << ", price: " << ants[k].price << endl;
         }
         */
-        cout << "Best ant: " << bestAnt << ", price: " << ants[bestAnt].price << endl;
+        cout << "Best ant: " << bestAnt << ", price: " << ants[bestAnt].price << ", best: " << bPath.price << endl;
     }
-    for(uint j=0; j<ants[bestAnt].nodeCounter-1; j++)
+    cout << "Best path:" << endl;
+    for(uint j=0; j<bPath.nodeCounter-1; j++)
     {
         uint i;
-        cout << "Node " << ants[bestAnt].nodes[j].curNode->name << 
-        ", price: " << prData.edgeWeightMatrices[0][ants[bestAnt].nodes[j].curNode->index][ants[bestAnt].nodes[j].nextNode->index] << ":" << endl;
+        cout << "Node " << bPath.nodes[j].curNode->name << 
+        ", price: " << prData.edgeWeightMatrices[0][bPath.nodes[j].curNode->index][bPath.nodes[j].nextNode->index] << ":" << endl;
         for(i=0; i<prData.dim-1; i++)
-            cout << ants[bestAnt].nodes[j].curNode->pheroNeighbours[i] << ", ";
-        cout << ants[bestAnt].nodes[j].curNode->pheroNeighbours[i] << endl;
+            cout << bPath.nodes[j].curNode->pheroNeighbours[i] << ", ";
+        cout << bPath.nodes[j].curNode->pheroNeighbours[i] << endl;
     }
+    cout << "Price: " << bPath.price << endl;
 
 
 

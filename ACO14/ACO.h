@@ -111,15 +111,30 @@ struct ant
     antNode *nodes;    //passed nodes
     bool *nodesVisited; //all nodes visited flags
     float price;
-    /* temporary calc arrays */
-    uint *nodeCandidatesIndices;
-    float *nodeCandidateProbs;
+};
+
+struct bestPath
+{
+    uint nodeCounter;
+    antNode *nodes;
+    float price;
+};
+
+/* all ants use it - make it thread safe if ants uses threads */
+struct probabilityArrays
+{
+    uint *nodeCandidatesIndices; //available nodes represented as indices
+    float *nodeCandidateProbs;   //available nodes' probabilities
+    uint *carCandidateIndices;   //available cars represented as indices
+    float *carCandidateProbs;    //available cars' probabilities
 };
 
 
 extern std::mt19937* mersenneGenerator;
 extern parameters parData;
 extern problemData prData;
+extern probabilityArrays probArrays;
+extern bestPath bPath;
 /* declaration in ACO.cpp */
 extern node* nodes;
 extern car* cars;
@@ -142,10 +157,11 @@ void init();
 void cleanup();
 
 /* algorithm part */
-bool Solution(uint iter);
+bool Solution(uint iter, node *startNode);
 void PheromoneEvaporation();
 bool updatePheromones(ant *bestAnt);
 int findBestAnt();
+void updateBestPath(uint bestAntIndex);
 
 /* probabilitiy */
 int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentCar);

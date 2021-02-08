@@ -6,6 +6,8 @@ void initNodes();
 void initCars();
 void initPassengers();
 void initAnts();
+void initProbArrays();
+void initBestPath();
 
 
 /* initialize and cleanup */
@@ -19,6 +21,8 @@ void init()
     initCars();
     initNodes();
     initAnts();
+    initProbArrays();
+    initBestPath();
 }
 
 
@@ -48,12 +52,16 @@ void cleanup()
         for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
         {
             delete[] ptAnt->nodes;
-            delete[] ptAnt->nodeCandidateProbs;
-            delete[] ptAnt->nodeCandidatesIndices;
             delete[] ptAnt->nodesVisited;
         }
         delete[] ants;
     }
+    delete[] probArrays.nodeCandidateProbs;
+    delete[] probArrays.nodeCandidatesIndices;
+    delete[] probArrays.carCandidateIndices;
+    delete[] probArrays.carCandidateProbs;
+    delete[] bPath.nodes;
+    bPath.nodeCounter = 0;
     delete mersenneGenerator;
 }
 
@@ -147,7 +155,20 @@ void initAnts()
         {
             *ptBool = false;
         }
-        ptAnt->nodeCandidatesIndices = new uint[prData.dim]; 
-        ptAnt->nodeCandidateProbs = new float[prData.dim];
     }
+}
+
+void initProbArrays()
+{
+    probArrays.nodeCandidatesIndices = new uint[prData.dim]; 
+    probArrays.nodeCandidateProbs = new float[prData.dim];
+    probArrays.carCandidateIndices = new uint[prData.nCars];
+    probArrays.carCandidateProbs = new float[prData.nCars];
+}
+
+void initBestPath()
+{
+    bPath.nodeCounter = 0;
+    bPath.price = numeric_limits<float>::max();
+    bPath.nodes = new antNode[prData.dim];
 }

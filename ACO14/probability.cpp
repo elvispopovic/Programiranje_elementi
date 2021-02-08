@@ -39,7 +39,7 @@ int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentC
     for(i=0, nNeighbours=0, ptFloat2=prData.edgeWeightMatrices[currentCar->index][currentNode->index],
         ptFloat3 = currentNode->pheroNeighbours,
         ptBool = currentAnt->nodesVisited, 
-        ptUint = currentAnt->nodeCandidatesIndices, ptFloat = currentAnt->nodeCandidateProbs, sum=0.0;
+        ptUint = probArrays.nodeCandidatesIndices, ptFloat = probArrays.nodeCandidateProbs, sum=0.0;
         i<prData.dim; 
         i++, ptFloat2++, ptBool++)
     {
@@ -57,7 +57,7 @@ int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentC
     if(nNeighbours == 0)
         return -1;
     else if(nNeighbours == 1)
-        return currentAnt->nodeCandidatesIndices[0];
-    i = selectFromFreqArray(sum, nNeighbours, currentAnt->nodeCandidateProbs);
-    return currentAnt->nodeCandidatesIndices[i];
+        return probArrays.nodeCandidatesIndices[0];
+    i = selectFromFreqArray(sum, nNeighbours, probArrays.nodeCandidateProbs);
+    return probArrays.nodeCandidatesIndices[i];
 }

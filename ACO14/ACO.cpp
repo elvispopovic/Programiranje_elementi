@@ -7,34 +7,25 @@ pass* passengers = nullptr;
 node* nodes = nullptr;
 car* cars = nullptr;
 ant* ants = nullptr;
+probabilityArrays probArrays;
+bestPath bPath;
 
 
 void resetAnts();
 bool nodeTraversal(node *startNode, ant *currentAnt);
 
-bool Solution(uint iter)
+bool Solution(uint iter, node *startNode)
 {
-    bool success;
-    uint antIndex;
+    uint j;
+    ant *ptAnt;
 
     /* add ant loop here */
 
     resetAnts();
-    for(antIndex = 0; antIndex < parData.nAnts; antIndex++)
+    for(j = 0, ptAnt = ants; j < parData.nAnts; j++, ptAnt++)
     {
-        success = nodeTraversal(&nodes[0], &ants[antIndex]);
+        nodeTraversal(startNode, ptAnt);
 
-    /*
-        cout << "Passed nodes: " << ants[antIndex].nodeCounter << 
-        ", price: " << ants[antIndex].price <<
-        ", success: " << (success?"SUCCESS":"FAIL") << endl;
-        */
-
-        for(uint i=0; i<=prData.dim; i++)
-        {
-            if(ants[antIndex].nodes[i].curNode == nullptr)
-                break;
-        }
     }
     return true;
 }
@@ -124,6 +115,20 @@ bool updatePheromones(ant *bestAnt)
     return true;
 }
 
+void updateBestPath(uint bestAntIndex)
+{
+    uint i;
+    ant *bestAnt;
+    antNode *ptAntNode1, *ptAntNode2;
+    bestAnt = ants+bestAntIndex;
+    if(bestAnt == nullptr || bestAnt->nodeCounter < prData.dim || bestAnt->price >= bPath.price)
+        return;
+    bPath.nodeCounter = prData.dim;
+    bPath.price = bestAnt->price;
+    for(i=0, ptAntNode1=bPath.nodes, ptAntNode2=bestAnt->nodes; i<prData.dim; i++, ptAntNode1++, ptAntNode2++)
+        memcpy(ptAntNode1, ptAntNode2, sizeof(antNode));
+}
+
 int findBestAnt()
 {
     int result = -1;
@@ -152,4 +157,6 @@ void resetAnts()
             *ptBool = false;
     }
 }
+
+
 
