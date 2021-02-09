@@ -42,39 +42,52 @@ int main(int argc, char* argv[])
             updatePheromones(&ants[bestAnt]);
         }
 
-        /*
+        
         uint j,k;
-        for(k=0; k<N_ANTS; k++)
+        for(k=0; k<parData.nAnts; k++)
         {
             cout << "Ant: " << k << endl;
+            
             for(j=0; j<ants[k].nodeCounter-1; j++)
             {
                 uint i;
-                cout << "Node " << ants[k].nodes[j].curNode->name << 
+                cout << "Node " << ants[k].nodes[j].curNode->name << ", car " << ants[k].nodes[j].carOut->name <<
                 ", price: " << prData.edgeWeightMatrices[0][ants[k].nodes[j].curNode->index][ants[k].nodes[j].nextNode->index] << ":" << endl;
+                cout << "Neighbours' pheromones:" << endl;
                 for(i=0; i<prData.dim-1; i++)
                     cout << ants[k].nodes[j].curNode->pheroNeighbours[i] << ", ";
                 cout << ants[k].nodes[j].curNode->pheroNeighbours[i] << endl;
+                cout << "Cars' pheromones:" << endl;
+                for(i=0; i<prData.nCars-1; i++)
+                    cout << ants[k].nodes[j].curNode->pheroCars[i] << ", ";
+                 cout << ants[k].nodes[j].curNode->pheroCars[i] << endl;
             }
+        
+           cout << "Ant " << k << ": nodecounter: " << ants[k].nodeCounter << ", price: " << ants[k].price << endl;
             for(j=0; j<ants[k].nodeCounter-1; j++)
                 cout << ants[k].nodes[j].curNode->name << ", ";
+
             cout << ants[k].nodes[j].curNode->name << ", price: " << ants[k].price << endl;
         }
-        */
+        
         cout << "Best ant: " << bestAnt << ", price: " << ants[bestAnt].price << ", best: " << bPath.price << endl;
+        
     }
+    
     cout << "Best path:" << endl;
     for(uint j=0; j<bPath.nodeCounter-1; j++)
     {
-        uint i;
-        cout << "Node " << bPath.nodes[j].curNode->name << 
+        //uint i;
+        cout << "Node " << bPath.nodes[j].curNode->name << ", car: " << bPath.nodes[j].carOut->name <<
         ", price: " << prData.edgeWeightMatrices[0][bPath.nodes[j].curNode->index][bPath.nodes[j].nextNode->index] << ":" << endl;
+        /*
         for(i=0; i<prData.dim-1; i++)
             cout << bPath.nodes[j].curNode->pheroNeighbours[i] << ", ";
         cout << bPath.nodes[j].curNode->pheroNeighbours[i] << endl;
+        */
     }
     cout << "Price: " << bPath.price << ", calculated price: " << calculatePathCost() << endl;
-
+    
 
 
     cout << "Ant simulation ended." << endl;

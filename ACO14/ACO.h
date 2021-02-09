@@ -164,7 +164,7 @@ float calculatePathCost();
 
 /* probabilitiy */
 int PickNode(ant *currentAnt, node *currentNode, car *currentCar);
-int PickCar(ant *currentAnt, node *currentNode);
+int PickCar(ant *currentAnt, node *currentNode, car *currentCar);
 uint selectFromFreqArray(float sum, uint n, float *probabilities);
 
 

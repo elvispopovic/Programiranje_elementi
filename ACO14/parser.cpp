@@ -293,6 +293,7 @@ bool parseMatrix2(ifstream& dataFile, float*** matrix, int dim)
     return true;
 }
 
+/* TSPLIB has not return matrix so we construct one */
 void fillReturnRates()
 {
     uint i, j;

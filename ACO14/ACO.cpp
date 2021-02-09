@@ -46,10 +46,11 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
 
     
     currentAnt->nodes[currentAnt->nodeCounter].carIn = nullptr;
-    pickedCar = PickCar(currentAnt, currentNode);
+    pickedCar = PickCar(currentAnt, currentNode, currentCar);
     if(pickedCar >= 0)
         currentCar = cars+pickedCar;
     currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
+    currentAnt->carsRented[currentCar->index] = true;
     currentAnt->nodeCounter++;
 
 
@@ -69,10 +70,11 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
             currentAnt->nodesVisited[pickedNode] = true;      
 
             currentAnt->nodes[currentAnt->nodeCounter].carIn = currentCar;
-            pickedCar = PickCar(currentAnt, currentNode);
+            pickedCar = PickCar(currentAnt, currentNode, currentCar);
             if(pickedCar >= 0)
                 currentCar = cars+pickedCar;
             currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
+            currentAnt->carsRented[currentCar->index] = true;
 
             currentAnt->nodeCounter++;
                   
@@ -90,7 +92,7 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
                 currentAnt->nodes[currentAnt->nodeCounter].nextNode = nullptr;
 
                 currentAnt->nodes[currentAnt->nodeCounter].carIn = currentCar;
-                currentCar = &cars[PickCar(currentAnt, currentNode)]; 
+                currentCar = &cars[PickCar(currentAnt, currentNode, currentCar)]; 
                 currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
                 currentAnt->nodeCounter++;
             }
@@ -108,9 +110,13 @@ void PheromoneEvaporation()
     node *ptNode;
     float *ptFloat;
     for(j=0, ptNode=nodes; j<prData.dim; j++, ptNode++)
+    {
         for(i=0, ptFloat=ptNode->pheroNeighbours; i<prData.dim; i++, ptFloat++)
             if(i!=j)
                 *ptFloat = (1.0-parData.rho) * (*ptFloat);
+        for(i=0, ptFloat=ptNode->pheroCars; i<prData.nCars; i++, ptFloat++)
+            *ptFloat = (1.0-parData.rho) * (*ptFloat);
+    }
 }
 
 bool updatePheromones(ant *bestAnt)
@@ -128,6 +134,7 @@ bool updatePheromones(ant *bestAnt)
     for(i=0, ptAntNode=bestAnt->nodes; i<bestAnt->nodeCounter-1; i++, ptAntNode++)
     {
         ptAntNode->curNode->pheroNeighbours[ptAntNode->nextNode->index]+=pheroUpdate;
+        ptAntNode->curNode->pheroCars[ptAntNode->carOut->index]+=pheroUpdate;
     }
 
     return true;
