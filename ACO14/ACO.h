@@ -97,8 +97,7 @@ struct antNode
 {
     node *curNode;     // pointer to problem node
     node *prevNode, *nextNode; // previous and next node
-    short carIn;    // car entering node
-    short carOut;    // car leaving node
+    car *carIn, *carOut;
     uint nPickedPassengers; // passengers on board
     pass** pickedPassengers; 
 
@@ -110,6 +109,7 @@ struct ant
     uint nodeCounter;  //passed nodes counter
     antNode *nodes;    //passed nodes
     bool *nodesVisited; //all nodes visited flags
+    bool *carsRented;
     float price;
 };
 
@@ -123,10 +123,8 @@ struct bestPath
 /* all ants use it - make it thread safe if ants uses threads */
 struct probabilityArrays
 {
-    uint *nodeCandidatesIndices; //available nodes represented as indices
-    float *nodeCandidateProbs;   //available nodes' probabilities
-    uint *carCandidateIndices;   //available cars represented as indices
-    float *carCandidateProbs;    //available cars' probabilities
+    uint *indices;
+    float *probabilities;
 };
 
 
@@ -162,9 +160,11 @@ void PheromoneEvaporation();
 bool updatePheromones(ant *bestAnt);
 int findBestAnt();
 void updateBestPath(uint bestAntIndex);
+float calculatePathCost();
 
 /* probabilitiy */
-int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentCar);
+int PickNode(ant *currentAnt, node *currentNode, car *currentCar);
+int PickCar(ant *currentAnt, node *currentNode);
 uint selectFromFreqArray(float sum, uint n, float *probabilities);
 
 

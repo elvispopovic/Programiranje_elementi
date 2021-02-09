@@ -27,7 +27,7 @@ uint selectFromFreqArray(float sum, uint n, float *probabilities)
     return center;
 }
 
-int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentCar)
+int PickNode(ant *currentAnt, node *currentNode, car *currentCar)
 {
     uint i, nNeighbours;
     uint *ptUint;
@@ -36,12 +36,11 @@ int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentC
     float *ptFloat, *ptFloat2, *ptFloat3;
     bool *ptBool;
     /* edgeWeightMatrices[car][node][neighbour] */
-    for(i=0, nNeighbours=0, ptFloat2=prData.edgeWeightMatrices[currentCar->index][currentNode->index],
-        ptFloat3 = currentNode->pheroNeighbours,
-        ptBool = currentAnt->nodesVisited, 
-        ptUint = probArrays.nodeCandidatesIndices, ptFloat = probArrays.nodeCandidateProbs, sum=0.0;
+    for(i=0, nNeighbours=0, ptFloat3 = currentNode->pheroNeighbours, ptBool = currentAnt->nodesVisited, 
+        ptFloat2=prData.edgeWeightMatrices[currentCar->index][currentNode->index],
+        ptUint = probArrays.indices, ptFloat = probArrays.probabilities, sum=0.0;
         i<prData.dim; 
-        i++, ptFloat2++, ptBool++)
+        i++, ptFloat2++, ptFloat3++, ptBool++)
     {
         if(*ptFloat2 != 0.0 && *ptFloat2 < 9999 && *ptBool == false)
         {
@@ -50,14 +49,23 @@ int CalculateNodeProbabilities(ant *currentAnt, node *currentNode, car *currentC
             tau = *ptFloat3;
             p = pow(eta, parData.alpha) * pow(tau, parData.beta);
             *(ptFloat++) = sum;     //freq array probability (cumulative)
-            sum += p;
+            sum += p;               //left shift, p0 to 0, sum after
             nNeighbours++;
         }
     }
     if(nNeighbours == 0)
         return -1;
     else if(nNeighbours == 1)
-        return probArrays.nodeCandidatesIndices[0];
-    i = selectFromFreqArray(sum, nNeighbours, probArrays.nodeCandidateProbs);
-    return probArrays.nodeCandidatesIndices[i];
+        return probArrays.indices[0];
+    i = selectFromFreqArray(sum, nNeighbours, probArrays.probabilities);
+    return probArrays.indices[i];
+}
+
+int PickCar(ant *currentAnt, node *currentNode)
+{
+    int picked = 0;
+    if(prData.nCars <= 1)
+        return picked;
+    
+    return picked;
 }

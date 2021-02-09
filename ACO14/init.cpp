@@ -53,13 +53,13 @@ void cleanup()
         {
             delete[] ptAnt->nodes;
             delete[] ptAnt->nodesVisited;
+            delete[] ptAnt->carsRented;
         }
         delete[] ants;
     }
-    delete[] probArrays.nodeCandidateProbs;
-    delete[] probArrays.nodeCandidatesIndices;
-    delete[] probArrays.carCandidateIndices;
-    delete[] probArrays.carCandidateProbs;
+    delete[] probArrays.indices;
+    delete[] probArrays.probabilities;
+
     delete[] bPath.nodes;
     bPath.nodeCounter = 0;
     delete mersenneGenerator;
@@ -152,18 +152,26 @@ void initAnts()
         ptAnt->nodeCounter = 0;
         ptAnt->nodesVisited = new bool[prData.dim];
         for(i=0, ptBool=ptAnt->nodesVisited; i<prData.dim; i++, ptBool++)
-        {
             *ptBool = false;
-        }
+
+        ptAnt->carsRented = new bool[prData.nCars];
+        for(i=0, ptBool=ptAnt->carsRented; i<prData.nCars; i++, ptBool++)
+            *ptBool = false;
     }
 }
 
 void initProbArrays()
 {
-    probArrays.nodeCandidatesIndices = new uint[prData.dim]; 
-    probArrays.nodeCandidateProbs = new float[prData.dim];
-    probArrays.carCandidateIndices = new uint[prData.nCars];
-    probArrays.carCandidateProbs = new float[prData.nCars];
+    uint i, max;
+    max = prData.dim;
+    if(prData.nCars > max)
+        max = prData.nCars;
+    for(i=0; i<prData.dim; i++)
+        if(nodes[i].nPassengers > max)
+            max = nodes[i].nPassengers;
+    probArrays.indices = new uint[max];
+    probArrays.probabilities = new float[max];
+
 }
 
 void initBestPath()

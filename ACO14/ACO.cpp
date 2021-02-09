@@ -32,36 +32,50 @@ bool Solution(uint iter, node *startNode)
 
 bool nodeTraversal(node *startNode, ant *currentAnt)
 {
-    int picked;
+    int pickedNode, pickedCar;
     float value;
     node *currentNode;
     car *currentCar;
 
     /* start node is visited, and counted as passed */
     currentNode = startNode;
+    currentCar = cars;
     currentAnt->nodes[currentAnt->nodeCounter].prevNode = nullptr;
     currentAnt->nodes[currentAnt->nodeCounter].curNode = currentNode;   
-    currentAnt->nodeCounter++;
     currentAnt->nodesVisited[currentNode->index] = true;
 
-    /* temporary */
-    currentCar = &cars[0];
+    
+    currentAnt->nodes[currentAnt->nodeCounter].carIn = nullptr;
+    pickedCar = PickCar(currentAnt, currentNode);
+    if(pickedCar >= 0)
+        currentCar = cars+pickedCar;
+    currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
+    currentAnt->nodeCounter++;
+
 
     /* reset ant price */
      currentAnt->price = 0.0;
 
     do /* node traversal loop starts here */
     {
-        picked = CalculateNodeProbabilities(currentAnt, currentNode, &cars[0]);
-        if(picked >= 0)
+        pickedNode = PickNode(currentAnt, currentNode, currentCar);
+        if(pickedNode >= 0)
         {
-            currentAnt->price += (float)prData.edgeWeightMatrices[currentCar->index][currentNode->index][nodes[picked].index];
+            currentAnt->price += (float)prData.edgeWeightMatrices[currentCar->index][currentNode->index][nodes[pickedNode].index];
             currentAnt->nodes[currentAnt->nodeCounter].prevNode = currentNode;
-            currentNode = nodes+picked;
+            currentNode = nodes+pickedNode;
             currentAnt->nodes[currentAnt->nodeCounter-1].nextNode = currentNode;
             currentAnt->nodes[currentAnt->nodeCounter].curNode = currentNode;
+            currentAnt->nodesVisited[pickedNode] = true;      
+
+            currentAnt->nodes[currentAnt->nodeCounter].carIn = currentCar;
+            pickedCar = PickCar(currentAnt, currentNode);
+            if(pickedCar >= 0)
+                currentCar = cars+pickedCar;
+            currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
+
             currentAnt->nodeCounter++;
-            currentAnt->nodesVisited[picked] = true;            
+                  
         }
         else //try to connect to start node (if link exists)
         {
@@ -74,11 +88,15 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
                 currentAnt->nodes[currentAnt->nodeCounter-1].nextNode = currentNode;
                 currentAnt->nodes[currentAnt->nodeCounter].curNode = currentNode;
                 currentAnt->nodes[currentAnt->nodeCounter].nextNode = nullptr;
+
+                currentAnt->nodes[currentAnt->nodeCounter].carIn = currentCar;
+                currentCar = &cars[PickCar(currentAnt, currentNode)]; 
+                currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
                 currentAnt->nodeCounter++;
             }
         }
         
-    } while (picked >= 0);
+    } while (pickedNode >= 0);
     if(currentAnt->nodeCounter == prData.dim+1)
         return true;
     return false;
@@ -127,6 +145,20 @@ void updateBestPath(uint bestAntIndex)
     bPath.price = bestAnt->price;
     for(i=0, ptAntNode1=bPath.nodes, ptAntNode2=bestAnt->nodes; i<prData.dim; i++, ptAntNode1++, ptAntNode2++)
         memcpy(ptAntNode1, ptAntNode2, sizeof(antNode));
+}
+
+/* redundant calculation */
+float calculatePathCost()
+{
+    uint i;
+    antNode *ptAntNode;
+    float price = 0.0;
+    if(bPath.nodeCounter == 0)
+        return price;
+    for(i=0, ptAntNode=bPath.nodes; i<bPath.nodeCounter; i++, ptAntNode++)
+        price += prData.edgeWeightMatrices[ptAntNode->carOut->index][ptAntNode->curNode->index][ptAntNode->nextNode->index];
+
+    return price;
 }
 
 int findBestAnt()

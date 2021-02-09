@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
             cout << bPath.nodes[j].curNode->pheroNeighbours[i] << ", ";
         cout << bPath.nodes[j].curNode->pheroNeighbours[i] << endl;
     }
-    cout << "Price: " << bPath.price << endl;
+    cout << "Price: " << bPath.price << ", calculated price: " << calculatePathCost() << endl;
 
 
 
