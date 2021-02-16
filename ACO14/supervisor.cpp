@@ -1,12 +1,14 @@
 #include "supervisor.h"
 
+char bestHeader[][12]={"Iter"," BestAnt"," BestPath1", " BestPath2"};
+
 using namespace std;
 
 char nodeHeader[][8]={"Index","Name","nPass"};
 char nodePassHeader[][8]={"Node","Index","Name","Start","End"};
 
 
-ofstream problemDataStr, initDataStr;
+ofstream problemDataStr, initDataStr, bestFileStream, resultStream;
 
 void writeHeaders();
 void displayMatrix(float*** matrix, int nMatrix, int dim);
@@ -16,17 +18,25 @@ void displayMatrix(float*** matrix, int nMatrix, int dim);
 void beginSupervisor(const char* filename)
 {
     char name[64];
+    if(parData.writeData == false)
+        return;
     sprintf(name,"%s_input_data.txt", filename);
     problemDataStr.open(name, ios::out);
     sprintf(name,"%s_init_data.txt", filename);
     initDataStr.open(name, ios::out);
-
-    
+    sprintf(name,"%s_results.txt", filename);
+    resultStream.open(name, ios::out);
+    sprintf(name,"%s_best.txt", filename);
+    bestFileStream.open(name, ios::out);
 }
 
 /* ends supervisor */
 void endSupervisor()
-{
+{   
+    if(parData.writeData == false)
+        return;
+    resultStream.close();
+    bestFileStream.close();
     initDataStr.close();
     problemDataStr.close();
 }
@@ -114,8 +124,80 @@ void writeInitData()
 /* help functions */
 void writeHeaders()
 {
+    unsigned long i, strSize;
+    if(parData.writeData == false)
+        return;
+    strSize = sizeof(bestHeader)/(8*sizeof(char));
 
+    for(i=0; i<strSize-1; i++)
+        bestFileStream << bestHeader[i] << " ";
+    bestFileStream << bestHeader[i] << endl;
 
+}
+
+void writeResult()
+{
+    uint i, j;
+    float *ptFloat;
+    antNode *ptAntNode;
+    car *ptCar;
+    node *ptNode, *carPickNode;
+    if(parData.writeData == false)
+        return;
+    if(bPath.nodeCounter == 0)
+    {
+        resultStream << "No best cost tour." << endl;
+        return;
+    }
+    resultStream << "Best: iteration: " << bPath.iteration << ", ant: " << bPath.antIndex << 
+    ", start node: " << bPath.nodes->curNode->name << ", cost: " << bPath.price << endl;
+    resultStream << "Nodes (name, car in, car out, arc cost, car return cost): " << endl;
+    for(i=0, ptAntNode=bPath.nodes, carPickNode=bPath.nodes->curNode; i<bPath.nodeCounter; i++, ptAntNode++)
+    {
+        resultStream << ptAntNode->curNode->name << " " << 
+        (ptAntNode->carIn==nullptr?"-":ptAntNode->carIn->name) << " " << ptAntNode->carOut->name << " " <<
+        prData.edgeWeightMatrices[ptAntNode->carOut->index][ptAntNode->curNode->index][ptAntNode->nextNode->index] << " ";
+        if(i==0)
+            resultStream << 0 << endl;
+        else if(ptAntNode->carIn->index == ptAntNode->carOut->index)
+        {
+            resultStream << 0 << endl;
+        }
+        else
+        {
+            resultStream << prData.returnRateMatrices[ptAntNode->carIn->index][ptAntNode->curNode->index][carPickNode->index] << endl;
+            carPickNode = ptAntNode->curNode;
+        }
+    }
+    resultStream << bPath.nodes->curNode->name << " " <<  (ptAntNode-1)->carOut->name << " -" << " - ";
+    resultStream << prData.returnRateMatrices[(ptAntNode-1)->carOut->index][(ptAntNode-1)->nextNode->index][carPickNode->index] << endl;
+    resultStream << "Pheromones: neighbours:" << endl;
+    for(j=0, ptAntNode = bPath.nodes; j<bPath.nodeCounter; j++, ptAntNode++)
+    {
+        resultStream << ptAntNode->curNode->name << endl;
+        for(i=0, ptNode=nodes, ptFloat=ptAntNode->curNode->pheroNeighbours; i<prData.dim; i++, ptNode++, ptFloat++)
+            resultStream << "(" << ptNode->name << ";" << *ptFloat << ") ";
+        resultStream << endl;
+    }
+    resultStream << "Pheromones: cars:" << endl;
+    for(j=0, ptAntNode = bPath.nodes; j<bPath.nodeCounter; j++, ptAntNode++)
+    {
+        resultStream << ptAntNode->curNode->name << ", " << ptAntNode->carOut->name << endl;
+        for(i=0, ptCar=cars, ptFloat=ptAntNode->curNode->pheroCars; i<prData.nCars; i++, ptCar++, ptFloat++)
+            resultStream << "(" << ptCar->name << ";" << *ptFloat << ") ";
+        resultStream << endl;
+    }
+
+}
+
+void writeBestData(uint iteration, ant *bestAnt)
+{
+    if(parData.writeData == false)
+        return;
+    bestFileStream << iteration << " " <<
+            bestAnt->price << " " << 
+            bPath.price << " " << 
+            calculatePathCost() << endl;
 }
 
 void displayMatrix(float*** matrix, int nMatrix, int dim)

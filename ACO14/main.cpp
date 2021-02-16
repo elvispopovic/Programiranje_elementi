@@ -30,6 +30,9 @@ int main(int argc, char* argv[])
     cout << "Init data written" << endl;
     cout << "Ant simulation will commence..." << endl;
 
+    if(parData.writeData == true)
+        writeHeaders();
+
     /* put ACO loop here */
     for(iter=0; iter < parData.nIter; iter++)
     {
@@ -38,12 +41,16 @@ int main(int argc, char* argv[])
         bestAnt = findBestAnt();
         if(bestAnt >= 0)
         {
-            updateBestPath(bestAnt);
+            updateBestPath(iter, bestAnt);
             updatePheromones(&ants[bestAnt]);
+            if(parData.writeData == true)
+                writeBestData(iter, ants+bestAnt);  
         }
-
         
-        uint j,k;
+
+  /*      
+        uint i, j,k;
+        cout << "Iter: " << iter << endl;
         for(k=0; k<parData.nAnts; k++)
         {
             cout << "Ant: " << k << endl;
@@ -71,24 +78,10 @@ int main(int argc, char* argv[])
         }
         
         cout << "Best ant: " << bestAnt << ", price: " << ants[bestAnt].price << ", best: " << bPath.price << endl;
-        
+    */
     }
-    
-    cout << "Best path:" << endl;
-    for(uint j=0; j<bPath.nodeCounter-1; j++)
-    {
-        //uint i;
-        cout << "Node " << bPath.nodes[j].curNode->name << ", car: " << bPath.nodes[j].carOut->name <<
-        ", price: " << prData.edgeWeightMatrices[0][bPath.nodes[j].curNode->index][bPath.nodes[j].nextNode->index] << ":" << endl;
-        /*
-        for(i=0; i<prData.dim-1; i++)
-            cout << bPath.nodes[j].curNode->pheroNeighbours[i] << ", ";
-        cout << bPath.nodes[j].curNode->pheroNeighbours[i] << endl;
-        */
-    }
-    cout << "Price: " << bPath.price << ", calculated price: " << calculatePathCost() << endl;
-    
-
+    writeResult();
+  
 
     cout << "Ant simulation ended." << endl;
     cleanup();

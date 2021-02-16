@@ -38,9 +38,12 @@ bool setParameters(int argc, char** argv)
     parData.beta =  BETA;
     parData.nAnts = N_ANTS;
     parData.nIter = N_ITER;
+    parData.writeData = false;
     
     for(i=1; i<argc; i++)
     {
+        if(strcmp(argv[i],"-write")==0)
+            parData.writeData = true; 
         if((strcmp(argv[i],"-tau")==0 || strcmp(argv[i],"-t")==0) && i<argc-1)
         {
             p1 = atof(argv[i+1]);

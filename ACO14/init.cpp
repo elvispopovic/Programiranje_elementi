@@ -148,7 +148,6 @@ void initAnts()
     for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
     {
         ptAnt->nodes = new antNode[prData.dim+1]; //first and last node are same
-
         ptAnt->nodeCounter = 0;
         ptAnt->nodesVisited = new bool[prData.dim];
         for(i=0, ptBool=ptAnt->nodesVisited; i<prData.dim; i++, ptBool++)

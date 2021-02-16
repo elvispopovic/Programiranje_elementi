@@ -25,8 +25,8 @@ bool Solution(uint iter, node *startNode)
     for(j = 0, ptAnt = ants; j < parData.nAnts; j++, ptAnt++)
     {
         nodeTraversal(startNode, ptAnt);
-
     }
+    
     return true;
 }
 
@@ -49,8 +49,10 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
     pickedCar = PickCar(currentAnt, currentNode, currentCar);
     if(pickedCar >= 0)
         currentCar = cars+pickedCar;
+    else return -1;
     currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
     currentAnt->carsRented[currentCar->index] = true;
+    currentAnt->carPickedNode = currentNode;
     currentAnt->nodeCounter++;
 
 
@@ -72,10 +74,13 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
             currentAnt->nodes[currentAnt->nodeCounter].carIn = currentCar;
             pickedCar = PickCar(currentAnt, currentNode, currentCar);
             if(pickedCar >= 0)
+            {
+                currentAnt->price += prData.returnRateMatrices[currentCar->index][currentNode->index][currentAnt->carPickedNode->index];
                 currentCar = cars+pickedCar;
+                currentAnt->carsRented[currentCar->index] = true;
+                currentAnt->carPickedNode = currentNode;
+            }
             currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
-            currentAnt->carsRented[currentCar->index] = true;
-
             currentAnt->nodeCounter++;
                   
         }
@@ -89,18 +94,27 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
                 currentNode = startNode;
                 currentAnt->nodes[currentAnt->nodeCounter-1].nextNode = currentNode;
                 currentAnt->nodes[currentAnt->nodeCounter].curNode = currentNode;
-                currentAnt->nodes[currentAnt->nodeCounter].nextNode = nullptr;
+                currentAnt->nodes[currentAnt->nodeCounter].nextNode = currentAnt->nodes->curNode;
 
                 currentAnt->nodes[currentAnt->nodeCounter].carIn = currentCar;
-                currentCar = &cars[PickCar(currentAnt, currentNode, currentCar)]; 
+                pickedCar = PickCar(currentAnt, currentNode, currentCar);
+                if(pickedCar >= 0)
+                {
+                    currentAnt->price += prData.returnRateMatrices[currentCar->index][currentNode->index][currentAnt->carPickedNode->index];
+                    currentCar = cars+pickedCar;
+                    currentAnt->carsRented[currentCar->index] = true;
+                    currentAnt->carPickedNode = currentNode;
+                }
                 currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
                 currentAnt->nodeCounter++;
             }
         }
-        
     } while (pickedNode >= 0);
     if(currentAnt->nodeCounter == prData.dim+1)
+    {
+        currentAnt->price += prData.returnRateMatrices[currentCar->index][currentAnt->nodes->curNode->index][currentAnt->carPickedNode->index];
         return true;
+    }
     return false;
 }
 
@@ -140,7 +154,7 @@ bool updatePheromones(ant *bestAnt)
     return true;
 }
 
-void updateBestPath(uint bestAntIndex)
+void updateBestPath(uint iteration, uint bestAntIndex)
 {
     uint i;
     ant *bestAnt;
@@ -148,6 +162,8 @@ void updateBestPath(uint bestAntIndex)
     bestAnt = ants+bestAntIndex;
     if(bestAnt == nullptr || bestAnt->nodeCounter < prData.dim || bestAnt->price >= bPath.price)
         return;
+    bPath.iteration = iteration;
+    bPath.antIndex = bestAntIndex;
     bPath.nodeCounter = prData.dim;
     bPath.price = bestAnt->price;
     for(i=0, ptAntNode1=bPath.nodes, ptAntNode2=bestAnt->nodes; i<prData.dim; i++, ptAntNode1++, ptAntNode2++)
@@ -159,12 +175,20 @@ float calculatePathCost()
 {
     uint i;
     antNode *ptAntNode;
+    node *carPickNode;
     float price = 0.0;
     if(bPath.nodeCounter == 0)
         return price;
-    for(i=0, ptAntNode=bPath.nodes; i<bPath.nodeCounter; i++, ptAntNode++)
+    for(i=0, ptAntNode=bPath.nodes, carPickNode=bPath.nodes->curNode; i<bPath.nodeCounter; i++, ptAntNode++)
+    {
         price += prData.edgeWeightMatrices[ptAntNode->carOut->index][ptAntNode->curNode->index][ptAntNode->nextNode->index];
-
+        if(i>0 && ptAntNode->carOut->index != ptAntNode->carIn->index)
+        {
+            price+=prData.returnRateMatrices[ptAntNode->carIn->index][ptAntNode->curNode->index][carPickNode->index];
+            carPickNode = ptAntNode->curNode;
+        }
+    }
+    price+=prData.returnRateMatrices[(ptAntNode-1)->carOut->index][bPath.nodes->curNode->index][carPickNode->index];
     return price;
 }
 
@@ -193,6 +217,8 @@ void resetAnts()
         ptAnt->price = 0.0;
         ptAnt->nodeCounter = 0;
         for(i=0, ptBool=ptAnt->nodesVisited; i<prData.dim; i++, ptBool++)
+            *ptBool = false;
+        for(i=0, ptBool=ptAnt->carsRented; i<prData.nCars; i++, ptBool++)
             *ptBool = false;
     }
 }

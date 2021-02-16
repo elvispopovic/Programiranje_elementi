@@ -9,5 +9,7 @@ void writeHeaders();
 
 void writeProblemData();
 void writeInitData();
+void writeResult();
+void writeBestData(uint iteration, ant *bestAnt);
 
 #endif

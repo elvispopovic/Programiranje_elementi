@@ -34,6 +34,7 @@ struct parameters
     float alpha, beta;
     uint nAnts;
     uint nIter;
+    bool writeData;
     char fileName[128];
 };
 
@@ -110,11 +111,15 @@ struct ant
     antNode *nodes;    //passed nodes
     bool *nodesVisited; //all nodes visited flags
     bool *carsRented;
+    node *carPickedNode;
     float price;
+    float pheroUpdate;
 };
 
 struct bestPath
 {
+    uint iteration;
+    uint antIndex;
     uint nodeCounter;
     antNode *nodes;
     float price;
@@ -159,7 +164,7 @@ bool Solution(uint iter, node *startNode);
 void PheromoneEvaporation();
 bool updatePheromones(ant *bestAnt);
 int findBestAnt();
-void updateBestPath(uint bestAntIndex);
+void updateBestPath(uint iteration, uint bestAntIndex);
 float calculatePathCost();
 
 /* probabilitiy */
