@@ -108,10 +108,14 @@ struct antNode
 struct ant
 {
     uint nodeCounter;  //passed nodes counter
+    bool closedPath;   //if this ant achieved closed path
     antNode *nodes;    //passed nodes
+    antNode *bestOptNodes;
+    float bestOptPrice;
     bool *nodesVisited; //all nodes visited flags
     bool *carsRented;
     node *carPickedNode;
+    antNode *optNodes;
     float price;
     float pheroUpdate;
 };
@@ -161,6 +165,7 @@ void cleanup();
 
 /* algorithm part */
 bool Solution(uint iter, node *startNode);
+void opt2_5();
 void PheromoneEvaporation();
 bool updatePheromones(ant *bestAnt);
 int findBestAnt();

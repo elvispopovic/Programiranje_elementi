@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
     {
         PheromoneEvaporation();
         Solution(0, &nodes[0]);
+        opt2_5();
         bestAnt = findBestAnt();
         if(bestAnt >= 0)
         {

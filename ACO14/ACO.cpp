@@ -57,8 +57,7 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
 
 
     /* reset ant price */
-     currentAnt->price = 0.0;
-
+    currentAnt->price = 0.0;
     do /* node traversal loop starts here */
     {
         pickedNode = PickNode(currentAnt, currentNode, currentCar);
@@ -81,40 +80,26 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
                 currentAnt->carPickedNode = currentNode;
             }
             currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
-            currentAnt->nodeCounter++;
-                  
+            currentAnt->nodeCounter++;         
         }
         else //try to connect to start node (if link exists)
         {
             value = prData.edgeWeightMatrices[currentCar->index][currentNode->index][startNode->index];
             if(value != 0.0 && value < 9999)
             {
-                currentAnt->price += (float)prData.edgeWeightMatrices[currentCar->index][currentNode->index][startNode->index];
-                currentAnt->nodes[currentAnt->nodeCounter].prevNode = currentNode;
+                currentAnt->price += value;
                 currentNode = startNode;
                 currentAnt->nodes[currentAnt->nodeCounter-1].nextNode = currentNode;
-                currentAnt->nodes[currentAnt->nodeCounter].curNode = currentNode;
-                currentAnt->nodes[currentAnt->nodeCounter].nextNode = currentAnt->nodes->curNode;
-
-                currentAnt->nodes[currentAnt->nodeCounter].carIn = currentCar;
-                pickedCar = PickCar(currentAnt, currentNode, currentCar);
-                if(pickedCar >= 0)
-                {
-                    currentAnt->price += prData.returnRateMatrices[currentCar->index][currentNode->index][currentAnt->carPickedNode->index];
-                    currentCar = cars+pickedCar;
-                    currentAnt->carsRented[currentCar->index] = true;
-                    currentAnt->carPickedNode = currentNode;
-                }
-                currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
-                currentAnt->nodeCounter++;
+                currentAnt->price += prData.returnRateMatrices[currentCar->index][currentNode->index][currentAnt->carPickedNode->index];
+                currentCar = nullptr;
+                currentAnt->closedPath = true;
             }
+            else 
+                currentAnt->closedPath = false;
         }
     } while (pickedNode >= 0);
-    if(currentAnt->nodeCounter == prData.dim+1)
-    {
-        currentAnt->price += prData.returnRateMatrices[currentCar->index][currentAnt->nodes->curNode->index][currentAnt->carPickedNode->index];
+    if(currentAnt->nodeCounter == prData.dim && currentAnt->closedPath == true)
         return true;
-    }
     return false;
 }
 
@@ -138,7 +123,7 @@ bool updatePheromones(ant *bestAnt)
     uint i;
     float pheroUpdate;
     antNode *ptAntNode;
-    if(bestAnt->nodeCounter <= prData.dim)
+    if(bestAnt->nodeCounter < prData.dim || bestAnt->closedPath == false)
         return false;
     if(bestAnt->price>0.001)
         pheroUpdate = 1.0/bestAnt->price;
@@ -160,7 +145,7 @@ void updateBestPath(uint iteration, uint bestAntIndex)
     ant *bestAnt;
     antNode *ptAntNode1, *ptAntNode2;
     bestAnt = ants+bestAntIndex;
-    if(bestAnt == nullptr || bestAnt->nodeCounter < prData.dim || bestAnt->price >= bPath.price)
+    if(bestAnt == nullptr || bestAnt->nodeCounter < prData.dim || bestAnt->closedPath == false || bestAnt->price >= bPath.price)
         return;
     bPath.iteration = iteration;
     bPath.antIndex = bestAntIndex;
@@ -199,7 +184,7 @@ int findBestAnt()
     ant* ptAnt;
     float minPrice = numeric_limits<float>::max();
     for(i=0, ptAnt=ants; i<parData.nAnts; i++, ptAnt++)
-        if(ptAnt->nodeCounter == prData.dim+1 && ptAnt->price < minPrice)
+        if(ptAnt->nodeCounter == prData.dim && ptAnt->closedPath == true && ptAnt->price < minPrice)
         {
             minPrice = ptAnt->price;
             result = i;

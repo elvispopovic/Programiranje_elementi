@@ -3,4 +3,4 @@ valgrind --leak-check=full \
          --track-origins=yes \
          --verbose \
          --log-file=./valgrind/valgrind-release-out.txt \
-         ./bin/Release/ACO14 inputData/Arab14ns.car -t 90 -a 2 -b 1 -na 5 -ni 100 -write
+         ./bin/Release/ACO14 inputData/Arab14ns.car -t 90 -a 2 -b 1 -na 5 -ni 50 -write

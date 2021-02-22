@@ -51,6 +51,8 @@ void cleanup()
     {
         for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
         {
+            delete[] ptAnt->bestOptNodes;
+            delete[] ptAnt->optNodes;
             delete[] ptAnt->nodes;
             delete[] ptAnt->nodesVisited;
             delete[] ptAnt->carsRented;
@@ -147,7 +149,10 @@ void initAnts()
     ants = new ant[parData.nAnts];
     for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
     {
-        ptAnt->nodes = new antNode[prData.dim+1]; //first and last node are same
+        ptAnt->nodes = new antNode[prData.dim];
+        ptAnt->optNodes = new antNode[prData.dim];
+        ptAnt->bestOptNodes = new antNode[prData.dim];
+
         ptAnt->nodeCounter = 0;
         ptAnt->nodesVisited = new bool[prData.dim];
         for(i=0, ptBool=ptAnt->nodesVisited; i<prData.dim; i++, ptBool++)
