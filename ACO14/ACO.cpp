@@ -23,10 +23,7 @@ bool Solution(uint iter, node *startNode)
 
     resetAnts();
     for(j = 0, ptAnt = ants; j < parData.nAnts; j++, ptAnt++)
-    {
-        nodeTraversal(startNode, ptAnt);
-    }
-    
+        nodeTraversal(startNode, ptAnt);    
     return true;
 }
 
@@ -40,6 +37,7 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
     /* start node is visited, and counted as passed */
     currentNode = startNode;
     currentCar = cars;
+
     currentAnt->nodes[currentAnt->nodeCounter].prevNode = nullptr;
     currentAnt->nodes[currentAnt->nodeCounter].curNode = currentNode;   
     currentAnt->nodesVisited[currentNode->index] = true;
@@ -61,7 +59,7 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
     do /* node traversal loop starts here */
     {
         pickedNode = PickNode(currentAnt, currentNode, currentCar);
-        if(pickedNode >= 0)
+        if(pickedNode >= 0) //can pick at least last node
         {
             currentAnt->price += (float)prData.edgeWeightMatrices[currentCar->index][currentNode->index][nodes[pickedNode].index];
             currentAnt->nodes[currentAnt->nodeCounter].prevNode = currentNode;
@@ -82,10 +80,10 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
             currentAnt->nodes[currentAnt->nodeCounter].carOut = currentCar;
             currentAnt->nodeCounter++;         
         }
-        else //try to connect to start node (if link exists)
+        else //start node
         {
             value = prData.edgeWeightMatrices[currentCar->index][currentNode->index][startNode->index];
-            if(value != 0.0 && value < 9999)
+            if(value != 0.0 && value < 9999) //can we connect last node and start node?
             {
                 currentAnt->price += value;
                 currentNode = startNode;
@@ -97,6 +95,7 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
             else 
                 currentAnt->closedPath = false;
         }
+        uint i;
     } while (pickedNode >= 0);
     if(currentAnt->nodeCounter == prData.dim && currentAnt->closedPath == true)
         return true;

@@ -2,14 +2,14 @@
 
 using namespace std;
 
-void createOptPath(uint n0, uint n1, ant *ptAnt);
+void createOptPath(uint n0, uint n1, ant *ptAnt, short variant);
 float calculateAntCost(uint nodeCount, antNode *nodes);
 void updateAntOpt(ant *currentAnt, float currentOptPrice);
 void updateAnt(ant *currentAnt);
 
 void opt2_5()
 {
-    uint i, j, k;
+    uint i, j, k, v;
     ant *ptAnt;
     float optPrice;
     if(prData.dim < 5)
@@ -33,19 +33,22 @@ void opt2_5()
             //cout << "j: " << j << ", granica: " << (j==0?ptAnt->nodeCounter-1:ptAnt->nodeCounter) << endl;
             for(i=j+3; i<(j==0?ptAnt->nodeCounter-1:ptAnt->nodeCounter); i++)
             {
-                //cout << "j: " << j << ", i: " << i << endl;
-                createOptPath(j,i, ptAnt);
-                optPrice = calculateAntCost(ptAnt->nodeCounter, ptAnt->optNodes);
-                //cout << "Price: Ant: " << ptAnt->price << ", opt: " << optPrice << (optPrice<ptAnt->price?" BETTER":"") << endl;
-                if(optPrice < ptAnt->bestOptPrice)
-                    updateAntOpt(ptAnt, optPrice);
+                for(v=0; v<2; v++)
+                {
+                    //cout << "j: " << j << ", i: " << i << ", v: " << v << endl;
+                    createOptPath(j,i, ptAnt, v);
+                    optPrice = calculateAntCost(ptAnt->nodeCounter, ptAnt->optNodes);
+                    //cout << "Price: Ant: " << ptAnt->price << ", opt: " << optPrice << (optPrice<ptAnt->price?" BETTER":"") << endl;
+                    if(optPrice < ptAnt->bestOptPrice)
+                        updateAntOpt(ptAnt, optPrice);
+                }
             }
             updateAnt(ptAnt);
         }
     }
 }
 
-void createOptPath(uint n0, uint n1, ant *ptAnt)
+void createOptPath(uint n0, uint n1, ant *ptAnt, short variant)
 {
     uint i;
     antNode *ptAntNode1, *ptAntNode2;
@@ -68,9 +71,21 @@ void createOptPath(uint n0, uint n1, ant *ptAnt)
     ptAntNode1->nextNode = ptAnt->optNodes->curNode;
     /* cars bypass */
     ptAnt->optNodes[n0+1].carIn=ptAnt->optNodes[n0].carOut;
-    ptAnt->optNodes[n1].carIn=ptAnt->optNodes[n1-1].carOut; //shifted one left, n1 becomes n1-1
-    if(n1+1<(ptAnt->nodeCounter))
-        ptAnt->optNodes[n1+1].carIn=ptAnt->optNodes[n1].carOut;
+    /* shifted one left, n1 becomes n1-1, n1+1 becomes n1 */
+    if(variant==0)
+    {
+        ptAnt->optNodes[n1].carIn=ptAnt->optNodes[n1].carOut=ptAnt->optNodes[n1-1].carOut; 
+        if(n1+1<(ptAnt->nodeCounter))
+            ptAnt->optNodes[n1+1].carIn=ptAnt->optNodes[n1].carOut;
+    }
+    else
+    {
+        ptAnt->optNodes[n1].carIn=ptAnt->optNodes[n1].carOut;
+        if(n1+1<(ptAnt->nodeCounter))
+            ptAnt->optNodes[n1].carOut=ptAnt->optNodes[n1+1].carIn;
+        else
+            ptAnt->optNodes[n1].carOut=ptAnt->nodes[ptAnt->nodeCounter-1].carOut;
+    }
 
 /*
     for(i=0, ptAntNode1=ptAnt->optNodes; i<ptAnt->nodeCounter-1; i++, ptAntNode1++)

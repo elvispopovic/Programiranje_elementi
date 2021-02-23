@@ -182,10 +182,11 @@ void writeResult()
     resultStream << "Pheromones: cars:" << endl;
     for(j=0, ptAntNode = bPath.nodes; j<bPath.nodeCounter; j++, ptAntNode++)
     {
-        resultStream << ptAntNode->curNode->name << ", " << ptAntNode->carOut->name << endl;
         for(i=0, ptCar=cars, ptFloat=ptAntNode->curNode->pheroCars; i<prData.nCars; i++, ptCar++, ptFloat++)
             resultStream << "(" << ptCar->name << ";" << *ptFloat << ") ";
         resultStream << endl;
+        resultStream << ptAntNode->curNode->name << ", " << 
+        (ptAntNode->carIn==nullptr?"-":ptAntNode->carIn->name) << " -> " << ptAntNode->carOut->name << endl;
     }
 
 }
