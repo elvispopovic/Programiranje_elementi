@@ -127,8 +127,12 @@ bool updatePheromones(ant *bestAnt)
         pheroUpdate = 1.0/bestAnt->price;
     else
         return false;
-    
-    for(i=0, ptAntNode=bestAnt->nodes; i<bestAnt->nodeCounter-1; i++, ptAntNode++)
+    /* use non-opt or opt path */
+    if(bestAnt->bestOptPrice >= bestAnt->price)
+        ptAntNode=bestAnt->nodes;
+    else
+        ptAntNode=bestAnt->bestOptNodes;
+    for(i=0; i<bestAnt->nodeCounter-1; i++, ptAntNode++)
     {
         ptAntNode->curNode->pheroNeighbours[ptAntNode->nextNode->index]+=pheroUpdate;
         ptAntNode->curNode->pheroCars[ptAntNode->carOut->index]+=pheroUpdate;
