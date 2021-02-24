@@ -35,6 +35,7 @@ struct parameters
     uint nAnts;
     uint nIter;
     bool writeData;
+    bool opt;
     char fileName[128];
 };
 
@@ -108,14 +109,15 @@ struct antNode
 struct ant
 {
     uint nodeCounter;  //passed nodes counter
-    bool closedPath;   //if this ant achieved closed path
     antNode *nodes;    //passed nodes
-    antNode *bestOptNodes;
+    bool closedPath;   //if this ant achieved closed path
     float bestOptPrice;
     bool *nodesVisited; //all nodes visited flags
     bool *carsRented;
     node *carPickedNode;
+    uint optNodeCounter;
     antNode *optNodes;
+    antNode *bestOptNodes;
     float price;
     float pheroUpdate;
 };
@@ -123,10 +125,12 @@ struct ant
 struct bestPath
 {
     uint iteration;
-    uint antIndex;
     uint nodeCounter;
     antNode *nodes;
+    uint optNodeCounter;
+    antNode *optNodes;
     float price;
+    float optPrice;
 };
 
 /* all ants use it - make it thread safe if ants uses threads */
@@ -168,9 +172,10 @@ bool Solution(uint iter, node *startNode);
 void opt2_5();
 void PheromoneEvaporation();
 bool updatePheromones(ant *bestAnt);
-int findBestAnt();
-void updateBestPath(uint iteration, uint bestAntIndex);
+ant* findBestAnt();
+bool updateBestPath(uint iteration, ant *bestAnt);
 float calculatePathCost();
+float calculateOptPathCost();
 
 /* probabilitiy */
 int PickNode(ant *currentAnt, node *currentNode, car *currentCar);

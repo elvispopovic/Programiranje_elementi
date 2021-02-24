@@ -6,7 +6,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     uint iter;
-    int bestAnt = 0;
+    ant *bestAnt;
     if(argc < 2)
     {
         cout << "No filename parameter." << endl;
@@ -40,12 +40,12 @@ int main(int argc, char* argv[])
         Solution(0, &nodes[0]);
         opt2_5();
         bestAnt = findBestAnt();
-        if(bestAnt >= 0)
+        if(bestAnt != nullptr)
         {
             updateBestPath(iter, bestAnt);
-            updatePheromones(&ants[bestAnt]);
+            updatePheromones(bestAnt);
             if(parData.writeData == true)
-                writeBestData(iter, ants+bestAnt);  
+                writeBestData(iter, bestAnt);  
         }
         
 

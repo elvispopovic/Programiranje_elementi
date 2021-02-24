@@ -5,14 +5,13 @@ using namespace std;
 void createOptPath(uint n0, uint n1, ant *ptAnt, short variant);
 float calculateAntCost(uint nodeCount, antNode *nodes);
 void updateAntOpt(ant *currentAnt, float currentOptPrice);
-void updateAnt(ant *currentAnt);
 
 void opt2_5()
 {
     uint i, j, k, v;
     ant *ptAnt;
     float optPrice;
-    if(prData.dim < 5)
+    if(prData.dim < 5 || parData.opt == false)
         return;
     for(k=0, ptAnt=ants; k<parData.nAnts; k++, ptAnt++)
     {
@@ -43,7 +42,6 @@ void opt2_5()
                         updateAntOpt(ptAnt, optPrice);
                 }
             }
-            updateAnt(ptAnt);
         }
     }
 }
@@ -86,14 +84,6 @@ void createOptPath(uint n0, uint n1, ant *ptAnt, short variant)
         else
             ptAnt->optNodes[n1].carOut=ptAnt->nodes[ptAnt->nodeCounter-1].carOut;
     }
-
-/*
-    for(i=0, ptAntNode1=ptAnt->optNodes; i<ptAnt->nodeCounter-1; i++, ptAntNode1++)
-        cout << (ptAntNode1->prevNode==nullptr?"-":ptAntNode1->prevNode->name) << "->" << ptAntNode1->curNode->name << "(" << 
-        (ptAntNode1->carIn==nullptr?"-":ptAntNode1->carIn->name) << ", " << ptAntNode1->carOut->name << ")->" << ptAntNode1->nextNode->name << ", ";
-    cout << (ptAntNode1->prevNode==nullptr?"-":ptAntNode1->prevNode->name) << "->" << ptAntNode1->curNode->name << "(" << 
-    (ptAntNode1->carIn==nullptr?"-":ptAntNode1->carIn->name) << ", " << ptAntNode1->carOut->name << ")->" << ptAntNode1->nextNode->name << endl;
-*/   
 }
 
 float calculateAntCost(uint nodeCount, antNode *nodes)
@@ -124,16 +114,6 @@ void updateAntOpt(ant *currentAnt, float currentOptPrice)
     for(i=0, ptAntNode1=currentAnt->optNodes, ptAntNode2=currentAnt->bestOptNodes; i<currentAnt->nodeCounter; i++, ptAntNode1++, ptAntNode2++)
         memcpy(ptAntNode2, ptAntNode1, sizeof(antNode));
     currentAnt->bestOptPrice = currentOptPrice;
-}
-
-void updateAnt(ant *currentAnt)
-{
-    uint i;
-    antNode *ptAntNode1, *ptAntNode2;
-    if(currentAnt->bestOptPrice>=currentAnt->price)
-        return;
-    for(i=0, ptAntNode1=currentAnt->bestOptNodes, ptAntNode2=currentAnt->nodes; i<currentAnt->nodeCounter; i++, ptAntNode1++, ptAntNode2++)
-        memcpy(ptAntNode2, ptAntNode1, sizeof(antNode));
-    currentAnt->price = currentAnt->bestOptPrice;
+    currentAnt->optNodeCounter = currentAnt->nodeCounter;
 }
 

@@ -63,7 +63,9 @@ void cleanup()
     delete[] probArrays.probabilities;
 
     delete[] bPath.nodes;
+    delete[] bPath.optNodes;
     bPath.nodeCounter = 0;
+    bPath.optNodeCounter = 0;
     delete mersenneGenerator;
 }
 
@@ -181,6 +183,9 @@ void initProbArrays()
 void initBestPath()
 {
     bPath.nodeCounter = 0;
-    bPath.price = numeric_limits<float>::max();
     bPath.nodes = new antNode[prData.dim];
+    bPath.optNodeCounter = 0;
+    bPath.optNodes = new antNode[prData.dim];
+    bPath.price = numeric_limits<float>::max();
+    bPath.optPrice = numeric_limits<float>::max();
 }

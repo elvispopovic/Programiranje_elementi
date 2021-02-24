@@ -95,7 +95,6 @@ bool nodeTraversal(node *startNode, ant *currentAnt)
             else 
                 currentAnt->closedPath = false;
         }
-        uint i;
     } while (pickedNode >= 0);
     if(currentAnt->nodeCounter == prData.dim && currentAnt->closedPath == true)
         return true;
@@ -138,20 +137,35 @@ bool updatePheromones(ant *bestAnt)
     return true;
 }
 
-void updateBestPath(uint iteration, uint bestAntIndex)
+bool updateBestPath(uint iteration, ant *bestAnt)
 {
     uint i;
-    ant *bestAnt;
+    float bestPrice = numeric_limits<float>::max();
     antNode *ptAntNode1, *ptAntNode2;
-    bestAnt = ants+bestAntIndex;
-    if(bestAnt == nullptr || bestAnt->nodeCounter < prData.dim || bestAnt->closedPath == false || bestAnt->price >= bPath.price)
-        return;
+    if(bestAnt == nullptr || bestAnt->nodeCounter < prData.dim || bestAnt->closedPath == false)
+        return false; //no updates
+    if(bestAnt->price < bestPrice) //try non-opt price
+        bestPrice = bestAnt->price;
+    if(bestAnt->bestOptPrice < bestPrice) //try opt price
+        bestPrice = bestAnt->bestOptPrice;
+    if(bestPrice >= bPath.price || bestPrice >= bPath.optPrice)
+        return false; //no better price
     bPath.iteration = iteration;
-    bPath.antIndex = bestAntIndex;
-    bPath.nodeCounter = prData.dim;
+
+    /* non-opt path */
+    bPath.nodeCounter = bestAnt->nodeCounter;
     bPath.price = bestAnt->price;
-    for(i=0, ptAntNode1=bPath.nodes, ptAntNode2=bestAnt->nodes; i<prData.dim; i++, ptAntNode1++, ptAntNode2++)
+    for(i=0, ptAntNode1=bPath.nodes, ptAntNode2=bestAnt->nodes; i<bPath.nodeCounter; i++, ptAntNode1++, ptAntNode2++)
         memcpy(ptAntNode1, ptAntNode2, sizeof(antNode));
+
+    /* opt path */
+    bPath.optNodeCounter = bestAnt->optNodeCounter;
+    bPath.optPrice = bestAnt->bestOptPrice;
+    if(bPath.optNodeCounter == bPath.nodeCounter)
+        for(i=0, ptAntNode1=bPath.optNodes, ptAntNode2=bestAnt->bestOptNodes; i<bPath.optNodeCounter; i++, ptAntNode1++, ptAntNode2++)
+            memcpy(ptAntNode1, ptAntNode2, sizeof(antNode));
+
+    return true;      
 }
 
 /* redundant calculation */
@@ -176,19 +190,51 @@ float calculatePathCost()
     return price;
 }
 
-int findBestAnt()
+float calculateOptPathCost()
 {
-    int result = -1;
     uint i;
-    ant* ptAnt;
+    antNode *ptAntNode;
+    node *carPickNode;
+    float price = 0.0;
+    if(bPath.optNodeCounter == 0)
+        return price;
+    for(i=0, ptAntNode=bPath.optNodes, carPickNode=bPath.optNodes->curNode; i<bPath.optNodeCounter; i++, ptAntNode++)
+    {
+        price += prData.edgeWeightMatrices[ptAntNode->carOut->index][ptAntNode->curNode->index][ptAntNode->nextNode->index];
+        if(i>0 && ptAntNode->carOut->index != ptAntNode->carIn->index)
+        {
+            price+=prData.returnRateMatrices[ptAntNode->carIn->index][ptAntNode->curNode->index][carPickNode->index];
+            carPickNode = ptAntNode->curNode;
+        }
+    }
+    price+=prData.returnRateMatrices[(ptAntNode-1)->carOut->index][bPath.optNodes->curNode->index][carPickNode->index];
+    return price;
+}
+
+
+
+ant* findBestAnt()
+{
+    uint i;
+    ant* ptAnt, *bestAnt=nullptr;
     float minPrice = numeric_limits<float>::max();
     for(i=0, ptAnt=ants; i<parData.nAnts; i++, ptAnt++)
-        if(ptAnt->nodeCounter == prData.dim && ptAnt->closedPath == true && ptAnt->price < minPrice)
+    {
+        if(ptAnt->nodeCounter == prData.dim && ptAnt->closedPath == true)
         {
-            minPrice = ptAnt->price;
-            result = i;
+            if(ptAnt->price < minPrice) //try non opt price
+            {
+                minPrice = ptAnt->price;
+                bestAnt = ptAnt;
+            }
+            if(ptAnt->bestOptPrice < minPrice) //try opt price
+            {
+                minPrice = ptAnt->bestOptPrice;
+                bestAnt = ptAnt;
+            }
         }
-    return result;
+    }
+    return bestAnt;
 }
 
 void resetAnts()
@@ -199,7 +245,9 @@ void resetAnts()
     for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
     {
         ptAnt->price = 0.0;
+        ptAnt->bestOptPrice = numeric_limits<float>::max();
         ptAnt->nodeCounter = 0;
+        ptAnt->optNodeCounter = 0;
         for(i=0, ptBool=ptAnt->nodesVisited; i<prData.dim; i++, ptBool++)
             *ptBool = false;
         for(i=0, ptBool=ptAnt->carsRented; i<prData.nCars; i++, ptBool++)

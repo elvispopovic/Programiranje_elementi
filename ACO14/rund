@@ -1,1 +1,1 @@
-./bin/Debug/ACO14 inputData/Arab14ns.car -t 99 -r 0.05 -a 2 -b 1 -na 3 -ni 100 -write
+./bin/Debug/ACO14 inputData/Arab14ns.car -t 99 -r 0.05 -a 2 -b 1 -na 3 -ni 100 -opt -write
