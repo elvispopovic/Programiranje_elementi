@@ -121,13 +121,13 @@ int PickCar(ant *currentAnt, node *currentNode, car *currentCar)
     return probArrays.indices[i];
 }
 
-void calculateMaxMin(ant *bestAnt)
+void calculateMaxMin()
 {
     float price = numeric_limits<float>::max();
-    if(bestAnt->price < price)
-        price = bestAnt->price;
-    if(bestAnt->bestOptPrice < price)
-        price = bestAnt->bestOptPrice;
+    if(bPath.price < price)
+        price = bPath.price;
+    if(bPath.optPrice < price)
+        price = bPath.optPrice;
     parData.max = 1.0/(parData.rho*price);
     parData.min = 0.1*parData.max;
     cout << "Phero min: " << parData.min << ", phero max: " << parData.max << endl;

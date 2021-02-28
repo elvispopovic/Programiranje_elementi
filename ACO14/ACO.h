@@ -183,7 +183,7 @@ float calculateOptPathCost();
 int PickNode(ant *currentAnt, node *currentNode, car *currentCar);
 int PickCar(ant *currentAnt, node *currentNode, car *currentCar);
 uint selectFromFreqArray(float sum, uint n, float *probabilities);
-void calculateMaxMin(ant *bestAnt);
+void calculateMaxMin();
 
 
 /* display part */

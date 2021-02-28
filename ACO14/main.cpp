@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
         {
             result = updateBestPath(iter, bestAnt);
             if(result)
-                calculateMaxMin(bestAnt);
+                calculateMaxMin();
             updatePheromones(bestAnt);
             limitPheromoneTraces();
             if(parData.writeData == true)
