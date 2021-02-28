@@ -5,6 +5,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+    bool result;
     uint iter;
     ant *bestAnt;
     if(argc < 2)
@@ -42,8 +43,11 @@ int main(int argc, char* argv[])
         bestAnt = findBestAnt();
         if(bestAnt != nullptr)
         {
-            updateBestPath(iter, bestAnt);
+            result = updateBestPath(iter, bestAnt);
+            if(result)
+                calculateMaxMin(bestAnt);
             updatePheromones(bestAnt);
+            limitPheromoneTraces();
             if(parData.writeData == true)
                 writeBestData(iter, bestAnt);  
         }

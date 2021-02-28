@@ -31,6 +31,7 @@ struct parameters
     uint argc;
     float tau; //initial pheromone trail
     float rho;
+    float max, min;
     float alpha, beta;
     uint nAnts;
     uint nIter;
@@ -172,6 +173,7 @@ bool Solution(uint iter, node *startNode);
 void opt2_5();
 void PheromoneEvaporation();
 bool updatePheromones(ant *bestAnt);
+void limitPheromoneTraces();
 ant* findBestAnt();
 bool updateBestPath(uint iteration, ant *bestAnt);
 float calculatePathCost();
@@ -181,6 +183,7 @@ float calculateOptPathCost();
 int PickNode(ant *currentAnt, node *currentNode, car *currentCar);
 int PickCar(ant *currentAnt, node *currentNode, car *currentCar);
 uint selectFromFreqArray(float sum, uint n, float *probabilities);
+void calculateMaxMin(ant *bestAnt);
 
 
 /* display part */

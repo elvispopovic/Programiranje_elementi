@@ -121,7 +121,7 @@ bool updatePheromones(ant *bestAnt)
     uint i;
     float pheroUpdate;
     antNode *ptAntNode;
-    if(bestAnt->nodeCounter < prData.dim || bestAnt->closedPath == false)
+    if(bestAnt->nodeCounter < prData.dim || bestAnt-> closedPath == false || bestAnt->price < 0.001)
         return false;
     if(bestAnt->price>0.001)
         pheroUpdate = 1.0/bestAnt->price;
@@ -129,9 +129,15 @@ bool updatePheromones(ant *bestAnt)
         return false;
     /* use non-opt or opt path */
     if(bestAnt->bestOptPrice >= bestAnt->price)
+    {   
+        pheroUpdate = 1.0/bestAnt->price;
         ptAntNode=bestAnt->nodes;
+    }
     else
+    {
+        pheroUpdate = 1.0/bestAnt->bestOptPrice;
         ptAntNode=bestAnt->bestOptNodes;
+    }
     for(i=0; i<bestAnt->nodeCounter-1; i++, ptAntNode++)
     {
         ptAntNode->curNode->pheroNeighbours[ptAntNode->nextNode->index]+=pheroUpdate;
@@ -139,6 +145,31 @@ bool updatePheromones(ant *bestAnt)
     }
 
     return true;
+}
+
+void limitPheromoneTraces()
+{
+    uint i, j;
+    node *ptNode;
+    float *ptFloat;
+    for(j=0, ptNode=nodes; j<prData.dim; j++, ptNode++)
+    {
+        for(i=0, ptFloat=ptNode->pheroNeighbours; i<prData.dim; i++, ptFloat++)
+            if(i!=j)
+            {
+                if(*ptFloat > parData.max)
+                    *ptFloat = parData.max;
+                if(*ptFloat < parData.min)
+                    *ptFloat = parData.min;
+            }
+        for(i=0, ptFloat=ptNode->pheroCars; i<prData.nCars; i++, ptFloat++)
+        {
+            if(*ptFloat > parData.max)
+                *ptFloat = parData.max;
+            if(*ptFloat < parData.min)
+                *ptFloat = parData.min;
+        }
+    }
 }
 
 bool updateBestPath(uint iteration, ant *bestAnt)
