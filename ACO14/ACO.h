@@ -136,8 +136,12 @@ struct bestPath
 /* all ants use it - make it thread safe if ants uses threads */
 struct probabilityArrays
 {
+    uint n;
     uint *indices; // elements indices
+    int selected;
+    float *probs;
     float *cumulatives; // cumulative probabilities
+    float sum;
 };
 
 
@@ -181,7 +185,7 @@ float calculateOptPathCost();
 /* probabilitiy */
 int PickNode(ant *currentAnt, node *currentNode, car *currentCar);
 int PickCar(ant *currentAnt, node *currentNode, car *currentCar);
-uint selectFromFreqArray(float sum, uint n, float *probabilities);
+uint selectFromFreqArray();
 void calculateMaxMin();
 
 

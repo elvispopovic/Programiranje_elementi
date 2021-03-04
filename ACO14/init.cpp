@@ -60,6 +60,7 @@ void cleanup()
         delete[] ants;
     }
     delete[] probArrays.indices;
+    delete[] probArrays.probs;
     delete[] probArrays.cumulatives;
     delete[] bPath.nodes;
     delete[] bPath.optNodes;
@@ -174,7 +175,9 @@ void initProbArrays()
     for(i=0; i<prData.dim; i++)
         if(nodes[i].nPassengers > max)
             max = nodes[i].nPassengers;
+    probArrays.n = 0;
     probArrays.indices = new uint[max];
+    probArrays.probs = new float[max];
     probArrays.cumulatives = new float[max];
 
 }
