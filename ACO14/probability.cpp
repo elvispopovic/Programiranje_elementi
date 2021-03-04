@@ -39,10 +39,12 @@ int PickNode(ant *currentAnt, node *currentNode, car *currentCar)
     for(i=0, nNeighbours=0, ptBool = currentAnt->nodesVisited, 
         ptFloat3 = currentNode->pheroNeighbours, 
         ptFloat2=prData.edgeWeightMatrices[currentCar->index][currentNode->index],
-        ptUint = probArrays.indices, ptFloat = probArrays.probabilities, sum=0.0;
+        ptUint = probArrays.indices, 
+        ptFloat = probArrays.cumulatives, sum=0.0;
         i<prData.dim; 
         i++, ptFloat2++, ptFloat3++, ptBool++)
     {
+        p = 0.0; //for last p added to sum - we don't know yet doues it meet conditions
         if(*ptFloat2 != 0.0 && *ptFloat2 < 9999 && *ptBool == false) //can be diagonal but can be no link also
         {
             *(ptUint++) = i;        //freq array index
@@ -50,15 +52,16 @@ int PickNode(ant *currentAnt, node *currentNode, car *currentCar)
             tau = *ptFloat3;
             p = pow(eta, parData.alpha) * pow(tau, parData.beta);
             *(ptFloat++) = sum;     //freq array probability (cumulative)
-            sum += p;               //left shift, p0 to 0, sum after
+            sum += p;               //left shift, p0 to 0, sum after, last sum not needed
             nNeighbours++;
         }
     }
+    sum += p;
     if(nNeighbours == 0)
         return -1;
     else if(nNeighbours == 1)
         return probArrays.indices[0];
-    i = selectFromFreqArray(sum, nNeighbours, probArrays.probabilities);
+    i = selectFromFreqArray(sum, nNeighbours, probArrays.cumulatives);
     return probArrays.indices[i];
 }
 
@@ -73,7 +76,7 @@ int PickCar(ant *currentAnt, node *currentNode, car *currentCar)
     if(prData.nCars <= 1) //at least one car exists, car index 0
         return picked;
     for(j=0, nCars=0, ptCar=cars, ptFloat3=currentNode->pheroCars,
-         ptUint = probArrays.indices, ptFloat = probArrays.probabilities, sum=0.0; 
+         ptUint = probArrays.indices, ptFloat = probArrays.cumulatives, sum=0.0; 
         j<prData.nCars; 
         j++,ptCar++, ptFloat3++)
     {
@@ -117,7 +120,7 @@ int PickCar(ant *currentAnt, node *currentNode, car *currentCar)
         return -1;
     else if(nCars==1)
         return probArrays.indices[0];
-    i = selectFromFreqArray(sum, nCars, probArrays.probabilities);
+    i = selectFromFreqArray(sum, nCars, probArrays.cumulatives);
     return probArrays.indices[i];
 }
 

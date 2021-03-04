@@ -103,7 +103,6 @@ struct antNode
     car *carIn, *carOut;
     uint nPickedPassengers; // passengers on board
     pass** pickedPassengers; 
-
 };
 
 /* ant structure */
@@ -137,8 +136,8 @@ struct bestPath
 /* all ants use it - make it thread safe if ants uses threads */
 struct probabilityArrays
 {
-    uint *indices;
-    float *probabilities;
+    uint *indices; // elements indices
+    float *cumulatives; // cumulative probabilities
 };
 
 
