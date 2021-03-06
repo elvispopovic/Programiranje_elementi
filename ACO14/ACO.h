@@ -31,7 +31,6 @@ struct parameters
     uint argc;
     float tau; //initial pheromone trail
     float rho;
-    float max, min;
     float alpha, beta;
     uint nAnts;
     uint nIter;
@@ -102,7 +101,9 @@ struct antNode
     node *prevNode, *nextNode; // previous and next node
     car *carIn, *carOut;
     uint nPickedPassengers; // passengers on board
-    pass** pickedPassengers; 
+    pass** pickedPassengers;
+    float prob;
+    float choices; 
 };
 
 /* ant structure */
@@ -131,6 +132,9 @@ struct bestPath
     antNode *optNodes;
     float price;
     float optPrice;
+    float pheroMin;
+    float pheroMax;
+    float pheroRatio;
 };
 
 /* all ants use it - make it thread safe if ants uses threads */
@@ -179,17 +183,17 @@ bool updatePheromones(ant *bestAnt);
 void limitPheromoneTraces();
 ant* findBestAnt();
 bool updateBestPath(uint iteration, ant *bestAnt);
-float calculatePathCost();
-float calculateOptPathCost();
+float calculatePathCost(antNode *nodes, uint nodeCounter);
 
 /* probabilitiy */
 int PickNode(ant *currentAnt, node *currentNode, car *currentCar);
 int PickCar(ant *currentAnt, node *currentNode, car *currentCar);
-uint selectFromFreqArray();
+uint selectFromFreqArray(float sum, uint n, float *probabilities);
 void calculateMaxMin();
 
 
 /* display part */
 void displayProblemData();
+void displayBestPath();
 
 #endif // ACO_H_INCLUDED

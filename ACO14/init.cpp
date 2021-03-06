@@ -190,4 +190,6 @@ void initBestPath()
     bPath.optNodes = new antNode[prData.dim];
     bPath.price = numeric_limits<float>::max();
     bPath.optPrice = numeric_limits<float>::max();
+    bPath.pheroMax = TAU_0;
+    bPath.pheroMin = 0.0;
 }

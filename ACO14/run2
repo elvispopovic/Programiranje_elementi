@@ -1,1 +1,1 @@
-./bin/Release/ACO14 inputData/ControlledGraph2.car -t 100 -r 0.1 -a 2 -b 1 -na 1 -ni 1 -opt -write
+./bin/Release/ACO14 inputData/ControlledGraph2.car -t 100 -r 0.1 -a 2 -b 1 -na 1 -ni 10 -opt -write

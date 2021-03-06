@@ -7,18 +7,18 @@ mt19937* mersenneGenerator = nullptr;
 
 
 /* pick from cumulative probability aaray */
-uint selectFromFreqArray()
+uint selectFromFreqArray(float sum, uint n, float *probabilities)
 {
     float l, r;
     uint left=0;
-    uint right = probArrays.n; //probabilities from 0 to n-1, right limit on n
+    uint right = n; //probabilities from 0 to n-1, right limit on n
     uint center =(left+right)>>1;
-    l = nextafter(probArrays.sum, numeric_limits<float>::max()); //upper closed interval limit
+    l = nextafter(sum, numeric_limits<float>::max()); //upper closed interval limit
     uniform_real_distribution<float> distribution((float)0.0,l);
     r = distribution(*mersenneGenerator);
     while(left<center)
     {
-        if(r >= *(probArrays.cumulatives+center))
+        if(r >= *(probabilities+center))
             left = center;
         else
             right = center;
@@ -36,8 +36,7 @@ int PickNode(ant *currentAnt, node *currentNode, car *currentCar)
     float *ptFloat, *ptFloat2, *ptFloat3, *ptFloat4;
     bool *ptBool;
     /* edgeWeightMatrices[car][node][neighbour] */
-    for(i=0, nNeighbours=0, 
-        ptBool = currentAnt->nodesVisited, 
+    for(i=0, nNeighbours=0, ptBool = currentAnt->nodesVisited, 
         ptFloat4 = probArrays.probs,
         ptFloat3 = currentNode->pheroNeighbours, 
         ptFloat2=prData.edgeWeightMatrices[currentCar->index][currentNode->index],
@@ -52,8 +51,8 @@ int PickNode(ant *currentAnt, node *currentNode, car *currentCar)
             eta = 1.0/(*ptFloat2);
             tau = *ptFloat3;
             p = pow(eta, parData.alpha) * pow(tau, parData.beta);
-            *(ptFloat4++) = p;
             *(ptFloat++) = sum;     //freq array probability (cumulative)
+            *(ptFloat4++) = p;
             sum += p;               //left shift, p0 to 0, sum after, last sum not needed
             nNeighbours++;
         }
@@ -61,7 +60,7 @@ int PickNode(ant *currentAnt, node *currentNode, car *currentCar)
     probArrays.n = nNeighbours;
     probArrays.sum = sum;
     if(nNeighbours == 0)
-    {   
+    {
         probArrays.selected = -1;
         return -1;
     }
@@ -70,7 +69,7 @@ int PickNode(ant *currentAnt, node *currentNode, car *currentCar)
         probArrays.selected = 0;
         return probArrays.indices[0];
     }
-    i = selectFromFreqArray();
+    i = selectFromFreqArray(sum, nNeighbours, probArrays.cumulatives);
     probArrays.selected = i;
     return probArrays.indices[i];
 }
@@ -84,11 +83,18 @@ int PickCar(ant *currentAnt, node *currentNode, car *currentCar)
     car *ptCar;
     int picked = 0;
     if(prData.nCars <= 1) //at least one car exists, car index 0
+    {
+        probArrays.n = 1;
+        probArrays.sum = 1;
+        probArrays.probs[0] = 1.0;
+        probArrays.selected = 0;
         return picked;
+    }
     for(j=0, nCars=0, ptCar=cars, 
         ptFloat4 = probArrays.probs,
         ptFloat3=currentNode->pheroCars,
-        ptUint = probArrays.indices, ptFloat = probArrays.cumulatives, sum=0.0; 
+        ptFloat = probArrays.cumulatives,
+         ptUint = probArrays.indices, sum=0.0; 
         j<prData.nCars; 
         j++,ptCar++, ptFloat3++)
     {
@@ -123,8 +129,8 @@ int PickCar(ant *currentAnt, node *currentNode, car *currentCar)
             eta = 1.0/(avgNeighbour+avgReturn);
             tau = *ptFloat3;
             p = pow(eta, parData.alpha) * pow(tau, parData.beta);
-            *(ptFloat4++) = p;
             *(ptFloat++) = sum;
+            *(ptFloat4++) = p;
             sum+=p;
             nCars++;
         }
@@ -132,27 +138,55 @@ int PickCar(ant *currentAnt, node *currentNode, car *currentCar)
     probArrays.n = nCars;
     probArrays.sum = sum;
     if(nCars==0)
-    {   probArrays.selected = -1;
+    {
+        probArrays.selected = -1;
         return -1;
     }
     else if(nCars==1)
-    {   
+    {
         probArrays.selected = 0;
         return probArrays.indices[0];
     }
-    i = selectFromFreqArray();
+    i = selectFromFreqArray(sum, nCars, probArrays.cumulatives);
     probArrays.selected = i;
     return probArrays.indices[i];
+}
+
+float calculateMinRatio(antNode *nodes, uint nodeCounter)
+{
+    uint i;
+    float minRatio;
+    float avg, pdec;
+
+    for(i=0, avg=0.0, pdec=0.0; i<nodeCounter; i++, nodes++)
+    {
+        avg += nodes->choices;
+        pdec += nodes->prob;
+    }
+    pdec /= nodeCounter;
+    avg /= nodeCounter;
+    if(avg > 1.0)
+        minRatio = (1.0-pdec)/((avg-1.0)*pdec);
+    else
+        minRatio = 0.0;
+    return minRatio;
 }
 
 void calculateMaxMin()
 {
     float price = numeric_limits<float>::max();
+    float minRatio;
     if(bPath.price < price)
         price = bPath.price;
     if(bPath.optPrice < price)
+    {
         price = bPath.optPrice;
-    parData.max = 1.0/(parData.rho*price);
-    parData.min = 0.0*parData.max;
-    cout << "Phero min: " << parData.min << ", phero max: " << parData.max << endl;
+        minRatio = calculateMinRatio(bPath.optNodes, bPath.optNodeCounter);
+    }
+    else
+        minRatio = calculateMinRatio(bPath.nodes, bPath.nodeCounter);
+    
+    bPath.pheroMax = 1.0/(parData.rho*price);
+    bPath.pheroMin = minRatio*bPath.pheroMax;
+    bPath.pheroRatio = minRatio;
 }

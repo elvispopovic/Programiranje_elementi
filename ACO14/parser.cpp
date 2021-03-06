@@ -34,8 +34,6 @@ bool setParameters(int argc, char** argv)
     /* default values */
     parData.tau =   TAU_0;
     parData.rho =   RHO;
-    parData.max =   TAU_0;
-    parData.min = 0.0;
     parData.alpha = ALPHA;
     parData.beta =  BETA;
     parData.nAnts = N_ANTS;

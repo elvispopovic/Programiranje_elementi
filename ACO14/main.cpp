@@ -24,6 +24,7 @@ int main(int argc, char* argv[])
     cout << "Data loaded." << endl;
     beginSupervisor("./outputData/stat");
 
+    displayProblemData();
     writeProblemData();
     cout << "Problem data written." << endl;
     init();
@@ -45,7 +46,10 @@ int main(int argc, char* argv[])
         {
             result = updateBestPath(iter, bestAnt);
             if(result)
+            {
                 calculateMaxMin();
+                displayBestPath();
+            }
             updatePheromones(bestAnt);
             limitPheromoneTraces();
             if(parData.writeData == true)

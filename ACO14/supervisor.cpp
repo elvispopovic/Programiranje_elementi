@@ -1,6 +1,6 @@
 #include "supervisor.h"
 
-char bestHeader[][14]={"Iter","BestAnt","BestAntOpt","BestPath1","BestPath2","BestOptPath1","BestOptPath2", "PheroMin", "PheroMax"};
+char bestHeader[][14]={"Iter","BestAnt","BestAntOpt","BestPath1","BestPath2","BestOptPath1","BestOptPath2", "PheroMin", "PheroMax", "PheroRatio"};
 
 using namespace std;
 
@@ -233,9 +233,9 @@ void writeBestData(uint iteration, ant *bestAnt)
         return;
     bestFileStream << iteration << " " <<
     bestAnt->price << " " << (bestAnt->optNodeCounter==0?-1:bestAnt->bestOptPrice) << " " << 
-    bPath.price << " " << calculatePathCost() << " " << 
-    (bPath.optNodeCounter==0?-1:bPath.optPrice) << " " << (bPath.optNodeCounter==0?-1:calculateOptPathCost()) << " " <<
-    parData.min << " " << parData.max << endl;;
+    bPath.price << " " << calculatePathCost(bPath.nodes, bPath.nodeCounter) << " " << 
+    (bPath.optNodeCounter==0?-1:bPath.optPrice) << " " << (bPath.optNodeCounter==0?-1:calculatePathCost(bPath.optNodes, bPath.optNodeCounter)) << " " <<
+    bPath.pheroMin << " " << bPath.pheroMax << " " << bPath.pheroRatio << endl;
 }
 
 void displayMatrix(float*** matrix, int nMatrix, int dim)
