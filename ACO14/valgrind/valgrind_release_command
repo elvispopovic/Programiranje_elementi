@@ -2,5 +2,5 @@ valgrind --leak-check=full \
          --show-leak-kinds=all \
          --track-origins=yes \
          --verbose \
-         --log-file=./valgrind/valgrind-release-out.txt \
-         ./bin/Release/ACO14 inputData/Arab14ns.car -t 90 -a 2 -b 1 -na 5 -ni 50 -opt -write
+         --log-file=./valgrind/valgrind-debug-out.txt \
+         ./bin/Debug/ACO14 inputData/ftv70.atsp -t 90 -a 2 -b 1 -na 5 -ni 5 -opt -write

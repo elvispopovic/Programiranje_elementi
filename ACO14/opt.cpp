@@ -3,7 +3,6 @@
 using namespace std;
 
 void createOptPath(uint n0, uint n1, ant *ptAnt, short variant);
-float calculateAntCost(uint nodeCount, antNode *nodes);
 void updateAntOpt(ant *currentAnt, float currentOptPrice);
 
 void opt2_5()
@@ -18,7 +17,6 @@ void opt2_5()
         if(ptAnt->nodeCounter < prData.dim || ptAnt->closedPath == false)
             continue;
 
-        ptAnt->bestOptPrice = numeric_limits<float>::max();
         /*
         cout << "Ant " << k << ", nodes: " << ptAnt->nodeCounter << ", dim: " << prData.dim << ", cost: " << price << endl;
         for(i=0; i<ptAnt->nodeCounter-1; i++)
@@ -36,10 +34,10 @@ void opt2_5()
                 {
                     //cout << "j: " << j << ", i: " << i << ", v: " << v << endl;
                     createOptPath(j,i, ptAnt, v);
-                    optPrice = calculateAntCost(ptAnt->nodeCounter, ptAnt->optNodes);
-                    //cout << "Price: Ant: " << ptAnt->price << ", opt: " << optPrice << (optPrice<ptAnt->price?" BETTER":"") << endl;
-                    if(optPrice < ptAnt->bestOptPrice)
-                        updateAntOpt(ptAnt, optPrice);
+                    optPrice = calculatePathCost(ptAnt->optNodes, ptAnt->optNodeCounter);
+                    if(optPrice != 0.0 && optPrice < ptAnt->bestOptPrice)
+                        updateAntOpt(ptAnt, optPrice); 
+             
                 }
             }
         }
@@ -84,27 +82,7 @@ void createOptPath(uint n0, uint n1, ant *ptAnt, short variant)
         else
             ptAnt->optNodes[n1].carOut=ptAnt->nodes[ptAnt->nodeCounter-1].carOut;
     }
-}
-
-float calculateAntCost(uint nodeCount, antNode *nodes)
-{
-    uint i;
-    antNode *ptAntNode;
-    node *carPickNode;
-    float price = 0.0;
-    if(nodeCount == 0)
-        return price;
-    for(i=0, ptAntNode=nodes, carPickNode=nodes->curNode; i<nodeCount; i++, ptAntNode++)
-    {
-        price += prData.edgeWeightMatrices[ptAntNode->carOut->index][ptAntNode->curNode->index][ptAntNode->nextNode->index];
-        if(i>0 && ptAntNode->carOut->index != ptAntNode->carIn->index)
-        {
-            price+=prData.returnRateMatrices[ptAntNode->carIn->index][ptAntNode->curNode->index][carPickNode->index];
-            carPickNode = ptAntNode->curNode;
-        }
-    }
-    price+=prData.returnRateMatrices[(ptAntNode-1)->carOut->index][nodes->curNode->index][carPickNode->index];
-    return price;
+    ptAnt->optNodeCounter = ptAnt->nodeCounter;
 }
 
 void updateAntOpt(ant *currentAnt, float currentOptPrice)

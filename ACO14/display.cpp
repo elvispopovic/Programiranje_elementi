@@ -13,7 +13,8 @@ void displayProblemData()
 
 void displayBestPath()
 {
-    cout << "it. " << bPath.iteration << ", price: " << bPath.price << ", opt. price: " << bPath.optPrice << 
+    cout << "it. " << bPath.iteration << ", price: " << bPath.price << 
+    ", opt. price: " << (bPath.optNodeCounter==0?-1:bPath.optPrice) << 
     ", phero Min: " << bPath.pheroMin << ", phero Max: " << bPath.pheroMax << ", ratio: " << bPath.pheroRatio << endl;
 }
 

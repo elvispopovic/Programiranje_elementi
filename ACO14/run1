@@ -1,1 +1,1 @@
-./bin/Release/ACO14 inputData/Arab14ns.car -t 10000 -r 0.9 -a 1 -b 1 -na 70 -ni 1000 -opt -write
+./bin/Release/ACO14 inputData/Arab14ns.car -t 10000 -r 0.6 -a 1 -b 1 -na 100 -ni 2000 -opt -write
