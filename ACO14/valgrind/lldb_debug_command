@@ -1,0 +1,1 @@
+lldb -o run -o quit -- ./bin/Debug/ACO14 inputData/ftv70.atsp -t 90 -a 2 -b 1 -na 5 -ni 5 -opt -write 

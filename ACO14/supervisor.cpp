@@ -241,7 +241,7 @@ void writeBestData(uint iteration, ant *bestAnt)
 
 void displayMatrix(float*** matrix, int nMatrix, int dim)
 {
-    register int i;
+    int i;
     int j;
     float *pt1;
     float **pt2;

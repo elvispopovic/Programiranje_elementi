@@ -1,0 +1,50 @@
+Data loaded.
+Arabia14n, type: CaRSP, nodes: 14, cars: 5
+Iters: 10000, ants: 100, rho: 0.6, alpha: 1, beta: 1
+Switches: 
+Problem data written.
+Init data written
+Ant simulation will commence...
+it. 0, price: 4492, opt. price: -1, phero Min: 8.35872e-05, phero Max: 0.00037103, ratio: 0.225284
+it. 1, price: 4271, opt. price: -1, phero Min: 9.58675e-05, phero Max: 0.000390229, ratio: 0.24567
+it. 4, price: 3942, opt. price: -1, phero Min: 9.03888e-05, phero Max: 0.000422797, ratio: 0.213788
+it. 5, price: 3881, opt. price: -1, phero Min: 8.27734e-05, phero Max: 0.000429443, ratio: 0.192746
+it. 7, price: 3594, opt. price: -1, phero Min: 8.69432e-05, phero Max: 0.000463736, ratio: 0.187484
+it. 13, price: 3389, opt. price: -1, phero Min: 8.14829e-05, phero Max: 0.000491787, ratio: 0.165687
+it. 14, price: 3335, opt. price: -1, phero Min: 4.10569e-05, phero Max: 0.00049975, ratio: 0.0821548
+it. 15, price: 3306, opt. price: -1, phero Min: 3.91572e-05, phero Max: 0.000504134, ratio: 0.0776722
+it. 16, price: 3286, opt. price: -1, phero Min: 2.62998e-05, phero Max: 0.000507202, ratio: 0.0518528
+it. 17, price: 3148, opt. price: -1, phero Min: 2.46897e-05, phero Max: 0.000529437, ratio: 0.0466338
+it. 18, price: 3120, opt. price: -1, phero Min: 1.79769e-05, phero Max: 0.000534188, ratio: 0.0336527
+it. 19, price: 3107, opt. price: -1, phero Min: 2.10632e-05, phero Max: 0.000536423, ratio: 0.0392661
+it. 20, price: 3073, opt. price: -1, phero Min: 1.61379e-05, phero Max: 0.000542358, ratio: 0.0297551
+it. 21, price: 3068, opt. price: -1, phero Min: 1.09682e-05, phero Max: 0.000543242, ratio: 0.0201902
+it. 31, price: 3058, opt. price: -1, phero Min: 1.06922e-05, phero Max: 0.000545019, ratio: 0.0196181
+it. 9480, price: 3054, opt. price: -1, phero Min: 2.49528e-05, phero Max: 0.000545732, ratio: 0.0457235
+Ant simulation ended.
+Init cleanup done.
+Loaded data freeing done.
+Process:         ACO14 [2450]
+Path:            /Users/USER/*/ACO14
+Load Address:    0x1021c8000
+Identifier:      ACO14
+Version:         ???
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  leaks [2449]
+
+Date/Time:       2021-05-01 19:37:18.122 +0200
+Launch Time:     2021-05-01 19:37:16.562 +0200
+OS Version:      macOS 11.1 (20C69)
+Report Version:  7
+Analysis Tool:   /Applications/Xcode.app/Contents/Developer/usr/bin/leaks
+Analysis Tool Version:  Xcode 12.5 (12E262)
+
+Physical footprint:         6561K
+Physical footprint (peak):  6561K
+----
+
+leaks Report Version: 4.0
+Process 2450: 217 nodes malloced for 16 KB
+Process 2450: 0 leaks for 0 total leaked bytes.
+
