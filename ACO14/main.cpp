@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     {
         PheromoneEvaporation();
         Solution(0, &nodes[0]);
-        opt2_5();
+        opt2_5(); //passengers call added inside opt2_5 (for each optimized)
         bestAnt = findBestAnt();
         if(bestAnt != nullptr)
         {
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
             if(result)
             {
                 calculateMaxMin();
-                displayBestPath();
+                displayBestPath(); //display in display.cpp
             }
             updatePheromones(bestAnt);
             limitPheromoneTraces();

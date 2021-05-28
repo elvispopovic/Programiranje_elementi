@@ -15,8 +15,6 @@ void init()
 {
     mt19937::result_type seed = time(0);
     mersenneGenerator = new mt19937(seed);
-
-
     initPassengers();
     initCars();
     initNodes();
@@ -56,6 +54,8 @@ void cleanup()
             delete[] ptAnt->nodes;
             delete[] ptAnt->nodesVisited;
             delete[] ptAnt->carsRented;
+            if(ptAnt->passPicked !=nullptr)
+                delete[] ptAnt->passPicked;
         }
         delete[] ants;
     }
@@ -77,7 +77,10 @@ void initNodes()
     pass* ptPass;
     float* ptFloat;
     if(passengers == nullptr)
+    {
+        nodes = nullptr;
         return;
+    }
     nodes = new node[prData.dim];
     for(j=0, ptNode=nodes; j<prData.dim; j++, ptNode++)     //for each node
     {
@@ -148,6 +151,14 @@ void initAnts()
     uint i, j;
     ant* ptAnt;
     bool* ptBool;
+    node *ptNode;
+    uint maxNodePassengers = 0;
+    if(nodes != nullptr)
+        for(i=0, maxNodePassengers=0, ptNode=nodes; i<prData.dim; i++, ptNode++)
+            if(ptNode->nPassengers > maxNodePassengers)
+                maxNodePassengers = ptNode->nPassengers;
+    cout << "Max node passengers: " << maxNodePassengers << endl;
+
     ants = new ant[parData.nAnts];
     for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
     {
@@ -163,6 +174,15 @@ void initAnts()
         ptAnt->carsRented = new bool[prData.nCars];
         for(i=0, ptBool=ptAnt->carsRented; i<prData.nCars; i++, ptBool++)
             *ptBool = false;
+
+        if(maxNodePassengers > 0)
+        {
+            ptAnt->passPicked = new bool[maxNodePassengers];
+            for(i=0, ptBool=ptAnt->passPicked; i<maxNodePassengers; i++, ptBool++)
+                *ptBool = false;
+        }
+        else
+            ptAnt->passPicked = nullptr;
     }
 }
 

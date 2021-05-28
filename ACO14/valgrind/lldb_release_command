@@ -1,1 +1,3 @@
-lldb -o run -o quit -- ./bin/Release/ACO14 inputData/ftv70.atsp -t 90 -a 2 -b 1 -na 5 -ni 5 -opt -write
+# lldb -o run -o quit -- ./bin/Release/ACO14 inputData/ftv70.atsp -t 90 -a 2 -b 1 -na 5 -ni 5 -opt -write
+
+lldb -o run -o quit -- ./bin/Release/ACO14 inputData/Arab14ns.car -t 100 -r 0.1 -a 1 -b 1 -na 1 -ni 1

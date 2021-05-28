@@ -100,7 +100,7 @@ struct antNode
     node *curNode;     // pointer to problem node
     node *prevNode, *nextNode; // previous and next node
     car *carIn, *carOut;
-    uint nPickedPassengers; // passengers on board
+    uint nPickedPassengers; // passengers on board (passengers in car)
     pass** pickedPassengers;
     float prob;
     float choices; 
@@ -114,11 +114,12 @@ struct ant
     bool closedPath;   //if this ant achieved closed path
     float bestOptPrice;
     bool *nodesVisited; //all nodes visited flags
-    bool *carsRented;
+    bool *carsRented;   //all cars rented flags
     node *carPickedNode;
+    bool *passPicked;   //temporary during node traversal - current node picked passengers
     uint optNodeCounter;
-    antNode *optNodes;
-    antNode *bestOptNodes;
+    antNode *optNodes;  
+    antNode *bestOptNodes; 
     float price;
     float pheroUpdate;
 };
@@ -141,9 +142,9 @@ struct bestPath
 struct probabilityArrays
 {
     uint n;
-    uint *indices; // elements indices
-    int selected;
-    float *probs;
+    uint *indices; // elements indices (prob. arrays have elements and their probabilities)
+    int selected; // 
+    float *probs; // probabilities
     float *cumulatives; // cumulative probabilities
     float sum;
 };
@@ -178,6 +179,7 @@ void cleanup();
 /* algorithm part */
 bool Solution(uint iter, node *startNode);
 void opt2_5();
+void calculatePassengers(antNode *nodes, uint nodeCounter);
 void PheromoneEvaporation();
 bool updatePheromones(ant *bestAnt);
 void limitPheromoneTraces();
@@ -188,6 +190,7 @@ float calculatePathCost(antNode *nodes, uint nodeCounter);
 /* probabilitiy */
 int PickNode(ant *currentAnt, node *currentNode, car *currentCar);
 int PickCar(ant *currentAnt, node *currentNode, car *currentCar);
+uint PickPassengers(node *currentNode, uint availablePlaces);
 uint selectFromFreqArray(float sum, uint n, float *probabilities);
 void calculateMaxMin();
 

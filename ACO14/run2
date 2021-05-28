@@ -1,1 +1,2 @@
+# -t tau, -r rho, -na number of ants, -ni number of iterations, -opt opt flag, -write write data
 ./bin/Release/ACO14 inputData/ControlledGraph2.car -t 100 -r 0.1 -a 2 -b 1 -na 1 -ni 10 -opt -write

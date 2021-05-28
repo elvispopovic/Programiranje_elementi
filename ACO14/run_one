@@ -1,0 +1,3 @@
+# run one ant in one iteration for development purposes only
+# -t tau, -r rho, -a alpha, -b beta, -na number of ants, -ni number of iterations, -opt opt flag, -write write data
+./bin/Release/ACO14 inputData/Arab14ns.car -t 100 -r 0.1 -a 1 -b 1 -na 1 -ni 1 -write

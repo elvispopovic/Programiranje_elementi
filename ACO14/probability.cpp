@@ -152,6 +152,21 @@ int PickCar(ant *currentAnt, node *currentNode, car *currentCar)
     return probArrays.indices[i];
 }
 
+uint PickPassengers(node *currentNode, uint availablePlaces)
+{
+    uint i, j;
+    //float *ptFloat;
+    pass **pptPass;
+    for(j=0, pptPass = currentNode->passengers; 
+        j<currentNode->nPassengers; 
+        j++, pptPass++)
+    {
+        cout << "Passenger: " << (*pptPass)->name << endl;
+    }
+
+    return 0;
+}
+
 float calculateMinRatio(antNode *nodes, uint nodeCounter)
 {
     uint i;

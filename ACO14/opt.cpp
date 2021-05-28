@@ -10,8 +10,15 @@ void opt2_5()
     uint i, j, k, v;
     ant *ptAnt;
     float optPrice;
-    if(prData.dim < 5 || parData.opt == false)
+    //no opt, but still have to calculate passengers
+    if(prData.dim < 5 || parData.opt == false) //no conditions for opt or no opt flag
+    {
+        for(k=0, ptAnt=ants; k<parData.nAnts; k++, ptAnt++)
+            if(ptAnt->nodeCounter == prData.dim && ptAnt->closedPath == true)
+                calculatePassengers(ptAnt->nodes, ptAnt->nodeCounter); 
         return;
+    }
+    //we have opt
     for(k=0, ptAnt=ants; k<parData.nAnts; k++, ptAnt++)
     {
         if(ptAnt->nodeCounter < prData.dim || ptAnt->closedPath == false)
@@ -36,8 +43,10 @@ void opt2_5()
                     createOptPath(j,i, ptAnt, v);
                     optPrice = calculatePathCost(ptAnt->optNodes, ptAnt->optNodeCounter);
                     if(optPrice != 0.0 && optPrice < ptAnt->bestOptPrice)
+                    {
                         updateAntOpt(ptAnt, optPrice); 
-             
+                        calculatePassengers(ptAnt->optNodes, ptAnt->optNodeCounter);
+                    }
                 }
             }
         }
