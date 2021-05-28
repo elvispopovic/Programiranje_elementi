@@ -102,6 +102,12 @@ void initNodes()
     /* number of passengers */
     for(i=0, ptPass = passengers; i<prData.nPass; i++, ptPass++)
         nodes[ptPass->startNode].nPassengers++;
+
+    /* max node pasengers in prData */
+    for(i=0, ptNode=nodes; i<prData.dim; i++, ptNode++)
+        if(ptNode->nPassengers > prData.maxNodePassengers)
+            prData.maxNodePassengers = ptNode->nPassengers;
+
     /* init array of passengers */
     for(j=0, ptNode=nodes; j<prData.dim; j++, ptNode++) 
     {
@@ -151,13 +157,6 @@ void initAnts()
     uint i, j;
     ant* ptAnt;
     bool* ptBool;
-    node *ptNode;
-    uint maxNodePassengers = 0;
-    if(nodes != nullptr)
-        for(i=0, maxNodePassengers=0, ptNode=nodes; i<prData.dim; i++, ptNode++)
-            if(ptNode->nPassengers > maxNodePassengers)
-                maxNodePassengers = ptNode->nPassengers;
-    cout << "Max node passengers: " << maxNodePassengers << endl;
 
     ants = new ant[parData.nAnts];
     for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
@@ -175,10 +174,10 @@ void initAnts()
         for(i=0, ptBool=ptAnt->carsRented; i<prData.nCars; i++, ptBool++)
             *ptBool = false;
 
-        if(maxNodePassengers > 0)
+        if(prData.maxNodePassengers > 0)
         {
-            ptAnt->passPicked = new bool[maxNodePassengers];
-            for(i=0, ptBool=ptAnt->passPicked; i<maxNodePassengers; i++, ptBool++)
+            ptAnt->passPicked = new bool[prData.maxNodePassengers];
+            for(i=0, ptBool=ptAnt->passPicked; i<prData.maxNodePassengers; i++, ptBool++)
                 *ptBool = false;
         }
         else

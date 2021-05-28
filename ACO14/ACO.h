@@ -57,6 +57,8 @@ struct problemData
     dataPass* passengers = nullptr; //array of passengers (file data)
     /* not in original paper */
     float rentFee = 0.0;
+    /* used by ants during passengers pick */
+    uint maxNodePassengers = 0;
 };
 
 /* file data passenger structure */
@@ -179,7 +181,7 @@ void cleanup();
 /* algorithm part */
 bool Solution(uint iter, node *startNode);
 void opt2_5();
-void calculatePassengers(antNode *nodes, uint nodeCounter);
+void calculatePassengers(antNode *nodes, uint nodeCounter, bool *passPicked);
 void PheromoneEvaporation();
 bool updatePheromones(ant *bestAnt);
 void limitPheromoneTraces();
@@ -190,7 +192,7 @@ float calculatePathCost(antNode *nodes, uint nodeCounter);
 /* probabilitiy */
 int PickNode(ant *currentAnt, node *currentNode, car *currentCar);
 int PickCar(ant *currentAnt, node *currentNode, car *currentCar);
-uint PickPassengers(node *currentNode, uint availablePlaces);
+uint PickPassengers(node *currentNode, uint availablePlaces, bool *passPicked);
 uint selectFromFreqArray(float sum, uint n, float *probabilities);
 void calculateMaxMin();
 

@@ -2,13 +2,24 @@
 
 using namespace std;
 
-void calculatePassengers(antNode *nodes, uint nodeCounter)
+void calculatePassengers(antNode *nodes, uint nodeCounter, bool *passPicked)
 {
-    int i;
+    int i, j;
     antNode *ptAntNode;
-    for(i=1, ptAntNode=nodes; i<nodeCounter; i++, ptAntNode++)
+    bool *ptBool;
+    for(j=0, ptAntNode=nodes; j<nodeCounter; j++, ptAntNode++)
     {
         cout << "Node: " << ptAntNode->curNode->name << ", nPass: " << ptAntNode->curNode->nPassengers << endl;
-        PickPassengers(ptAntNode->curNode, ptAntNode->curNode->nPassengers);
+
+        for(i=0, ptBool = passPicked; i<ptAntNode->curNode->nPassengers; i++,ptBool++)
+            *ptBool = false;
+
+        //privremeno za testiranje
+        
+        for(i=0, ptBool = passPicked; i<ptAntNode->curNode->nPassengers/2; i++, ptBool++)
+            *ptBool = true;
+            
+
+        PickPassengers(ptAntNode->curNode, ptAntNode->curNode->nPassengers, passPicked);
     }
 }

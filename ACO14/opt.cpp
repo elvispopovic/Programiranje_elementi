@@ -15,7 +15,7 @@ void opt2_5()
     {
         for(k=0, ptAnt=ants; k<parData.nAnts; k++, ptAnt++)
             if(ptAnt->nodeCounter == prData.dim && ptAnt->closedPath == true)
-                calculatePassengers(ptAnt->nodes, ptAnt->nodeCounter); 
+                calculatePassengers(ptAnt->nodes, ptAnt->nodeCounter, ptAnt->passPicked); 
         return;
     }
     //we have opt
@@ -44,8 +44,8 @@ void opt2_5()
                     optPrice = calculatePathCost(ptAnt->optNodes, ptAnt->optNodeCounter);
                     if(optPrice != 0.0 && optPrice < ptAnt->bestOptPrice)
                     {
-                        updateAntOpt(ptAnt, optPrice); 
-                        calculatePassengers(ptAnt->optNodes, ptAnt->optNodeCounter);
+                        updateAntOpt(ptAnt, optPrice);
+                        //calculatePassengers(ptAnt->optNodes, ptAnt->optNodeCounter, ptAnt->passPicked);
                     }
                 }
             }

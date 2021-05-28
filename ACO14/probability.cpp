@@ -152,15 +152,20 @@ int PickCar(ant *currentAnt, node *currentNode, car *currentCar)
     return probArrays.indices[i];
 }
 
-uint PickPassengers(node *currentNode, uint availablePlaces)
+uint PickPassengers(node *currentNode, uint availablePlaces, bool *passPicked)
 {
-    uint i, j;
+    uint j;
     //float *ptFloat;
+    bool *ptBool;
     pass **pptPass;
-    for(j=0, pptPass = currentNode->passengers; 
+
+
+    for(j=0, ptBool = passPicked, pptPass = currentNode->passengers; 
         j<currentNode->nPassengers; 
-        j++, pptPass++)
+        j++, ptBool++, pptPass++)
     {
+        if(*ptBool == true)
+            continue;
         cout << "Passenger: " << (*pptPass)->name << endl;
     }
 
