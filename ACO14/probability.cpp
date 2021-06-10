@@ -152,24 +152,49 @@ int PickCar(ant *currentAnt, node *currentNode, car *currentCar)
     return probArrays.indices[i];
 }
 
-uint PickPassengers(node *currentNode, uint availablePlaces, bool *passPicked)
+int PickPassengers(node *currentNode, uint availablePlaces, bool *passPicked)
 {
-    uint j;
-    //float *ptFloat;
+    uint i, nPass;
     bool *ptBool;
+    float sum, p;
+    float *ptFloat, *ptFloat4;
+    uint *ptUint;
     pass **pptPass;
 
-
-    for(j=0, ptBool = passPicked, pptPass = currentNode->passengers; 
-        j<currentNode->nPassengers; 
-        j++, ptBool++, pptPass++)
+    for(i=0, nPass = 0, p = 1.0,
+        ptBool = passPicked, pptPass = currentNode->passengers,
+        ptFloat4 = probArrays.probs,
+        ptUint = probArrays.indices, 
+        ptFloat = probArrays.cumulatives, sum=0.0; 
+        i<currentNode->nPassengers; 
+        i++, ptBool++, pptPass++)
     {
-        if(*ptBool == true)
-            continue;
-        cout << "Passenger: " << (*pptPass)->name << endl;
+        if(*ptBool == false)
+        {
+            p *= 0.5;
+            *(ptUint++) = i;        //freq array index / indices
+            *(ptFloat++) = sum;     //freq array probability (cumulative)
+            //cout << "Passenger: " << (*pptPass)->name << ", i: " << i << ", p: " << p << endl;
+            *(ptFloat4++) = p;
+            sum+=p;
+            nPass++;
+        }
     }
-
-    return 0;
+    probArrays.n = nPass;
+    probArrays.sum = sum;
+    if(nPass==0) // none to select - no selection
+    {
+        probArrays.selected = -1;
+        return -1;
+    }
+    else if(nPass == 1) // one to select - no selection
+    {
+        probArrays.selected = 0;
+        return probArrays.indices[0];
+    }
+    i = selectFromFreqArray(sum, nPass, probArrays.cumulatives);
+    probArrays.selected = i;
+    return probArrays.indices[i];
 }
 
 float calculateMinRatio(antNode *nodes, uint nodeCounter)

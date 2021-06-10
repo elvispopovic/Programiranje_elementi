@@ -25,6 +25,7 @@ bool setParameters(int argc, char** argv)
     float p1;
     uint p2;
     parData.argc = argc;
+    cout << "Arg: " << argv[1] << endl;
     if(argv[1][0]!='-')
         strncpy(parData.fileName, argv[1], 128);
     else 
@@ -125,8 +126,6 @@ bool loadData(const char* filename)
             case 3: prData.dim = stoi(element); // dimension
                     break;
             case 4: prData.nCars = stoi(element); // cars number
-                    if(prData.nCars > 0 && prData.dim > 0)
-                        prData.carPassLimit = new uchar[prData.nCars];
                     break;
             case 5: prData.nPass = stoi(element);
                     if(prData.nPass > 0)
@@ -191,6 +190,9 @@ bool loadData(const char* filename)
                 return true;
             }
         }
+        /* if no cars, at least one exist, otherwise use prData.nValue */
+        if(prData.nCars > 0 && prData.dim > 0)
+            prData.carPassLimit = new uchar[prData.nCars];
     };
     dataFile.close();
     return false;

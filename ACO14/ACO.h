@@ -59,6 +59,7 @@ struct problemData
     float rentFee = 0.0;
     /* used by ants during passengers pick */
     uint maxNodePassengers = 0;
+    uint maxCarPassengers = 0;
 };
 
 /* file data passenger structure */
@@ -76,6 +77,7 @@ struct pass
     uint index;
     uint startNode;
     uint endNode;
+    float phero;
 };
 
 /* problem node structure - static */
@@ -102,10 +104,21 @@ struct antNode
     node *curNode;     // pointer to problem node
     node *prevNode, *nextNode; // previous and next node
     car *carIn, *carOut;
-    uint nPickedPassengers; // passengers on board (passengers in car)
-    pass** pickedPassengers;
     float prob;
     float choices; 
+};
+
+/* last good point during passengers traverse */
+struct passContext
+{
+    uint iterCounter;
+    bool updateFromContext = false;
+    uint antNodeIndex, lastAntNodeIndex;
+    antNode *aNode, *lastANode;
+    pass **passOnBoard = nullptr;
+    pass **lastPassOnBoard = nullptr;
+    bool *passPicked = nullptr;   //temporary during node traversal - current node picked passengers flags
+    uchar nPicked, lastNPicked;
 };
 
 /* ant structure */
@@ -117,8 +130,8 @@ struct ant
     float bestOptPrice;
     bool *nodesVisited; //all nodes visited flags
     bool *carsRented;   //all cars rented flags
-    node *carPickedNode;
-    bool *passPicked;   //temporary during node traversal - current node picked passengers
+    node *carPickedNode; // where a particular car has been picked
+    passContext passengerContext;
     uint optNodeCounter;
     antNode *optNodes;  
     antNode *bestOptNodes; 
@@ -181,7 +194,7 @@ void cleanup();
 /* algorithm part */
 bool Solution(uint iter, node *startNode);
 void opt2_5();
-void calculatePassengers(antNode *nodes, uint nodeCounter, bool *passPicked);
+void calculatePassengers(antNode *aNodes, uint nodeCounter, passContext *passengerContext);
 void PheromoneEvaporation();
 bool updatePheromones(ant *bestAnt);
 void limitPheromoneTraces();
@@ -192,7 +205,7 @@ float calculatePathCost(antNode *nodes, uint nodeCounter);
 /* probabilitiy */
 int PickNode(ant *currentAnt, node *currentNode, car *currentCar);
 int PickCar(ant *currentAnt, node *currentNode, car *currentCar);
-uint PickPassengers(node *currentNode, uint availablePlaces, bool *passPicked);
+int PickPassengers(node *currentNode, uint availablePlaces, bool *passPicked);
 uint selectFromFreqArray(float sum, uint n, float *probabilities);
 void calculateMaxMin();
 

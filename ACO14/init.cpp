@@ -54,8 +54,12 @@ void cleanup()
             delete[] ptAnt->nodes;
             delete[] ptAnt->nodesVisited;
             delete[] ptAnt->carsRented;
-            if(ptAnt->passPicked !=nullptr)
-                delete[] ptAnt->passPicked;
+            if(ptAnt->passengerContext.passPicked !=nullptr)
+                delete[] ptAnt->passengerContext.passPicked;
+            if(ptAnt->passengerContext.passOnBoard != nullptr)
+                delete[] ptAnt->passengerContext.passOnBoard;
+            if(ptAnt->passengerContext.passOnBoard != nullptr)
+                delete[] ptAnt->passengerContext.lastPassOnBoard;
         }
         delete[] ants;
     }
@@ -124,7 +128,7 @@ void initNodes()
 
 void initCars()
 {
-    uint i;
+    uint i, max = 0;
     car *ptCar;
     uchar *ptUchar;
     cars = new car[prData.nCars];
@@ -132,8 +136,11 @@ void initCars()
     {
         ptCar->index = i;
         sprintf(ptCar->name, "C%d", i);
-        
+        ptCar->carPassLimit = prData.carPassLimit[i];
+        if(ptCar->carPassLimit > max)
+            max = ptCar->carPassLimit;
     }
+    prData.maxCarPassengers = max;
 }
 
 void initPassengers()
@@ -157,6 +164,7 @@ void initAnts()
     uint i, j;
     ant* ptAnt;
     bool* ptBool;
+    pass **pptPass1, **pptPass2;
 
     ants = new ant[parData.nAnts];
     for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
@@ -170,30 +178,40 @@ void initAnts()
         for(i=0, ptBool=ptAnt->nodesVisited; i<prData.dim; i++, ptBool++)
             *ptBool = false;
 
+        
+
         ptAnt->carsRented = new bool[prData.nCars];
         for(i=0, ptBool=ptAnt->carsRented; i<prData.nCars; i++, ptBool++)
             *ptBool = false;
 
         if(prData.maxNodePassengers > 0)
         {
-            ptAnt->passPicked = new bool[prData.maxNodePassengers];
-            for(i=0, ptBool=ptAnt->passPicked; i<prData.maxNodePassengers; i++, ptBool++)
+            ptAnt->passengerContext.passPicked = new bool[prData.maxNodePassengers];
+            for(i=0, ptBool=ptAnt->passengerContext.passPicked; i<prData.maxNodePassengers; i++, ptBool++)
                 *ptBool = false;
+            ptAnt->passengerContext.passOnBoard = new pass*[prData.maxCarPassengers];
+            ptAnt->passengerContext.lastPassOnBoard = new pass*[prData.maxCarPassengers];
+            for(i=0, pptPass1 = ptAnt->passengerContext.passOnBoard, 
+                pptPass2 = ptAnt->passengerContext.lastPassOnBoard; 
+                i<prData.maxCarPassengers; i++, pptPass1++)
+            {
+                (*pptPass1) = nullptr;
+                (*pptPass2) = nullptr;
+            }
         }
         else
-            ptAnt->passPicked = nullptr;
+            ptAnt->passengerContext.passPicked = nullptr;
     }
 }
 
 void initProbArrays()
 {
-    uint i, max;
+    uint max;
     max = prData.dim;
     if(prData.nCars > max)
         max = prData.nCars;
-    for(i=0; i<prData.dim; i++)
-        if(nodes[i].nPassengers > max)
-            max = nodes[i].nPassengers;
+    if(prData.maxNodePassengers > max)
+        max = prData.maxNodePassengers;
     probArrays.n = 0;
     probArrays.indices = new uint[max];
     probArrays.probs = new float[max];

@@ -5,8 +5,8 @@
     "version": "14.0",
     "configurations": [
         {
-            "name": "(gdb) Launch Debug",
-            "type": "cppdbg",
+            "name": "Launch Debug",
+            "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/bin/Debug/ACO14",
             "args": ["${workspaceFolder}/data/NoPass.car"],
