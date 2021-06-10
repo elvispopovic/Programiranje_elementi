@@ -5,11 +5,19 @@
     "version": "14.0",
     "configurations": [
         {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Launch",
+            "program": "${workspaceFolder}/bin/Debug/ACO14",
+            "args": ["${workspaceFolder}/inputData/Arab14ns.car","-t","100","-r","0.1","-a","1","-b","1","-na","1","-ni","1","-write"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "(gdb) Launch Debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/Debug/ACO14",
-            "args": ["${workspaceFolder}/data/NoPass.car"],
+            "args": ["${workspaceFolder}/data/NoPass.car","-t","100","-r","0.1","-a","1","-b","1","-na","1","-ni","1","-write"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -28,7 +36,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/Release/ACO14",
-            "args": ["${workspaceFolder}/data/NoPass.car"],
+            "args": ["${workspaceFolder}/data/NoPass.car","-t","100","-r","0.1","-a","1","-b","1","-na","1","-ni","1","-write"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -41,6 +49,6 @@
                     "ignoreFailures": true
                 }
             ]
-        }
+        },
     ]
 }
