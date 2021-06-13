@@ -5,21 +5,11 @@
     "version": "14.0",
     "configurations": [
         {
-            "type": "lldb",
-            "request": "launch",
-            "name": "(llvm) Launch Debug",
-            "program": "${workspaceFolder}/bin/Debug/ACO14",
-            "args": ["${workspaceFolder}/inputData/Arab14ns.car","-t","100","-r","0.1","-a","1","-b","1","-na","1","-ni","1","-write"],
-            "cwd": "${workspaceFolder}",
-            "externalConsole": false,
-            "MIMode": "llvm",
-        },
-        {
             "name": "(gdb) Launch Debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/Debug/ACO14",
-            "args": ["${workspaceFolder}/inputData/Arab14ns.car","-t","100","-r","0.1","-a","1","-b","1","-na","1","-ni","1","-write"],
+            "args": ["${workspaceFolder}/data/NoPass.car"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -33,5 +23,24 @@
                 }
             ]
         },
+        {
+            "name": "(gdb) Launch Release",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/Release/ACO14",
+            "args": ["${workspaceFolder}/data/NoPass.car"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
     ]
 }

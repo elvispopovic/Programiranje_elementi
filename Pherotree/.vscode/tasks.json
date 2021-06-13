@@ -4,9 +4,35 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build",
+            "label": "build gcc",
             "type": "shell",
-            "command": "${workspaceFolder}/compile.sh",
+            "command": "",
+            "args": [
+                "${workspaceFolder}/compile_gcc.sh"
+            ],
+            "problemMatcher": "$gcc",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "valgrind debug",
+            "type": "shell",
+            "command": "",
+            "args": [
+                "${workspaceFolder}/valgrind_debug.sh"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "debug",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "Build clang",
+            "type": "shell",
+            "command": "${workspaceFolder}/compile_clang.sh",
             "problemMatcher": ["$gcc"]
         },
     ]
