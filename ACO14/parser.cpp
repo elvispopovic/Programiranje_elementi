@@ -162,6 +162,8 @@ bool loadData(const char* filename)
                     parseMatrix1(dataFile, prData.returnRateMatrices, prData.nCars, prData.dim);
                 break;
             case 12:    // passenger limit
+                if(prData.nCars > 0 && prData.dim > 0)
+                    prData.carPassLimit = new uchar[prData.nCars];
                 getline(dataFile, line);
                 pos = 0;
                 for(i=0, uchPt=prData.carPassLimit; i<prData.nCars; i++, uchPt++)
@@ -189,10 +191,13 @@ bool loadData(const char* filename)
                 dataFile.close();
                 return true;
             }
+            // if there are no cars, we set one from imagination
+            if(prData.carPassLimit == nullptr)
+            {
+                prData.carPassLimit = new uchar[1];
+                prData.carPassLimit[0] = 5; // 
+            }
         }
-        /* if no cars, at least one exist, otherwise use prData.nValue */
-        if(prData.nCars > 0 && prData.dim > 0)
-            prData.carPassLimit = new uchar[prData.nCars];
     };
     dataFile.close();
     return false;
