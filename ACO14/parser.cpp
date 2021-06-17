@@ -27,11 +27,11 @@ bool setParameters(int argc, char** argv)
     parData.argc = argc;
     cout << "Arg: " << argv[1] << endl;
     if(argv[1][0]!='-')
-        strncpy(parData.fileName, argv[1], 128);
+        strncpy(parData.fileName, argv[1], 127);
     else 
         for(i=1; i<argc; i++)
             if(strcmp(argv[i],"-d")==0 && i<argc-1)
-                strncpy(parData.fileName, argv[i+1], 128);
+                strncpy(parData.fileName, argv[i+1], 127);
     /* default values */
     parData.tau =   TAU_0;
     parData.rho =   RHO;
@@ -191,12 +191,12 @@ bool loadData(const char* filename)
                 dataFile.close();
                 return true;
             }
-            // if there are no cars, we set one from imagination
-            if(prData.carPassLimit == nullptr)
-            {
-                prData.carPassLimit = new uchar[1];
-                prData.carPassLimit[0] = 5; // 
-            }
+        }
+        // if there are no cars, we set one from imagination
+        if(prData.carPassLimit == nullptr)
+        {
+            prData.carPassLimit = new uchar[1];
+            prData.carPassLimit[0] = 5; // 
         }
     };
     dataFile.close();

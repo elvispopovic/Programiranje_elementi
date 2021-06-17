@@ -83,7 +83,7 @@ void calculatePassengers(antNode *aNodes, uint nodeCounter, passContext *passeng
 
                     /* temporary */
                     cout << "Picked: " << iPicked << ", passenger: " << (iPicked>=0?ptAntNode->curNode->passengers[iPicked]->name:"None")
-                    << (iPicked==ptAntNode->curNode->nPassengers-1?"*":"") << endl;
+                    << (iPicked==(int)(ptAntNode->curNode->nPassengers)-1?"*":"") << endl;
                 }
                         /* remain space in car */
             if(ptAntNode->carOut->carPassLimit >= passengerContext->nPicked)

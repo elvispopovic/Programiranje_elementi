@@ -1,41 +1,19 @@
-#include <iostream>
-#include <cmath>
-#include <random>
-#define unsign int uint;
-#define BROJ_CVOROVA 7
-#define BROJ_PUTNIKA 12
-#define PUTNIKA_U_CVORU 5
-
-struct cvor;
-
-struct putnik
-{
-    uint indeks;
-    float phero;
-    float budget;
-    cvor *odrediste;
-};
-
-struct cvor
-{
-    uint indeks;
-    putnik **putnici;
-};
-
-struct vjerojatnosti
-{
-    uint n;
-    int odabrano; 
-    float sum;
-    uint *indeksi; 
-    float *p; 
-    float *kumulativ; 
-};
+#include "pherotree.h"
 
 
 float prijelazi[BROJ_CVOROVA]
 {
     10.0, 13.0, 9.0, 11.0, 8.0, 12.0, 7.0
+};
+
+short automobiliUCvorovima[BROJ_CVOROVA]
+{
+    0,0,1,1,1,2,2
+};
+
+uchar kapaciteti[BROJ_AUTOMOBILA]
+{
+    5,4,4
 };
 
 float budgeti[BROJ_PUTNIKA]
@@ -65,40 +43,48 @@ short putniciUCvorovima[BROJ_CVOROVA][PUTNIKA_U_CVORU]
     {11,-1,-1,-1,-1}
 };
 
+
+/* globalne varijable */
+std::mt19937* mersenneGenerator;
 vjerojatnosti vj;
 
-
-void ispisPodataka(cvor *staza);
-int IzaberiPutnike(cvor *trenutniCvor, uint mjesta, bool *pokupljeni);
-uint odaberiIzFrekventogPolja(float sum, uint n, float *vjerojatnosti);
-
 using namespace std;
-
-mt19937* mersenneGenerator;
 
 int main()
 {
     uint i, j;
-    int izbor, mjesta;
+    int izbor;
     cvor *staza, *ptCvor;
     bool *pokupljeni, *ptBool;
+    automobil *automobili, *ptAuto;
     putnik *putnici, *ptPutnik, **pptPutnik;
 
     mt19937::result_type seed = time(0);
     mersenneGenerator = new mt19937(seed);
 
     staza = new cvor[BROJ_CVOROVA];
+    automobili = new automobil[BROJ_AUTOMOBILA];
     putnici = new putnik[BROJ_PUTNIKA];
     pokupljeni = new bool[PUTNIKA_U_CVORU];
+    /* inicijalizacija automobila */
+    for(i=0, ptAuto=automobili; i<BROJ_AUTOMOBILA; i++, ptAuto++) 
+    {
+        ptAuto->indeks = i;
+        ptAuto->kapacitet = kapaciteti[i];
+    }
+
+    /* inicijalizacija putnika */
     for(i=0, ptPutnik=putnici; i<BROJ_PUTNIKA; i++, ptPutnik++)
     {
         ptPutnik->indeks = i;
         ptPutnik->budget = budgeti[i];
         ptPutnik->odrediste = staza+odredista[i];
     }
+    /* inicijalizacija cvorova */
     for(j=0, ptCvor=staza; j<BROJ_CVOROVA; j++, ptCvor++)
     {
         ptCvor->indeks = j;
+        ptCvor->automob = automobili+automobiliUCvorovima[j];
         ptCvor->putnici = new putnik*[PUTNIKA_U_CVORU];
         for(i=0, pptPutnik=ptCvor->putnici; i<PUTNIKA_U_CVORU; i++, pptPutnik++)
             if(putniciUCvorovima[j][i]==-1)
@@ -107,18 +93,20 @@ int main()
                 *pptPutnik = putnici+putniciUCvorovima[j][i];        
     }
 
-
+    /* inicijalizacija vjerojatnosniih polja */
     vj.indeksi = new uint[PUTNIKA_U_CVORU];
     vj.kumulativ = new float[PUTNIKA_U_CVORU];
     vj.p = new float[PUTNIKA_U_CVORU];
     cout << "Sva polja alocirana." << endl;
     ispisPodataka(staza);
 
-    for(j=0, ptCvor=staza, mjesta=5; j<BROJ_CVOROVA; j++, ptCvor++)
+    for(j=0, ptCvor=staza; j<BROJ_CVOROVA; j++, ptCvor++)
     {
+        cout << "Cvor " << j << ", auto: " << ptCvor->automob->indeks 
+        << ", kapacitet: " << (int)(ptCvor->automob->kapacitet) << endl;
         for(i=0, ptBool=pokupljeni; i<PUTNIKA_U_CVORU; i++, ptBool++)
             *ptBool = false;
-        izbor = IzaberiPutnike(ptCvor, mjesta, pokupljeni);
+        izbor = IzaberiPutnika(ptCvor, pokupljeni);
         for(i=0; i<vj.n; i++)
             cout << "indeks: " << ptCvor->putnici[vj.indeksi[i]]->indeks << ", p: " << vj.p[i] << ", kum: " << vj.kumulativ[i] << endl;
 
@@ -135,6 +123,7 @@ int main()
     for(i=0, ptCvor=staza; i<BROJ_CVOROVA; i++, ptCvor++)
         delete[] ptCvor->putnici;
     delete[] putnici;
+    delete[] automobili;
     delete[] staza;
     delete mersenneGenerator;
     cout << "Sva polja dealocirana." << endl;
@@ -157,7 +146,7 @@ void ispisPodataka(cvor *staza)
     }
 }
 
-int IzaberiPutnike(cvor *trenutniCvor, uint mjesta, bool *pokupljeni)
+int IzaberiPutnika(cvor *trenutniCvor, bool *pokupljeni)
 {
     uint i, nPutnika;
     uint *ptUint;
@@ -184,7 +173,7 @@ int IzaberiPutnike(cvor *trenutniCvor, uint mjesta, bool *pokupljeni)
         }
     vj.n = nPutnika;
     vj.sum = sum;
-    if(nPutnika==0 || mjesta==0) // none to select - no selection
+    if(nPutnika==0) // none to select - no selection
     {
         vj.odabrano = -1;
         return -1;
