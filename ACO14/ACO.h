@@ -108,17 +108,10 @@ struct antNode
     float choices; 
 };
 
-/* last good point during passengers traverse */
-struct passContext
+struct contextNode
 {
-    uint iterCounter;
-    bool updateFromContext = false;
-    uint antNodeIndex, lastAntNodeIndex;
-    antNode *aNode, *lastANode;
-    pass **passOnBoard = nullptr;
-    pass **lastPassOnBoard = nullptr;
-    bool *passPicked = nullptr;   //temporary during node traversal - current node picked passengers flags
-    uchar nPicked, lastNPicked;
+    uint index;
+    node *currentNode;
 };
 
 /* ant structure */
@@ -131,12 +124,14 @@ struct ant
     bool *nodesVisited; //all nodes visited flags
     bool *carsRented;   //all cars rented flags
     node *carPickedNode; // where a particular car has been picked
-    passContext passengerContext;
-    uint optNodeCounter;
-    antNode *optNodes;  
-    antNode *bestOptNodes; 
+    pass **passOnBoard = nullptr; //passengers on board (current car)
+    uint optNodeCounter; //number of opt nodes
+    antNode *optNodes;  //array of opt nodes
+    antNode *bestOptNodes; // array of best opt nodes
+    contextNode *contextNodes; //array of context nodes (during passengers calculation)
     float price;
     float pheroUpdate;
+    bool *passPicked = nullptr;   //temporary during node traversal - current node picked passengers flags
 };
 
 struct bestPath
@@ -194,7 +189,7 @@ void cleanup();
 /* algorithm part */
 bool Solution(uint iter, node *startNode);
 void opt2_5();
-void calculatePassengers(antNode *aNodes, uint nodeCounter, passContext *passengerContext);
+void calculatePassengers(ant *currentAnt);
 void PheromoneEvaporation();
 bool updatePheromones(ant *bestAnt);
 void limitPheromoneTraces();

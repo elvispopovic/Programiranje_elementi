@@ -54,12 +54,13 @@ void cleanup()
             delete[] ptAnt->nodes;
             delete[] ptAnt->nodesVisited;
             delete[] ptAnt->carsRented;
-            if(ptAnt->passengerContext.passPicked !=nullptr)
-                delete[] ptAnt->passengerContext.passPicked;
-            if(ptAnt->passengerContext.passOnBoard != nullptr)
-                delete[] ptAnt->passengerContext.passOnBoard;
-            if(ptAnt->passengerContext.passOnBoard != nullptr)
-                delete[] ptAnt->passengerContext.lastPassOnBoard;
+            if(ptAnt->passPicked !=nullptr)
+                delete[] ptAnt->passPicked;
+            if(ptAnt->passOnBoard != nullptr)
+                delete[] ptAnt->passOnBoard;
+
+            /* delete context nodes */
+            delete[] ptAnt->contextNodes;
         }
         delete[] ants;
     }
@@ -164,7 +165,7 @@ void initAnts()
     uint i, j;
     ant* ptAnt;
     bool* ptBool;
-    pass **pptPass1, **pptPass2;
+    pass **pptPass1;
 
     ants = new ant[parData.nAnts];
     for(j=0, ptAnt=ants; j<parData.nAnts; j++, ptAnt++)
@@ -186,21 +187,21 @@ void initAnts()
 
         if(prData.maxNodePassengers > 0)
         {
-            ptAnt->passengerContext.passPicked = new bool[prData.maxNodePassengers];
-            for(i=0, ptBool=ptAnt->passengerContext.passPicked; i<prData.maxNodePassengers; i++, ptBool++)
+            ptAnt->passPicked = new bool[prData.maxNodePassengers];
+            for(i=0, ptBool=ptAnt->passPicked; i<prData.maxNodePassengers; i++, ptBool++)
                 *ptBool = false;
-            ptAnt->passengerContext.passOnBoard = new pass*[prData.maxCarPassengers];
-            ptAnt->passengerContext.lastPassOnBoard = new pass*[prData.maxCarPassengers];
-            for(i=0, pptPass1 = ptAnt->passengerContext.passOnBoard, 
-                pptPass2 = ptAnt->passengerContext.lastPassOnBoard; 
+            ptAnt->passOnBoard = new pass*[prData.maxCarPassengers];
+            for(i=0, pptPass1 = ptAnt->passOnBoard; 
                 i<prData.maxCarPassengers; i++, pptPass1++)
             {
                 (*pptPass1) = nullptr;
-                (*pptPass2) = nullptr;
             }
         }
         else
-            ptAnt->passengerContext.passPicked = nullptr;
+            ptAnt->passPicked = nullptr;
+
+        /* init context nodes' array */
+        ptAnt->contextNodes = new contextNode[prData.dim];
     }
 }
 

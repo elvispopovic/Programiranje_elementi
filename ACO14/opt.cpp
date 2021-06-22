@@ -15,7 +15,7 @@ void opt2_5()
     {
         for(k=0, ptAnt=ants; k<parData.nAnts; k++, ptAnt++)
             if(ptAnt->nodeCounter == prData.dim && ptAnt->closedPath == true)
-                calculatePassengers(ptAnt->nodes, ptAnt->nodeCounter, &(ptAnt->passengerContext)); 
+                calculatePassengers(ptAnt); 
         return;
     }
     //we have opt
